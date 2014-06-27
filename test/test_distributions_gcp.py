@@ -1,6 +1,6 @@
 from microscopes.py.common.util import random_orthonormal_matrix, almost_eq
-from microscopes.py.distributions import gcp
-from microscopes.py.distributions.gcp import sample_niw, sample_iw
+from microscopes.py.models import gcp
+from microscopes.py.models.gcp import sample_niw, sample_iw
 from distributions.dbg.models import nich
 
 import numpy as np
