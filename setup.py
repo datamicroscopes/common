@@ -68,7 +68,7 @@ def make_extension(module_name):
         sources=sources,
         libraries=["microscopes_common", "protobuf", "distributions_shared"],
         language="c++",
-        include_dirs=[numpy.get_include(), 'include', 'microscopes'] + extra_include_dirs,
+        include_dirs=[numpy.get_include(), 'include'] + extra_include_dirs,
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args)
 

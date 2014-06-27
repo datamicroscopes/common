@@ -55,7 +55,7 @@ endif
 .PHONY: clean
 clean: 
 	rm -rf out
-	find microscopes \( -name '*.cpp' -or -name '*.so' \) -type f -print0 | xargs -0 rm --
+	find microscopes \( -name '*.cpp' -or -name '*.so' -or -name '*.pyc' \) -type f -print0 | xargs -0 rm --
 
 .PHONY: protobuf
 protobuf:
