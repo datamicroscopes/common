@@ -17,7 +17,7 @@ class _numpy_iter(object):
         self._i += 1
         return i, self._Y[i]
 
-class numpy_dataset(object):
+class numpy_dataview(object):
     def __init__(self, Y):
         self._Y = Y
 
