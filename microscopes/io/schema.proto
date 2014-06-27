@@ -1,0 +1,5 @@
+package microscopes.io;
+
+message CRP {
+    required float alpha = 1;
+}
