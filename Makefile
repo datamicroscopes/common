@@ -25,11 +25,14 @@ OBJFILES := $(patsubst src/%.cpp, $(O)/%.o, $(SRCFILES))
 
 UNAME_S := $(shell uname -s)
 TARGETS :=
+LIBPATH_VARNAME :=
 ifeq ($(UNAME_S),Linux)
 	TARGETS := $(O)/libmicroscopes_common.so
+	LIBPATH_VARNAME := LD_LIBRARY_PATH
 endif
 ifeq ($(UNAME_S),Darwin)
 	TARGETS := $(O)/libmicroscopes_common.dylib
+	LIBPATH_VARNAME := DYLD_LIBRARY_PATH
 endif
 
 all: $(TARGETS)
@@ -59,3 +62,7 @@ protobuf:
 	mkdir -p src/io
 	protoc --cpp_out=include --python_out=. microscopes/io/schema.proto
 	mv include/microscopes/io/schema.pb.cc src/io/schema.pb.cpp
+
+.PHONY: test
+test:
+	$(LIBPATH_VARNAME)=$$$(LIBPATH_VARNAME):./out nosetests
