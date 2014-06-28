@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 #include <random>
+#include <algorithm>
 
 // pretty printer for std::pair<A, B>
 template <typename A, typename B>
