@@ -12,6 +12,8 @@ cdef class abstract_dataview:
     cdef dataview *_thisptr
 
 cdef class numpy_dataview(abstract_dataview):
-    cdef np.ndarray _npd
+    cdef np.ndarray _data
+    cdef np.ndarray _mask
 
-cdef vector[ti.runtime_type_info] get_c_types(np.ndarray npd)
+"""helper function"""
+cdef vector[ti.runtime_type_info] get_c_types(dtype)

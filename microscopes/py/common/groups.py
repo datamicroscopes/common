@@ -16,7 +16,7 @@ class FixedNGroupManager(object):
     def ngroups(self):
         return len(self._gdata)
 
-    def nentities_in_group(self, gid):
+    def groupsize(self, gid):
         return self._gdata[gid][0]
 
     def no_entities_assigned(self):
@@ -32,7 +32,7 @@ class FixedNGroupManager(object):
         return not (self._assignments == -1).any()
 
     def empty_groups(self):
-        return self._gempty
+        return list(self._gempty)
 
     def group_data(self, gid):
         return self._gdata[gid][1]
@@ -41,7 +41,7 @@ class FixedNGroupManager(object):
         return self._gdata.iteritems()
 
     def assignments(self):
-        return self._assignments
+        return list(self._assignments)
 
     def create_group(self, gdata):
         """
@@ -57,7 +57,7 @@ class FixedNGroupManager(object):
         """
         Can only do this if the group is empty
         """
-        assert not self.nentities_in_group(gid), 'group needs to be empty'
+        assert not self.groupsize(gid), 'group needs to be empty'
         assert gid in self._gempty
         del self._gdata[gid]
         self._gempty.remove(gid)
