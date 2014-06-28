@@ -2,10 +2,58 @@
 #include <microscopes/common/util.hpp>
 
 #include <cassert>
+#include <sstream>
 #include <iostream>
 
 using namespace std;
 using namespace microscopes::common;
+
+static vector<string>
+runtime_type_strings(const vector<runtime_type_info> &types)
+{
+  vector<string> ret;
+  ret.reserve(types.size());
+  for (auto t : types)
+    ret.push_back(runtime_type_traits::TypeInfoString(t));
+  return ret;
+}
+
+string
+row_accessor::debug_str() const
+{
+  vector<string> values_repr;
+  values_repr.reserve(types_->size());
+  for (size_t i = 0; i < types_->size(); i++) {
+    if (!mask_ || !mask_[i])
+      values_repr.push_back(
+          runtime_type_traits::ToString((*types_)[i], data_ + (*offsets_)[i]));
+    else
+      values_repr.push_back("--");
+  }
+  ostringstream oss;
+  oss << "{"
+      << "types=" << runtime_type_strings(*types_) << ", "
+      << "values="<< values_repr << ", ";
+  if (mask_) {
+    vector<string> mask_repr;
+    mask_repr.reserve(types_->size());
+    for (size_t i = 0; i < types_->size(); i++)
+      mask_repr.push_back(mask_[i] ? "true" : "false");
+    oss << "mask=" << mask_repr;
+  } else
+    oss << "mask=null";
+  oss << "}";
+  return oss.str();
+}
+
+string
+row_mutator::debug_str() const
+{
+  ostringstream oss;
+  row_accessor acc(data_, nullptr, types_, offsets_);
+  oss << "{view=" << acc.debug_str() << "}";
+  return oss.str();
+}
 
 dataview::dataview(size_t n, const vector<runtime_type_info> &types)
   : n_(n), types_(types), rowsize_()

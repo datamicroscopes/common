@@ -7,14 +7,19 @@
 //
 // since cython can handle neither of them particularly well (if even)
 
+#define RUNTIME_TYPE_INFO(x) \
+  x(TYPE_INFO_B) \
+  x(TYPE_INFO_I8) \
+  x(TYPE_INFO_I16) \
+  x(TYPE_INFO_I32) \
+  x(TYPE_INFO_I64) \
+  x(TYPE_INFO_F32) \
+  x(TYPE_INFO_F64)
+
 // WARNING: don't name this type_info otherwise might class with std::type_info
 enum runtime_type_info {
-  TYPE_INFO_B,
-  TYPE_INFO_I8,
-  TYPE_INFO_I16,
-  TYPE_INFO_I32,
-  TYPE_INFO_I64,
-  TYPE_INFO_F32,
-  TYPE_INFO_F64,
+#define _ENUM_CASE(name) name,
+  RUNTIME_TYPE_INFO(_ENUM_CASE)
+#undef _ENUM_CASE
   TYPE_INFO_NELEMS,
 };

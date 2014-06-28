@@ -2,6 +2,7 @@
 
 #include <microscopes/common/type_helper.hpp>
 #include <microscopes/common/random_fwd.hpp>
+#include <microscopes/common/macros.hpp>
 
 #include <vector>
 #include <cassert>
@@ -29,6 +30,7 @@ public:
   inline size_t tell() const { return pos_; }
   inline size_t nfeatures() const { return types_->size(); }
   inline bool ismasked() const { return !mask_ ? false : *(mask_ + pos_); }
+  inline runtime_type_info type(size_t i) const { return (*types_)[pos_]; }
 
   inline void
   seek(size_t pos)
@@ -63,6 +65,8 @@ public:
     seek(0);
   }
 
+  std::string debug_str() const;
+
 protected:
   const uint8_t *cursor() const { return cursor_; }
 
@@ -91,6 +95,7 @@ public:
 
   inline size_t tell() const { return pos_; }
   inline size_t nfeatures() const { return types_->size(); }
+  inline runtime_type_info type(size_t i) const { return (*types_)[pos_]; }
 
   inline void
   seek(size_t pos)
@@ -114,6 +119,8 @@ public:
   void
   set(const row_accessor &acc)
   {
+    // XXX: need to implement casting
+    MICROSCOPES_DCHECK(acc.type(pos_) == type(pos_), "Need to implement casting");
     assert(cursor_);
     memcpy(cursor_, acc.cursor(), runtime_type_traits::TypeSize((*types_)[pos_]));
   }
@@ -131,6 +138,8 @@ public:
   {
     seek(0);
   }
+
+  std::string debug_str() const;
 
 private:
   uint8_t *data_;
