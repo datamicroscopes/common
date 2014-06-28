@@ -42,12 +42,11 @@ public:
   }
 
   template <typename T>
-  const T &
+  T
   get() const
   {
     assert(cursor_);
-    // XXX: implementing casting here
-    return *reinterpret_cast<const T *>(cursor_);
+    return runtime_cast< T >::cast(cursor_, (*types_)[pos_]);
   }
 
   inline void
@@ -106,11 +105,10 @@ public:
 
   template <typename T>
   void
-  set(const T& t)
+  set(T t)
   {
     assert(cursor_);
-    // XXX: implementing casting here
-    *reinterpret_cast<T *>(cursor_) = t;
+    runtime_cast< T >::uncast(cursor_, (*types_)[pos_], t);
   }
 
   void
