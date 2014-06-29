@@ -12,6 +12,7 @@ cdef class abstract_dataview:
     cdef dataview *_thisptr
 
 cdef class numpy_dataview(abstract_dataview):
+    cdef int _n
     cdef np.ndarray _data
     cdef np.ndarray _mask
 

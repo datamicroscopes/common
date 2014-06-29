@@ -11,10 +11,10 @@ def test_numpy_dataview():
     x = np.array([(False, 32.), (True, 943.), (False, -32.)], dtype=[('', bool), ('', float)])
     view = numpy_dataview(x)
     assert view
+    assert view.size() == x.shape[0]
     r = rng(5432)
-    view.permute(r)
-    view.reset_permutation()
-    view.permute(r)
+    view.view(True, r)
+    view.view(False, r)
 
 def test_numpy_dataview_masked():
     # XXX: likewise with above test
@@ -23,3 +23,4 @@ def test_numpy_dataview_masked():
         mask=[(False, False, True, True, True)])
     view = numpy_dataview(x)
     assert view
+    assert view.size() == x.shape[0]

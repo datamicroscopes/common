@@ -11,6 +11,7 @@ cdef class numpy_dataview(abstract_dataview):
         n = npd.shape[0]
         if len(npd.shape) != 1:
             raise ValueError("1D arrays only")
+        self._n = n
         dtype = npd.dtype
         if len(dtype) == 0:
             raise ValueError("structural arrays only")
@@ -37,12 +38,15 @@ cdef class numpy_dataview(abstract_dataview):
                 n, 
                 ctypes)
 
-    def permute(self, rng r):
-        (<row_major_dataview *>self._thisptr)[0].permute(r._thisptr[0])
+    def view(self, shuffle, rng r):
+        if not shuffle:
+            (<row_major_dataview *>self._thisptr)[0].reset_permutation()
+        else:
+            (<row_major_dataview *>self._thisptr)[0].permute(r._thisptr[0])
         return self
 
-    def reset_permutation(self):
-        (<row_major_dataview *>self._thisptr)[0].reset_permutation()
+    def size(self):
+        return self._n
 
 def get_c_type(tpe):
     if tpe in (bool, np.bool):
