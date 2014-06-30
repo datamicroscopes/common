@@ -1,5 +1,7 @@
 # a sanity test, see if we can import
 
+from nose.tools import assert_almost_equals
+
 def test_import_models():
     from microscopes.cxx.models import bb, bnb, gp, nich
     assert bb and bnb and gp and nich
@@ -12,3 +14,11 @@ def test_import_rng():
     from microscopes.cxx.common.rng import rng
     r = rng(12345)
     assert r
+
+def test_scalar_functions():
+    from microscopes.cxx.common.scalar_functions import log_exponential
+    import math
+    lam = 2.
+    fn = log_exponential(lam)
+    x = 10.
+    assert_almost_equals(math.log(lam*math.exp(-lam*x)), fn(x), places=5)
