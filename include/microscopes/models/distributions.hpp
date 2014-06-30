@@ -1,6 +1,7 @@
 #pragma once
 
 #include <microscopes/models/base.hpp>
+#include <microscopes/common/util.hpp>
 
 #include <distributions/io/protobuf.hpp>
 #include <distributions/models/bb.hpp>
@@ -68,6 +69,15 @@ public:
   get_runtime_type_info() const override
   {
     return common::_static_type_to_runtime_id< typename T::Value >::value;
+  }
+
+  std::string
+  debug_str() const override
+  {
+    // XXX: inefficient
+    message_type m;
+    repr_.protobuf_dump(m);
+    return m.ShortDebugString();
   }
 
   // XXX: public for now so distributions_feature_group can access

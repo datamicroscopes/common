@@ -3,6 +3,7 @@
 #include <microscopes/common/random_fwd.hpp>
 
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <utility>
 #include <random>
@@ -110,6 +111,14 @@ struct util {
     return res;
   }
 
+  template <typename T>
+  static inline std::string
+  to_string(const T &t)
+  {
+    std::ostringstream oss;
+    oss << t;
+    return oss.str();
+  }
 };
 
 } // namespace common

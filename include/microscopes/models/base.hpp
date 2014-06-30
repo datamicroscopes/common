@@ -40,6 +40,7 @@ public:
   virtual void set_hp(const model &m) = 0;
 
   virtual runtime_type_info get_runtime_type_info() const = 0;
+  virtual std::string debug_str() const = 0;
 };
 
 // useful typedefs for cython
