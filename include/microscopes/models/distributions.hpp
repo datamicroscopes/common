@@ -58,6 +58,12 @@ public:
     repr_.protobuf_load(m);
   }
 
+  void
+  set_hp(const model &m) override
+  {
+    repr_ = static_cast<const distributions_model<T> &>(m).repr_;
+  }
+
   runtime_type_info
   get_runtime_type_info() const override
   {

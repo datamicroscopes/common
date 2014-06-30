@@ -10,6 +10,8 @@ cdef extern from "microscopes/models/base.hpp" namespace "microscopes::models":
         hyperparam_bag_t get_hp() except +
         void set_hp(hyperparam_bag_t &) except +
         vector[runtime_type_info] get_runtime_type_info() except +
+    ctypedef model* model_raw_ptr
+    ctypedef shared_ptr[model] model_shared_ptr
 
 cdef extern from "microscopes/models/distributions.hpp" namespace "microscopes::models":
     cdef cppclass distributions_factory[T]:

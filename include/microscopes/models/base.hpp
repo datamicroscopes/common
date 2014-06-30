@@ -37,9 +37,14 @@ public:
 
   virtual common::hyperparam_bag_t get_hp() const = 0;
   virtual void set_hp(const common::hyperparam_bag_t &hp) = 0;
+  virtual void set_hp(const model &m) = 0;
 
   virtual runtime_type_info get_runtime_type_info() const = 0;
 };
+
+// useful typedefs for cython
+typedef model* model_raw_ptr;
+typedef std::shared_ptr<model> model_shared_ptr;
 
 } // namespace models
 } // namespace microscopes
