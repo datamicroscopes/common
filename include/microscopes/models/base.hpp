@@ -36,6 +36,10 @@ public:
   virtual std::shared_ptr<feature_group> create_feature_group(common::rng_t &rng) const = 0;
 
   virtual common::hyperparam_bag_t get_hp() const = 0;
+
+  // only certain models support this; others will throw a runtime exception!
+  virtual common::hyperparam_float_bag_t get_hp_float_bag() const = 0;
+
   virtual void set_hp(const common::hyperparam_bag_t &hp) = 0;
   virtual void set_hp(const model &m) = 0;
 

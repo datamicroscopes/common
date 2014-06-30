@@ -9,6 +9,8 @@
 #include <distributions/models/gp.hpp>
 #include <distributions/models/nich.hpp>
 
+#include <stdexcept>
+
 // XXX: make sure to include the distribution above
 #define DISTRIB_FOR_EACH_DISTRIBUTION(x) \
   x(BetaBernoulli) \
@@ -33,6 +35,60 @@ DISTRIB_FOR_EACH_DISTRIBUTION(DISTRIB_SPECIALIZE_MODEL_TYPES)
 
 #undef DISTRIB_SPECIALIZE_MODEL_TYPES
 
+// hardcode here which distributions models contain only scalar float parameters
+template <typename T>
+struct distributions_model_hp_float_bag
+{
+  static inline common::hyperparam_float_bag_t
+  get(const typename T::Shared &)
+  {
+    throw std::runtime_error("this model does not support float bags");
+  }
+};
+
+#define DISTRIB_BB_FIELDS(x) \
+  x(alpha) \
+  x(beta)
+
+#define DISTRIB_GP_FIELDS(x) \
+  x(alpha) \
+  x(inv_beta)
+
+#define DISTRIB_NICH_FIELDS(x) \
+  x(mu) \
+  x(kappa) \
+  x(sigmasq) \
+  x(nu)
+
+#define DISTRIB_FOR_EACH_FLOAT_DISTRIBUTION(x) \
+  x(BetaBernoulli, DISTRIB_BB_FIELDS) \
+  x(GammaPoisson, DISTRIB_GP_FIELDS) \
+  x(NormalInverseChiSq, DISTRIB_NICH_FIELDS)
+
+// XXX: yes hardcoding sucks, and we could do this by introspection/reflection
+// on the protobuf message, but that is annoying and this is faster. deal with it.
+
+#define DISTRIB_SPECIALIZE_FLOAT_BAG_EMIT_ASSIGN(fname) \
+  ret[ #fname ] = s.fname;
+
+#define DISTRIB_SPECIALIZE_FLOAT_BAG(name, fields) \
+  template <> \
+  struct distributions_model_hp_float_bag< distributions::name > \
+  { \
+    static inline common::hyperparam_float_bag_t \
+    get(const distributions::name::Shared &s) \
+    { \
+      common::hyperparam_float_bag_t ret; \
+      fields(DISTRIB_SPECIALIZE_FLOAT_BAG_EMIT_ASSIGN) \
+      return ret; \
+    } \
+  };
+
+DISTRIB_FOR_EACH_FLOAT_DISTRIBUTION(DISTRIB_SPECIALIZE_FLOAT_BAG)
+
+#undef DISTRIB_SPECIALIZE_FLOAT_BAG_EMIT_ASSIGN
+#undef DISTRIB_SPECIALIZE_FLOAT_BAG
+
 template <typename T>
 class distributions_model : public model {
 public:
@@ -48,6 +104,12 @@ public:
     std::ostringstream out;
     m.SerializeToOstream(&out);
     return out.str();
+  }
+
+  common::hyperparam_float_bag_t
+  get_hp_float_bag() const override
+  {
+    return distributions_model_hp_float_bag<T>::get(repr_);
   }
 
   void
@@ -169,6 +231,12 @@ struct distributions_factory {
     return std::make_shared<distributions_model<T>>();
   }
 };
+
+// explicitly instantiate C++ templates
+#define DISTRIB_EXPLICIT_INSTANTIATE(name) \
+  extern template class distributions_model< distributions::name >;
+DISTRIB_FOR_EACH_DISTRIBUTION(DISTRIB_EXPLICIT_INSTANTIATE)
+#undef DISTRIB_EXPLICIT_INSTANTIATE
 
 } // namespace models
 } // namespace microscopes
