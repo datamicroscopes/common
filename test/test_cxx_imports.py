@@ -22,6 +22,7 @@ def test_log_exponential():
     fn = log_exponential(lam)
     x = 10.
     assert_almost_equals(math.log(lam*math.exp(-lam*x)), fn(x), places=5)
+    assert math.isinf(fn(-10.))
 
 def test_log_normal():
     from microscopes.cxx.common.scalar_functions import log_normal

@@ -2,6 +2,7 @@
 
 #include <microscopes/common/typedefs.hpp>
 #include <distributions/special.hpp> // for M_PIf
+#include <limits>
 #include <cmath>
 
 namespace microscopes {
@@ -12,6 +13,8 @@ log_exponential(float lambda)
 {
   const float log_lambda = logf(lambda);
   return [lambda, log_lambda](float x) {
+    if (x < 0)
+      return std::numeric_limits<float>::infinity();
     return log_lambda - lambda * x;
   };
 }
