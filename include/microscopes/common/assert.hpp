@@ -10,3 +10,14 @@
 #else
 #define MICROSCOPES_ASSERT assert
 #endif
+
+namespace microscopes {
+namespace common {
+
+struct _debug_mode_warning {
+  _debug_mode_warning();
+  static const _debug_mode_warning _Instance;
+};
+
+} // namespace common
+} // namespace microscopes
