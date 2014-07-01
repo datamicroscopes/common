@@ -15,10 +15,19 @@ def test_import_rng():
     r = rng(12345)
     assert r
 
-def test_scalar_functions():
+def test_log_exponential():
     from microscopes.cxx.common.scalar_functions import log_exponential
     import math
     lam = 2.
     fn = log_exponential(lam)
     x = 10.
     assert_almost_equals(math.log(lam*math.exp(-lam*x)), fn(x), places=5)
+
+def test_log_normal():
+    from microscopes.cxx.common.scalar_functions import log_normal
+    from scipy.stats import norm
+    import math
+    mu, sigma2 = 1.5, 3.2
+    x = 6.3
+    ours = log_normal(mu, sigma2)
+    assert_almost_equals(ours(x), norm.logpdf(x, loc=mu, scale=math.sqrt(sigma2)))
