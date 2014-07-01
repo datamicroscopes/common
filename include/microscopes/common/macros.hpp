@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <cassert>
 
 #define NEVER_INLINE  __attribute__((noinline))
 #define ALWAYS_INLINE __attribute__((always_inline))
@@ -36,3 +37,9 @@
       ::std::string("Should not be reached: ") + \
       ::std::string(_SOURCE_INFO)); \
   } while (0)
+
+#ifdef NDEBUG
+  #define ALWAYS_ASSERT(expr) (likely((expr)) ? (void)0 : abort())
+#else
+  #define ALWAYS_ASSERT(expr) assert((expr))
+#endif

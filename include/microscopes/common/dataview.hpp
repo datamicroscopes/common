@@ -3,9 +3,9 @@
 #include <microscopes/common/type_helper.hpp>
 #include <microscopes/common/random_fwd.hpp>
 #include <microscopes/common/macros.hpp>
+#include <microscopes/common/assert.hpp>
 
 #include <vector>
-#include <cassert>
 #include <cstring>
 #include <iostream>
 
@@ -23,8 +23,8 @@ public:
     : data_(data), mask_(mask), types_(types),
       offsets_(offsets), cursor_(data), pos_()
   {
-    assert(data);
-    assert(types->size() == offsets->size());
+    MICROSCOPES_ASSERT(data);
+    MICROSCOPES_ASSERT(types->size() == offsets->size());
   }
 
   inline size_t tell() const { return pos_; }
@@ -35,7 +35,7 @@ public:
   inline void
   seek(size_t pos)
   {
-    assert(pos <= nfeatures());
+    MICROSCOPES_ASSERT(pos <= nfeatures());
     if (pos < nfeatures())
       cursor_ = data_ + (*offsets_)[pos];
     else
@@ -47,7 +47,7 @@ public:
   T
   get() const
   {
-    assert(cursor_);
+    MICROSCOPES_ASSERT(cursor_);
     return runtime_cast< T >::cast(cursor_, (*types_)[pos_]);
   }
 
@@ -89,8 +89,8 @@ public:
     : data_(data), types_(types),
       offsets_(offsets), cursor_(data), pos_()
   {
-    assert(data);
-    assert(types->size() == offsets->size());
+    MICROSCOPES_ASSERT(data);
+    MICROSCOPES_ASSERT(types->size() == offsets->size());
   }
 
   inline size_t tell() const { return pos_; }
@@ -100,7 +100,7 @@ public:
   inline void
   seek(size_t pos)
   {
-    assert(pos <= nfeatures());
+    MICROSCOPES_ASSERT(pos <= nfeatures());
     if (pos < nfeatures())
       cursor_ = data_ + (*offsets_)[pos];
     else
@@ -112,7 +112,7 @@ public:
   void
   set(T t)
   {
-    assert(cursor_);
+    MICROSCOPES_ASSERT(cursor_);
     runtime_cast< T >::uncast(cursor_, (*types_)[pos_], t);
   }
 
@@ -121,7 +121,7 @@ public:
   {
     // XXX: need to implement casting
     MICROSCOPES_DCHECK(acc.type(pos_) == type(pos_), "Need to implement casting");
-    assert(cursor_);
+    MICROSCOPES_ASSERT(cursor_);
     memcpy(cursor_, acc.cursor(), runtime_type_traits::TypeSize((*types_)[pos_]));
   }
 

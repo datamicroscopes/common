@@ -9,6 +9,8 @@ TOP := $(shell echo $${PWD-`pwd`})
 CXXFLAGS := -fPIC -g -MD -Wall -std=c++0x -I$(TOP)/include
 ifneq ($(strip $(DEBUG)),1)
 	CXXFLAGS += -O3 -DNDEBUG
+else
+	CXXFLAGS += -DDEBUG_MODE
 endif
 ifneq ($(strip $(DISTRIBUTIONS_INC)),)
 	CXXFLAGS += -I$(DISTRIBUTIONS_INC)
