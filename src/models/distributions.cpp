@@ -1,6 +1,10 @@
 #include <microscopes/models/distributions.hpp>
 using namespace distributions;
 
+namespace distributions {
+template struct DirichletDiscrete<128>;
+}
+
 namespace microscopes {
 namespace models {
 

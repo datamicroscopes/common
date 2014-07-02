@@ -33,3 +33,7 @@ cdef extern from "distributions/models/gp.hpp" namespace "distributions":
 cdef extern from "distributions/models/nich.hpp" namespace "distributions":
     cdef cppclass NormalInverseChiSq:
         pass
+
+cdef extern from "microscopes/models/distributions.hpp" namespace "distributions":
+    cdef cppclass DirichletDiscrete128:
+        pass

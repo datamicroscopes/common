@@ -1,8 +1,9 @@
-from microscopes.cxx._models_h cimport distributions_factory
-from microscopes.cxx._models_h cimport BetaBernoulli as c_bb
-from microscopes.cxx._models_h cimport BetaNegativeBinomial as c_bnb
-from microscopes.cxx._models_h cimport GammaPoisson as c_gp
-from microscopes.cxx._models_h cimport NormalInverseChiSq as c_nich
+from microscopes.cxx._models_h cimport distributions_factory, \
+                                       BetaBernoulli as c_bb, \
+                                       BetaNegativeBinomial as c_bnb, \
+                                       GammaPoisson as c_gp, \
+                                       NormalInverseChiSq as c_nich, \
+                                       DirichletDiscrete128 as c_dd
 from microscopes.cxx._bbnc_h cimport new_instance as bbnc_new_instance
 
 cdef class factory:
@@ -28,6 +29,11 @@ cdef class gp_factory(factory):
 cdef class nich_factory(factory):
     cdef shared_ptr[model] new_cmodel(self):
         cdef distributions_factory[c_nich] f = distributions_factory[c_nich]()
+        return f.new_instance()
+
+cdef class dd_factory(factory):
+    cdef shared_ptr[model] new_cmodel(self):
+        cdef distributions_factory[c_dd] f = distributions_factory[c_dd]()
         return f.new_instance()
 
 cdef class bbnc_factory(factory):

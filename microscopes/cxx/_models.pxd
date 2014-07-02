@@ -16,5 +16,8 @@ cdef class gp_factory(factory):
 cdef class nich_factory(factory):
     cdef shared_ptr[model] new_cmodel(self)
 
+cdef class dd_factory(factory):
+    cdef shared_ptr[model] new_cmodel(self)
+
 cdef class bbnc_factory(factory):
     cdef shared_ptr[model] new_cmodel(self)

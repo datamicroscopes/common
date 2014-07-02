@@ -10,6 +10,7 @@
 #include <distributions/models/bnb.hpp>
 #include <distributions/models/gp.hpp>
 #include <distributions/models/nich.hpp>
+#include <distributions/models/dd.hpp>
 
 // XXX: make sure to include the distribution above
 #define DISTRIB_BB_FIELDS(x) \
@@ -31,17 +32,37 @@
   x(sigmasq) \
   x(nu)
 
+#define DISTRIB_DD128_FIELDS(x) \
+  x(alphas)
+
 #define DISTRIB_FOR_EACH_DISTRIBUTION(x) \
   x(BetaBernoulli) \
   x(BetaNegativeBinomial) \
   x(GammaPoisson) \
-  x(NormalInverseChiSq)
+  x(NormalInverseChiSq) \
+  x(DirichletDiscrete128)
 
 #define DISTRIB_FOR_EACH_DISTRIBUTION_WITH_FIELDS(x) \
   x(BetaBernoulli, DISTRIB_BB_FIELDS) \
   x(BetaNegativeBinomial, DISTRIB_BNB_FIELDS) \
   x(GammaPoisson, DISTRIB_GP_FIELDS) \
-  x(NormalInverseChiSq, DISTRIB_NICH_FIELDS)
+  x(NormalInverseChiSq, DISTRIB_NICH_FIELDS) \
+  x(DirichletDiscrete128, DISTRIB_DD128_FIELDS)
+
+// somewhat of a hack
+namespace distributions {
+
+extern template struct DirichletDiscrete<128>;
+typedef DirichletDiscrete<128> DirichletDiscrete128;
+
+namespace protobuf {
+
+typedef DirichletDiscrete_Shared DirichletDiscrete128_Shared;
+typedef DirichletDiscrete_Group DirichletDiscrete128_Group;
+
+} // namespace protobuf
+
+} // namespace distributions
 
 namespace microscopes {
 namespace models {
