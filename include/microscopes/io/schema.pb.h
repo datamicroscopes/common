@@ -35,6 +35,9 @@ void protobuf_AssignDesc_microscopes_2fio_2fschema_2eproto();
 void protobuf_ShutdownFile_microscopes_2fio_2fschema_2eproto();
 
 class CRP;
+class BetaBernoulliNonConj;
+class BetaBernoulliNonConj_Shared;
+class BetaBernoulliNonConj_Group;
 
 // ===================================================================
 
@@ -118,6 +121,255 @@ class CRP : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static CRP* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class BetaBernoulliNonConj_Shared : public ::google::protobuf::Message {
+ public:
+  BetaBernoulliNonConj_Shared();
+  virtual ~BetaBernoulliNonConj_Shared();
+
+  BetaBernoulliNonConj_Shared(const BetaBernoulliNonConj_Shared& from);
+
+  inline BetaBernoulliNonConj_Shared& operator=(const BetaBernoulliNonConj_Shared& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const BetaBernoulliNonConj_Shared& default_instance();
+
+  void Swap(BetaBernoulliNonConj_Shared* other);
+
+  // implements Message ----------------------------------------------
+
+  BetaBernoulliNonConj_Shared* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const BetaBernoulliNonConj_Shared& from);
+  void MergeFrom(const BetaBernoulliNonConj_Shared& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required float alpha = 1;
+  inline bool has_alpha() const;
+  inline void clear_alpha();
+  static const int kAlphaFieldNumber = 1;
+  inline float alpha() const;
+  inline void set_alpha(float value);
+
+  // required float beta = 2;
+  inline bool has_beta() const;
+  inline void clear_beta();
+  static const int kBetaFieldNumber = 2;
+  inline float beta() const;
+  inline void set_beta(float value);
+
+  // @@protoc_insertion_point(class_scope:microscopes.io.BetaBernoulliNonConj.Shared)
+ private:
+  inline void set_has_alpha();
+  inline void clear_has_alpha();
+  inline void set_has_beta();
+  inline void clear_has_beta();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  float alpha_;
+  float beta_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_AssignDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_ShutdownFile_microscopes_2fio_2fschema_2eproto();
+
+  void InitAsDefaultInstance();
+  static BetaBernoulliNonConj_Shared* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class BetaBernoulliNonConj_Group : public ::google::protobuf::Message {
+ public:
+  BetaBernoulliNonConj_Group();
+  virtual ~BetaBernoulliNonConj_Group();
+
+  BetaBernoulliNonConj_Group(const BetaBernoulliNonConj_Group& from);
+
+  inline BetaBernoulliNonConj_Group& operator=(const BetaBernoulliNonConj_Group& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const BetaBernoulliNonConj_Group& default_instance();
+
+  void Swap(BetaBernoulliNonConj_Group* other);
+
+  // implements Message ----------------------------------------------
+
+  BetaBernoulliNonConj_Group* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const BetaBernoulliNonConj_Group& from);
+  void MergeFrom(const BetaBernoulliNonConj_Group& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required float p = 1;
+  inline bool has_p() const;
+  inline void clear_p();
+  static const int kPFieldNumber = 1;
+  inline float p() const;
+  inline void set_p(float value);
+
+  // @@protoc_insertion_point(class_scope:microscopes.io.BetaBernoulliNonConj.Group)
+ private:
+  inline void set_has_p();
+  inline void clear_has_p();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  float p_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_AssignDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_ShutdownFile_microscopes_2fio_2fschema_2eproto();
+
+  void InitAsDefaultInstance();
+  static BetaBernoulliNonConj_Group* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class BetaBernoulliNonConj : public ::google::protobuf::Message {
+ public:
+  BetaBernoulliNonConj();
+  virtual ~BetaBernoulliNonConj();
+
+  BetaBernoulliNonConj(const BetaBernoulliNonConj& from);
+
+  inline BetaBernoulliNonConj& operator=(const BetaBernoulliNonConj& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const BetaBernoulliNonConj& default_instance();
+
+  void Swap(BetaBernoulliNonConj* other);
+
+  // implements Message ----------------------------------------------
+
+  BetaBernoulliNonConj* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const BetaBernoulliNonConj& from);
+  void MergeFrom(const BetaBernoulliNonConj& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  typedef BetaBernoulliNonConj_Shared Shared;
+  typedef BetaBernoulliNonConj_Group Group;
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:microscopes.io.BetaBernoulliNonConj)
+ private:
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[1];
+
+  friend void  protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_AssignDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_ShutdownFile_microscopes_2fio_2fschema_2eproto();
+
+  void InitAsDefaultInstance();
+  static BetaBernoulliNonConj* default_instance_;
+};
 // ===================================================================
 
 
@@ -146,6 +398,84 @@ inline void CRP::set_alpha(float value) {
   set_has_alpha();
   alpha_ = value;
 }
+
+// -------------------------------------------------------------------
+
+// BetaBernoulliNonConj_Shared
+
+// required float alpha = 1;
+inline bool BetaBernoulliNonConj_Shared::has_alpha() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void BetaBernoulliNonConj_Shared::set_has_alpha() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void BetaBernoulliNonConj_Shared::clear_has_alpha() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void BetaBernoulliNonConj_Shared::clear_alpha() {
+  alpha_ = 0;
+  clear_has_alpha();
+}
+inline float BetaBernoulliNonConj_Shared::alpha() const {
+  return alpha_;
+}
+inline void BetaBernoulliNonConj_Shared::set_alpha(float value) {
+  set_has_alpha();
+  alpha_ = value;
+}
+
+// required float beta = 2;
+inline bool BetaBernoulliNonConj_Shared::has_beta() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void BetaBernoulliNonConj_Shared::set_has_beta() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void BetaBernoulliNonConj_Shared::clear_has_beta() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void BetaBernoulliNonConj_Shared::clear_beta() {
+  beta_ = 0;
+  clear_has_beta();
+}
+inline float BetaBernoulliNonConj_Shared::beta() const {
+  return beta_;
+}
+inline void BetaBernoulliNonConj_Shared::set_beta(float value) {
+  set_has_beta();
+  beta_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// BetaBernoulliNonConj_Group
+
+// required float p = 1;
+inline bool BetaBernoulliNonConj_Group::has_p() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void BetaBernoulliNonConj_Group::set_has_p() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void BetaBernoulliNonConj_Group::clear_has_p() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void BetaBernoulliNonConj_Group::clear_p() {
+  p_ = 0;
+  clear_has_p();
+}
+inline float BetaBernoulliNonConj_Group::p() const {
+  return p_;
+}
+inline void BetaBernoulliNonConj_Group::set_p(float value) {
+  set_has_p();
+  p_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// BetaBernoulliNonConj
 
 
 // @@protoc_insertion_point(namespace_scope)

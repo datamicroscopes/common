@@ -3,3 +3,14 @@ package microscopes.io;
 message CRP {
     required float alpha = 1;
 }
+
+message BetaBernoulliNonConj {
+    message Shared {
+      required float alpha = 1;
+      required float beta = 2;
+    }
+
+    message Group {
+      required float p = 1;
+    }
+}

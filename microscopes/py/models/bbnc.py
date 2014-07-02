@@ -81,7 +81,7 @@ class Group(GroupIoMixin):
 
     def score_value(self, shared, value):
         """samples a value using the explicit p"""
-        return sample_bernoulli(self.p)
+        return log(self.p) if value else log(1.-self.p)
 
     def score_data(self, shared):
         """computes the joint p(q, Y)"""

@@ -1,4 +1,4 @@
-# XXX: we use the dbg versions for now, since the lp versions 
+# XXX: we use the dbg versions for now, since the lp versions
 # don't have load_protobuf()/dump_protobuf() defined for the groups
 
 from distributions.dbg.models import bb as dbg_bb
@@ -11,7 +11,8 @@ from distributions.io.schema_pb2 import BetaNegativeBinomial as pb_bnb
 from distributions.io.schema_pb2 import GammaPoisson as pb_gp
 from distributions.io.schema_pb2 import NormalInverseChiSq as pb_nich
 
-from microscopes.cxx._models cimport bb_factory, bnb_factory, gp_factory, nich_factory
+from microscopes.cxx._models cimport bb_factory, bnb_factory, gp_factory, nich_factory, bbnc_factory
+from microscopes.io.schema_pb2 import BetaBernoulliNonConj as pb_bbnc
 
 class py_model(object):
     def __init__(self, model_module, pb_type):
@@ -46,7 +47,30 @@ class py_model(object):
         s.load_protobuf(m)
         return s.dump()
 
+class py_bbnc_model(object):
+    def shared_dict_to_bytes(self, raw):
+        m = pb_bbnc.Shared()
+        m.alpha = float(raw['alpha'])
+        m.beta = float(raw['beta'])
+        return m.SerializeToString()
+
+    def shared_bytes_to_dict(self, raw):
+        m = pb_bbnc.Shared()
+        m.ParseFromString(raw)
+        return {'alpha':m.alpha, 'beta':m.beta}
+
+    def group_dict_to_bytes(self, raw):
+        m = pb_bbnc.Group()
+        m.p = float(raw['p'])
+        return m.SerializeToString()
+
+    def group_bytes_to_dict(self, raw):
+        m = pb_bbnc.Group()
+        m.ParseFromString(raw)
+        return {'p':m.p}
+
 bb = (py_model(dbg_bb, pb_bb), bb_factory())
 bnb = (py_model(dbg_bnb, pb_bnb), bnb_factory())
 gp = (py_model(dbg_gp, pb_gp), gp_factory())
 nich = (py_model(dbg_nich, pb_nich), nich_factory())
+bbnc = (py_bbnc_model(), bbnc_factory())

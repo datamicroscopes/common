@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='microscopes/io/schema.proto',
   package='microscopes.io',
-  serialized_pb='\n\x1bmicroscopes/io/schema.proto\x12\x0emicroscopes.io\"\x14\n\x03\x43RP\x12\r\n\x05\x61lpha\x18\x01 \x02(\x02')
+  serialized_pb='\n\x1bmicroscopes/io/schema.proto\x12\x0emicroscopes.io\"\x14\n\x03\x43RP\x12\r\n\x05\x61lpha\x18\x01 \x02(\x02\"Q\n\x14\x42\x65taBernoulliNonConj\x1a%\n\x06Shared\x12\r\n\x05\x61lpha\x18\x01 \x02(\x02\x12\x0c\n\x04\x62\x65ta\x18\x02 \x02(\x02\x1a\x12\n\x05Group\x12\t\n\x01p\x18\x01 \x02(\x02')
 
 
 
@@ -45,13 +45,116 @@ _CRP = _descriptor.Descriptor(
   serialized_end=67,
 )
 
+
+_BETABERNOULLINONCONJ_SHARED = _descriptor.Descriptor(
+  name='Shared',
+  full_name='microscopes.io.BetaBernoulliNonConj.Shared',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='alpha', full_name='microscopes.io.BetaBernoulliNonConj.Shared.alpha', index=0,
+      number=1, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='beta', full_name='microscopes.io.BetaBernoulliNonConj.Shared.beta', index=1,
+      number=2, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=93,
+  serialized_end=130,
+)
+
+_BETABERNOULLINONCONJ_GROUP = _descriptor.Descriptor(
+  name='Group',
+  full_name='microscopes.io.BetaBernoulliNonConj.Group',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='p', full_name='microscopes.io.BetaBernoulliNonConj.Group.p', index=0,
+      number=1, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=132,
+  serialized_end=150,
+)
+
+_BETABERNOULLINONCONJ = _descriptor.Descriptor(
+  name='BetaBernoulliNonConj',
+  full_name='microscopes.io.BetaBernoulliNonConj',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[_BETABERNOULLINONCONJ_SHARED, _BETABERNOULLINONCONJ_GROUP, ],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=69,
+  serialized_end=150,
+)
+
+_BETABERNOULLINONCONJ_SHARED.containing_type = _BETABERNOULLINONCONJ;
+_BETABERNOULLINONCONJ_GROUP.containing_type = _BETABERNOULLINONCONJ;
 DESCRIPTOR.message_types_by_name['CRP'] = _CRP
+DESCRIPTOR.message_types_by_name['BetaBernoulliNonConj'] = _BETABERNOULLINONCONJ
 
 class CRP(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType
   DESCRIPTOR = _CRP
 
   # @@protoc_insertion_point(class_scope:microscopes.io.CRP)
+
+class BetaBernoulliNonConj(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+
+  class Shared(_message.Message):
+    __metaclass__ = _reflection.GeneratedProtocolMessageType
+    DESCRIPTOR = _BETABERNOULLINONCONJ_SHARED
+
+    # @@protoc_insertion_point(class_scope:microscopes.io.BetaBernoulliNonConj.Shared)
+
+  class Group(_message.Message):
+    __metaclass__ = _reflection.GeneratedProtocolMessageType
+    DESCRIPTOR = _BETABERNOULLINONCONJ_GROUP
+
+    # @@protoc_insertion_point(class_scope:microscopes.io.BetaBernoulliNonConj.Group)
+  DESCRIPTOR = _BETABERNOULLINONCONJ
+
+  # @@protoc_insertion_point(class_scope:microscopes.io.BetaBernoulliNonConj)
 
 
 # @@protoc_insertion_point(module_scope)

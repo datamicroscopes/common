@@ -24,6 +24,15 @@ namespace {
 const ::google::protobuf::Descriptor* CRP_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   CRP_reflection_ = NULL;
+const ::google::protobuf::Descriptor* BetaBernoulliNonConj_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  BetaBernoulliNonConj_reflection_ = NULL;
+const ::google::protobuf::Descriptor* BetaBernoulliNonConj_Shared_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  BetaBernoulliNonConj_Shared_reflection_ = NULL;
+const ::google::protobuf::Descriptor* BetaBernoulliNonConj_Group_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  BetaBernoulliNonConj_Group_reflection_ = NULL;
 
 }  // namespace
 
@@ -49,6 +58,51 @@ void protobuf_AssignDesc_microscopes_2fio_2fschema_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CRP));
+  BetaBernoulliNonConj_descriptor_ = file->message_type(1);
+  static const int BetaBernoulliNonConj_offsets_[1] = {
+  };
+  BetaBernoulliNonConj_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      BetaBernoulliNonConj_descriptor_,
+      BetaBernoulliNonConj::default_instance_,
+      BetaBernoulliNonConj_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BetaBernoulliNonConj, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BetaBernoulliNonConj, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(BetaBernoulliNonConj));
+  BetaBernoulliNonConj_Shared_descriptor_ = BetaBernoulliNonConj_descriptor_->nested_type(0);
+  static const int BetaBernoulliNonConj_Shared_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BetaBernoulliNonConj_Shared, alpha_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BetaBernoulliNonConj_Shared, beta_),
+  };
+  BetaBernoulliNonConj_Shared_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      BetaBernoulliNonConj_Shared_descriptor_,
+      BetaBernoulliNonConj_Shared::default_instance_,
+      BetaBernoulliNonConj_Shared_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BetaBernoulliNonConj_Shared, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BetaBernoulliNonConj_Shared, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(BetaBernoulliNonConj_Shared));
+  BetaBernoulliNonConj_Group_descriptor_ = BetaBernoulliNonConj_descriptor_->nested_type(1);
+  static const int BetaBernoulliNonConj_Group_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BetaBernoulliNonConj_Group, p_),
+  };
+  BetaBernoulliNonConj_Group_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      BetaBernoulliNonConj_Group_descriptor_,
+      BetaBernoulliNonConj_Group::default_instance_,
+      BetaBernoulliNonConj_Group_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BetaBernoulliNonConj_Group, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BetaBernoulliNonConj_Group, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(BetaBernoulliNonConj_Group));
 }
 
 namespace {
@@ -63,6 +117,12 @@ void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     CRP_descriptor_, &CRP::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    BetaBernoulliNonConj_descriptor_, &BetaBernoulliNonConj::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    BetaBernoulliNonConj_Shared_descriptor_, &BetaBernoulliNonConj_Shared::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    BetaBernoulliNonConj_Group_descriptor_, &BetaBernoulliNonConj_Group::default_instance());
 }
 
 }  // namespace
@@ -70,6 +130,12 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void protobuf_ShutdownFile_microscopes_2fio_2fschema_2eproto() {
   delete CRP::default_instance_;
   delete CRP_reflection_;
+  delete BetaBernoulliNonConj::default_instance_;
+  delete BetaBernoulliNonConj_reflection_;
+  delete BetaBernoulliNonConj_Shared::default_instance_;
+  delete BetaBernoulliNonConj_Shared_reflection_;
+  delete BetaBernoulliNonConj_Group::default_instance_;
+  delete BetaBernoulliNonConj_Group_reflection_;
 }
 
 void protobuf_AddDesc_microscopes_2fio_2fschema_2eproto() {
@@ -80,11 +146,19 @@ void protobuf_AddDesc_microscopes_2fio_2fschema_2eproto() {
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\033microscopes/io/schema.proto\022\016microscop"
-    "es.io\"\024\n\003CRP\022\r\n\005alpha\030\001 \002(\002", 67);
+    "es.io\"\024\n\003CRP\022\r\n\005alpha\030\001 \002(\002\"Q\n\024BetaBerno"
+    "ulliNonConj\032%\n\006Shared\022\r\n\005alpha\030\001 \002(\002\022\014\n\004"
+    "beta\030\002 \002(\002\032\022\n\005Group\022\t\n\001p\030\001 \002(\002", 150);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "microscopes/io/schema.proto", &protobuf_RegisterTypes);
   CRP::default_instance_ = new CRP();
+  BetaBernoulliNonConj::default_instance_ = new BetaBernoulliNonConj();
+  BetaBernoulliNonConj_Shared::default_instance_ = new BetaBernoulliNonConj_Shared();
+  BetaBernoulliNonConj_Group::default_instance_ = new BetaBernoulliNonConj_Group();
   CRP::default_instance_->InitAsDefaultInstance();
+  BetaBernoulliNonConj::default_instance_->InitAsDefaultInstance();
+  BetaBernoulliNonConj_Shared::default_instance_->InitAsDefaultInstance();
+  BetaBernoulliNonConj_Group::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_microscopes_2fio_2fschema_2eproto);
 }
 
@@ -298,6 +372,614 @@ void CRP::Swap(CRP* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = CRP_descriptor_;
   metadata.reflection = CRP_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int BetaBernoulliNonConj_Shared::kAlphaFieldNumber;
+const int BetaBernoulliNonConj_Shared::kBetaFieldNumber;
+#endif  // !_MSC_VER
+
+BetaBernoulliNonConj_Shared::BetaBernoulliNonConj_Shared()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void BetaBernoulliNonConj_Shared::InitAsDefaultInstance() {
+}
+
+BetaBernoulliNonConj_Shared::BetaBernoulliNonConj_Shared(const BetaBernoulliNonConj_Shared& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void BetaBernoulliNonConj_Shared::SharedCtor() {
+  _cached_size_ = 0;
+  alpha_ = 0;
+  beta_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+BetaBernoulliNonConj_Shared::~BetaBernoulliNonConj_Shared() {
+  SharedDtor();
+}
+
+void BetaBernoulliNonConj_Shared::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void BetaBernoulliNonConj_Shared::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* BetaBernoulliNonConj_Shared::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return BetaBernoulliNonConj_Shared_descriptor_;
+}
+
+const BetaBernoulliNonConj_Shared& BetaBernoulliNonConj_Shared::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  return *default_instance_;
+}
+
+BetaBernoulliNonConj_Shared* BetaBernoulliNonConj_Shared::default_instance_ = NULL;
+
+BetaBernoulliNonConj_Shared* BetaBernoulliNonConj_Shared::New() const {
+  return new BetaBernoulliNonConj_Shared;
+}
+
+void BetaBernoulliNonConj_Shared::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    alpha_ = 0;
+    beta_ = 0;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool BetaBernoulliNonConj_Shared::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required float alpha = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &alpha_)));
+          set_has_alpha();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(21)) goto parse_beta;
+        break;
+      }
+
+      // required float beta = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_beta:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &beta_)));
+          set_has_beta();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void BetaBernoulliNonConj_Shared::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required float alpha = 1;
+  if (has_alpha()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->alpha(), output);
+  }
+
+  // required float beta = 2;
+  if (has_beta()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->beta(), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* BetaBernoulliNonConj_Shared::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required float alpha = 1;
+  if (has_alpha()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->alpha(), target);
+  }
+
+  // required float beta = 2;
+  if (has_beta()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->beta(), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int BetaBernoulliNonConj_Shared::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required float alpha = 1;
+    if (has_alpha()) {
+      total_size += 1 + 4;
+    }
+
+    // required float beta = 2;
+    if (has_beta()) {
+      total_size += 1 + 4;
+    }
+
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void BetaBernoulliNonConj_Shared::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const BetaBernoulliNonConj_Shared* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const BetaBernoulliNonConj_Shared*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void BetaBernoulliNonConj_Shared::MergeFrom(const BetaBernoulliNonConj_Shared& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_alpha()) {
+      set_alpha(from.alpha());
+    }
+    if (from.has_beta()) {
+      set_beta(from.beta());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void BetaBernoulliNonConj_Shared::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void BetaBernoulliNonConj_Shared::CopyFrom(const BetaBernoulliNonConj_Shared& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BetaBernoulliNonConj_Shared::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+
+  return true;
+}
+
+void BetaBernoulliNonConj_Shared::Swap(BetaBernoulliNonConj_Shared* other) {
+  if (other != this) {
+    std::swap(alpha_, other->alpha_);
+    std::swap(beta_, other->beta_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata BetaBernoulliNonConj_Shared::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = BetaBernoulliNonConj_Shared_descriptor_;
+  metadata.reflection = BetaBernoulliNonConj_Shared_reflection_;
+  return metadata;
+}
+
+
+// -------------------------------------------------------------------
+
+#ifndef _MSC_VER
+const int BetaBernoulliNonConj_Group::kPFieldNumber;
+#endif  // !_MSC_VER
+
+BetaBernoulliNonConj_Group::BetaBernoulliNonConj_Group()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void BetaBernoulliNonConj_Group::InitAsDefaultInstance() {
+}
+
+BetaBernoulliNonConj_Group::BetaBernoulliNonConj_Group(const BetaBernoulliNonConj_Group& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void BetaBernoulliNonConj_Group::SharedCtor() {
+  _cached_size_ = 0;
+  p_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+BetaBernoulliNonConj_Group::~BetaBernoulliNonConj_Group() {
+  SharedDtor();
+}
+
+void BetaBernoulliNonConj_Group::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void BetaBernoulliNonConj_Group::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* BetaBernoulliNonConj_Group::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return BetaBernoulliNonConj_Group_descriptor_;
+}
+
+const BetaBernoulliNonConj_Group& BetaBernoulliNonConj_Group::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  return *default_instance_;
+}
+
+BetaBernoulliNonConj_Group* BetaBernoulliNonConj_Group::default_instance_ = NULL;
+
+BetaBernoulliNonConj_Group* BetaBernoulliNonConj_Group::New() const {
+  return new BetaBernoulliNonConj_Group;
+}
+
+void BetaBernoulliNonConj_Group::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    p_ = 0;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool BetaBernoulliNonConj_Group::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required float p = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &p_)));
+          set_has_p();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void BetaBernoulliNonConj_Group::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required float p = 1;
+  if (has_p()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->p(), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* BetaBernoulliNonConj_Group::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required float p = 1;
+  if (has_p()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->p(), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int BetaBernoulliNonConj_Group::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required float p = 1;
+    if (has_p()) {
+      total_size += 1 + 4;
+    }
+
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void BetaBernoulliNonConj_Group::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const BetaBernoulliNonConj_Group* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const BetaBernoulliNonConj_Group*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void BetaBernoulliNonConj_Group::MergeFrom(const BetaBernoulliNonConj_Group& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_p()) {
+      set_p(from.p());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void BetaBernoulliNonConj_Group::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void BetaBernoulliNonConj_Group::CopyFrom(const BetaBernoulliNonConj_Group& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BetaBernoulliNonConj_Group::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+
+  return true;
+}
+
+void BetaBernoulliNonConj_Group::Swap(BetaBernoulliNonConj_Group* other) {
+  if (other != this) {
+    std::swap(p_, other->p_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata BetaBernoulliNonConj_Group::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = BetaBernoulliNonConj_Group_descriptor_;
+  metadata.reflection = BetaBernoulliNonConj_Group_reflection_;
+  return metadata;
+}
+
+
+// -------------------------------------------------------------------
+
+#ifndef _MSC_VER
+#endif  // !_MSC_VER
+
+BetaBernoulliNonConj::BetaBernoulliNonConj()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void BetaBernoulliNonConj::InitAsDefaultInstance() {
+}
+
+BetaBernoulliNonConj::BetaBernoulliNonConj(const BetaBernoulliNonConj& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void BetaBernoulliNonConj::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+BetaBernoulliNonConj::~BetaBernoulliNonConj() {
+  SharedDtor();
+}
+
+void BetaBernoulliNonConj::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void BetaBernoulliNonConj::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* BetaBernoulliNonConj::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return BetaBernoulliNonConj_descriptor_;
+}
+
+const BetaBernoulliNonConj& BetaBernoulliNonConj::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  return *default_instance_;
+}
+
+BetaBernoulliNonConj* BetaBernoulliNonConj::default_instance_ = NULL;
+
+BetaBernoulliNonConj* BetaBernoulliNonConj::New() const {
+  return new BetaBernoulliNonConj;
+}
+
+void BetaBernoulliNonConj::Clear() {
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool BetaBernoulliNonConj::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+        ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+      return true;
+    }
+    DO_(::google::protobuf::internal::WireFormat::SkipField(
+          input, tag, mutable_unknown_fields()));
+  }
+  return true;
+#undef DO_
+}
+
+void BetaBernoulliNonConj::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* BetaBernoulliNonConj::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int BetaBernoulliNonConj::ByteSize() const {
+  int total_size = 0;
+
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void BetaBernoulliNonConj::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const BetaBernoulliNonConj* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const BetaBernoulliNonConj*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void BetaBernoulliNonConj::MergeFrom(const BetaBernoulliNonConj& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void BetaBernoulliNonConj::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void BetaBernoulliNonConj::CopyFrom(const BetaBernoulliNonConj& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BetaBernoulliNonConj::IsInitialized() const {
+
+  return true;
+}
+
+void BetaBernoulliNonConj::Swap(BetaBernoulliNonConj* other) {
+  if (other != this) {
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata BetaBernoulliNonConj::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = BetaBernoulliNonConj_descriptor_;
+  metadata.reflection = BetaBernoulliNonConj_reflection_;
   return metadata;
 }
 
