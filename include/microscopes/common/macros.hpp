@@ -17,6 +17,10 @@
       throw ::std::runtime_error(msg); \
   } while (0)
 
+// from https://code.google.com/p/protobuf/source/browse/trunk/src/google/protobuf/stubs/common.h
+#define MICROSCOPES_ARRAYSIZE(a) \
+  ((sizeof(a) / sizeof(*(a))) / \
+      static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
 
 #define _STRINGIFY(x) #x
 
