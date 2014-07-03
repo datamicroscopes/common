@@ -24,6 +24,8 @@ public:
   common::suffstats_bag_t get_ss() const override;
   void set_ss(const common::suffstats_bag_t &ss) override;
 
+  void * get_ss_raw_ptr(const std::string &key) override;
+
 protected:
   size_t heads_;
   size_t tails_;

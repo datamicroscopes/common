@@ -26,6 +26,9 @@ public:
 
   virtual common::suffstats_bag_t get_ss() const = 0;
   virtual void set_ss(const common::suffstats_bag_t &ss) = 0;
+
+  // See note below about the lack of safety with this API
+  virtual void * get_ss_raw_ptr(const std::string &key) = 0;
 };
 
 // abstract model

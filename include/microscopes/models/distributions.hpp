@@ -109,9 +109,9 @@ class distributions_model : public model {
 public:
   typedef typename distributions_model_types<T>::shared_message_type message_type;
 
-  std::shared_ptr<feature_group> create_feature_group(common::rng_t &rng) const override;
+  inline std::shared_ptr<feature_group> create_feature_group(common::rng_t &rng) const override;
 
-  common::hyperparam_bag_t
+  inline common::hyperparam_bag_t
   get_hp() const override
   {
     message_type m;
@@ -121,7 +121,7 @@ public:
     return out.str();
   }
 
-  void
+  inline void
   set_hp(const common::hyperparam_bag_t &hp) override
   {
     std::istringstream inp(hp);
@@ -130,25 +130,25 @@ public:
     repr_.protobuf_load(m);
   }
 
-  void
+  inline void
   set_hp(const model &m) override
   {
     repr_ = static_cast<const distributions_model<T> &>(m).repr_;
   }
 
-  void *
+  inline void *
   get_hp_raw_ptr(const std::string &name) override
   {
     return distributions_model_hp<T>::get(repr_, name);
   }
 
-  runtime_type_info
+  inline runtime_type_info
   get_runtime_type_info() const override
   {
     return common::_static_type_to_runtime_id< typename T::Value >::value;
   }
 
-  std::string
+  inline std::string
   debug_str() const override
   {
     // XXX: inefficient
@@ -174,38 +174,38 @@ private:
 public:
   typedef typename distributions_model_types<T>::group_message_type message_type;
 
-  void
+  inline void
   add_value(const model &m, const common::row_accessor &value, common::rng_t &rng) override
   {
     repr_.add_value(shared_repr(m), value.get< typename T::Value >(), rng);
   }
 
-  void
+  inline void
   remove_value(const model &m, const common::row_accessor &value, common::rng_t &rng) override
   {
     repr_.remove_value(shared_repr(m), value.get< typename T::Value >(), rng);
   }
 
-  float
+  inline float
   score_value(const model &m, const common::row_accessor &value, common::rng_t &rng) const override
   {
     return repr_.score_value(shared_repr(m), value.get< typename T::Value >(), rng);
   }
 
-  float
+  inline float
   score_data(const model &m, common::rng_t &rng) const override
   {
     return repr_.score_data(shared_repr(m), rng);
   }
 
-  void
+  inline void
   sample_value(const model &m, common::row_mutator &value, common::rng_t &rng) const override
   {
     typename T::Value sampled = repr_.sample_value(shared_repr(m), rng);
     value.set< typename T::Value >(sampled);
   }
 
-  common::suffstats_bag_t
+  inline common::suffstats_bag_t
   get_ss() const override
   {
     message_type m;
@@ -215,13 +215,19 @@ public:
     return out.str();
   }
 
-  void
+  inline void
   set_ss(const common::suffstats_bag_t &ss) override
   {
     std::istringstream inp(ss);
     message_type m;
     m.ParseFromIstream(&inp);
     repr_.protobuf_load(m);
+  }
+
+  inline void *
+  get_ss_raw_ptr(const std::string &name) override
+  {
+    throw std::runtime_error("unsupported");
   }
 
   // XXX: public for now so distributions_model can access

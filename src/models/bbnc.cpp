@@ -86,6 +86,14 @@ bbnc_feature_group::set_ss(const suffstats_bag_t &ss)
   p_ = m.p();
 }
 
+void *
+bbnc_feature_group::get_ss_raw_ptr(const string &key)
+{
+  if (key == "p")
+    return &p_;
+  throw runtime_error("unknown key: " + key);
+}
+
 shared_ptr<feature_group>
 bbnc_model::create_feature_group(rng_t &rng) const
 {
