@@ -17,6 +17,7 @@ from microscopes.cxx._models cimport \
   bb_factory, bnb_factory, gp_factory, \
   nich_factory, dd_factory, bbnc_factory
 
+from microscopes.py.models import bbnc as py_bbnc
 from microscopes.io.schema_pb2 import BetaBernoulliNonConj as pb_bbnc
 
 class py_model(object):
@@ -24,6 +25,9 @@ class py_model(object):
         self._model_module = model_module
         self._pb_type = pb_type
 
+    def get_py_type(self):
+        return self._model_module
+
     def shared_dict_to_bytes(self, raw):
         s = self._model_module.Shared()
         s.load(raw)
@@ -52,31 +56,9 @@ class py_model(object):
         s.load_protobuf(m)
         return s.dump()
 
-class py_bbnc_model(object):
-    def shared_dict_to_bytes(self, raw):
-        m = pb_bbnc.Shared()
-        m.alpha = float(raw['alpha'])
-        m.beta = float(raw['beta'])
-        return m.SerializeToString()
-
-    def shared_bytes_to_dict(self, raw):
-        m = pb_bbnc.Shared()
-        m.ParseFromString(raw)
-        return {'alpha':m.alpha, 'beta':m.beta}
-
-    def group_dict_to_bytes(self, raw):
-        m = pb_bbnc.Group()
-        m.p = float(raw['p'])
-        return m.SerializeToString()
-
-    def group_bytes_to_dict(self, raw):
-        m = pb_bbnc.Group()
-        m.ParseFromString(raw)
-        return {'p':m.p}
-
-bb = (py_model(dbg_bb, pb_bb), bb_factory())
-bnb = (py_model(dbg_bnb, pb_bnb), bnb_factory())
-gp = (py_model(dbg_gp, pb_gp), gp_factory())
+bb   = (py_model(dbg_bb, pb_bb), bb_factory())
+bnb  = (py_model(dbg_bnb, pb_bnb), bnb_factory())
+gp   = (py_model(dbg_gp, pb_gp), gp_factory())
 nich = (py_model(dbg_nich, pb_nich), nich_factory())
-dd = (py_model(dbg_dd, pb_dd), dd_factory())
-bbnc = (py_bbnc_model(), bbnc_factory())
+dd   = (py_model(dbg_dd, pb_dd), dd_factory())
+bbnc = (py_model(py_bbnc, pb_bbnc), bbnc_factory())

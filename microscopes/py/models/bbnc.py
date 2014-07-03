@@ -73,9 +73,6 @@ class Group(GroupIoMixin):
             self.tails -= 1
 
     def merge(self, shared, source):
-        #self.heads += source.heads
-        #self.tails += source.tails
-
         # does merging these groups make sense?
         raise Exception("XXX: merging two groups with explicit p values")
 
@@ -97,32 +94,17 @@ class Group(GroupIoMixin):
         sampler.init(shared, self)
         return sampler.eval(shared)
 
-    ### XXX: not sure whether or not to include
-    ### the H/T counts in the loading/unloading!
-
     def load(self, raw):
-        #self.heads = raw['heads']
-        #self.tails = raw['tails']
         self.p = raw['p']
-        #assert self.p >= 0. and self.p <= 1.
 
     def dump(self):
-        return {
-            #'heads': self.heads,
-            #'tails': self.tails,
-            'p': self.p,
-        }
+        return {'p': self.p}
 
     def load_protobuf(self, message):
-        #self.heads = message.heads
-        #self.tails = message.tails
         self.p = message.p
 
     def dump_protobuf(self, message):
-        #message.heads = self.heads
-        #message.tails = self.tails
         message.p = self.p
-
 
 class Sampler(object):
     def init(self, shared, group=None):
