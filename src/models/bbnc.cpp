@@ -1,6 +1,7 @@
 #include <microscopes/models/bbnc.hpp>
 #include <microscopes/io/schema.pb.h>
 #include <distributions/random.hpp>
+#include <distributions/special.hpp>
 
 #include <stdexcept>
 #include <sstream>
@@ -39,13 +40,13 @@ bbnc_feature_group::remove_value(const model &m, const row_accessor &value, rng_
 float
 bbnc_feature_group::score_value(const model &m, const row_accessor &value, rng_t &rng) const
 {
-  return value.get<bool>() ? logf(p_) : logf(1.-p_);
+  return value.get<bool>() ? fast_log(p_) : fast_log(1.-p_);
 }
 
 static inline float
-lbetaf(float a, float b)
+fast_lbeta(float a, float b)
 {
-  return lgammaf(a) + lgammaf(b) - lgammaf(a + b);
+  return fast_lgamma(a) + fast_lgamma(b) - fast_lgamma(a + b);
 }
 
 float
@@ -54,9 +55,9 @@ bbnc_feature_group::score_data(const model &m, rng_t &rng) const
   const float alpha = static_cast<const bbnc_model &>(m).alpha_;
   const float beta = static_cast<const bbnc_model &>(m).beta_;
   const float score_prior =
-    (alpha-1.)*logf(p_) + (beta-1.)*logf(1.-p_) - lbetaf(alpha, beta);
+    (alpha-1.)*fast_log(p_) + (beta-1.)*fast_log(1.-p_) - fast_lbeta(alpha, beta);
   const float score_likelihood =
-    float(heads_)*logf(p_) + float(tails_)*logf(1.-p_);
+    float(heads_)*fast_log(p_) + float(tails_)*fast_log(1.-p_);
   return score_prior + score_likelihood;
 }
 
