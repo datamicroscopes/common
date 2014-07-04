@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <cmath>
+#include <limits>
 
 using namespace std;
 using namespace distributions;
@@ -40,6 +41,7 @@ bbnc_feature_group::remove_value(const model &m, const row_accessor &value, rng_
 float
 bbnc_feature_group::score_value(const model &m, const row_accessor &value, rng_t &rng) const
 {
+  MICROSCOPES_ASSERT(p_ >= 0.0 && p_ <= 1.0);
   return value.get<bool>() ? fast_log(p_) : fast_log(1.-p_);
 }
 
@@ -52,6 +54,8 @@ fast_lbeta(float a, float b)
 float
 bbnc_feature_group::score_data(const model &m, rng_t &rng) const
 {
+  if (p_ < 0.0 || p_ > 1.0)
+    return -numeric_limits<float>::infinity();
   const float alpha = static_cast<const bbnc_model &>(m).alpha_;
   const float beta = static_cast<const bbnc_model &>(m).beta_;
   const float score_prior =
@@ -64,6 +68,7 @@ bbnc_feature_group::score_data(const model &m, rng_t &rng) const
 void
 bbnc_feature_group::sample_value(const model &m, row_mutator &value, rng_t &rng) const
 {
+  MICROSCOPES_ASSERT(p_ >= 0.0 && p_ <= 1.0);
   value.set<bool>(sample_bernoulli(rng, p_));
 }
 
