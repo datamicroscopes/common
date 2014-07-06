@@ -15,46 +15,50 @@ namespace common {
 class row_accessor {
   friend class row_mutator;
 public:
-  row_accessor() : data_(), mask_(), types_(), offsets_(), pos_() {}
+  row_accessor()
+    : data_(), mask_(), types_(),
+      cursor_(), mask_cursor_(), pos_() {}
   row_accessor(const uint8_t *data,
                const bool *mask,
-               const std::vector<runtime_type_info> *types,
-               const std::vector<size_t> *offsets)
+               const std::vector<runtime_type> *types)
     : data_(data), mask_(mask), types_(types),
-      offsets_(offsets), cursor_(data), pos_()
+      cursor_(data), mask_cursor_(mask), pos_()
   {
     MICROSCOPES_ASSERT(data);
-    MICROSCOPES_ASSERT(types->size() == offsets->size());
+    MICROSCOPES_ASSERT(types);
   }
 
   inline size_t tell() const { return pos_; }
   inline size_t nfeatures() const { return types_->size(); }
-  inline bool ismasked() const { return !mask_ ? false : *(mask_ + pos_); }
-  inline runtime_type_info type(size_t i) const { return (*types_)[pos_]; }
 
-  inline void
-  seek(size_t pos)
+  inline const runtime_type & curtype() const { return (*types_)[pos_]; }
+  inline unsigned curshape() const { return curtype().n_; }
+
+  inline bool
+  ismasked(size_t idx) const
   {
-    MICROSCOPES_ASSERT(pos <= nfeatures());
-    if (pos < nfeatures())
-      cursor_ = data_ + (*offsets_)[pos];
-    else
-      cursor_ = nullptr;
-    pos_ = pos;
+    MICROSCOPES_ASSERT(idx < curshape());
+    return !mask_ ? false : *(mask_cursor_ + idx);
   }
 
   template <typename T>
-  T
-  get() const
+  inline T
+  get(size_t idx) const
   {
+    MICROSCOPES_ASSERT(pos_ < nfeatures());
     MICROSCOPES_ASSERT(cursor_);
-    return runtime_cast< T >::cast(cursor_, (*types_)[pos_]);
+    MICROSCOPES_ASSERT(idx < curshape());
+    const size_t s = runtime_type_traits::PrimitiveTypeSize(curtype().t_);
+    return runtime_cast::cast<T>(cursor_ + idx * s, curtype().t_);
   }
 
   inline void
   bump()
   {
-    seek(pos_ + 1);
+    MICROSCOPES_ASSERT(pos_ <= nfeatures());
+    cursor_ += runtime_type_traits::RuntimeTypeSize(curtype());
+    mask_cursor_ += curtype().n_;
+    pos_++;
   }
 
   inline bool end() const { return pos_ == nfeatures(); }
@@ -62,73 +66,76 @@ public:
   inline void
   reset()
   {
-    seek(0);
+    cursor_ = data_;
+    mask_cursor_ = mask_;
+    pos_ = 0;
   }
 
   std::string debug_str() const;
 
 protected:
-  const uint8_t *cursor() const { return cursor_; }
+  inline const uint8_t * cursor() const { return cursor_; }
 
 private:
   const uint8_t *data_;
-  const bool *mask_; // XXX: use more space saving repr in future
-  const std::vector<runtime_type_info> *types_;
-  const std::vector<size_t> *offsets_;
+  const bool *mask_;
+  const std::vector<runtime_type> *types_;
 
   const uint8_t *cursor_;
+  const bool *mask_cursor_;
   size_t pos_;
 };
 
 class row_mutator {
 public:
-  row_mutator() : data_(), types_(), offsets_(), pos_() {}
+  row_mutator()
+    : data_(), types_(), cursor_(), pos_() {}
   row_mutator(uint8_t *data,
-              const std::vector<runtime_type_info> *types,
-              const std::vector<size_t> *offsets)
+              const std::vector<runtime_type> *types)
     : data_(data), types_(types),
-      offsets_(offsets), cursor_(data), pos_()
+      cursor_(data), pos_()
   {
     MICROSCOPES_ASSERT(data);
-    MICROSCOPES_ASSERT(types->size() == offsets->size());
+    MICROSCOPES_ASSERT(types);
   }
 
   inline size_t tell() const { return pos_; }
   inline size_t nfeatures() const { return types_->size(); }
-  inline runtime_type_info type(size_t i) const { return (*types_)[pos_]; }
 
-  inline void
-  seek(size_t pos)
-  {
-    MICROSCOPES_ASSERT(pos <= nfeatures());
-    if (pos < nfeatures())
-      cursor_ = data_ + (*offsets_)[pos];
-    else
-      cursor_ = nullptr;
-    pos_ = pos;
-  }
+  inline const runtime_type & curtype() const { return (*types_)[pos_]; }
+  inline unsigned curshape() const { return curtype().n_; }
 
   template <typename T>
-  void
-  set(T t)
+  inline void
+  set(T t, size_t idx)
   {
+    MICROSCOPES_ASSERT(pos_ < nfeatures());
     MICROSCOPES_ASSERT(cursor_);
-    runtime_cast< T >::uncast(cursor_, (*types_)[pos_], t);
+    MICROSCOPES_ASSERT(idx < curshape());
+    const size_t s = runtime_type_traits::PrimitiveTypeSize(curtype().t_);
+    runtime_cast::uncast<T>(cursor_ + idx * s, curtype().t_, t);
   }
 
   void
   set(const row_accessor &acc)
   {
-    // XXX: need to implement casting
-    MICROSCOPES_DCHECK(acc.type(pos_) == type(pos_), "Need to implement casting");
+    MICROSCOPES_DCHECK(curshape() == acc.curshape(), "shapes do not match");
     MICROSCOPES_ASSERT(cursor_);
-    memcpy(cursor_, acc.cursor(), runtime_type_traits::TypeSize((*types_)[pos_]));
+    MICROSCOPES_ASSERT(acc.cursor());
+    const size_t s0 = runtime_type_traits::PrimitiveTypeSize(curtype().t_);
+    const size_t s1 = runtime_type_traits::PrimitiveTypeSize(acc.curtype().t_);
+    for (unsigned i = 0; i < curshape(); i++)
+      runtime_cast::copy(
+          cursor_ + i * s0, curtype().t_,
+          acc.cursor() + i * s1, acc.curtype().t_);
   }
 
   inline void
   bump()
   {
-    seek(pos_ + 1);
+    MICROSCOPES_ASSERT(pos_ <= nfeatures());
+    cursor_ += runtime_type_traits::RuntimeTypeSize(curtype());
+    pos_++;
   }
 
   inline bool end() const { return pos_ == nfeatures(); }
@@ -136,15 +143,15 @@ public:
   inline void
   reset()
   {
-    seek(0);
+    cursor_ = data_;
+    pos_ = 0;
   }
 
   std::string debug_str() const;
 
 private:
   uint8_t *data_;
-  const std::vector<runtime_type_info> *types_;
-  const std::vector<size_t> *offsets_;
+  const std::vector<runtime_type> *types_;
 
   uint8_t *cursor_;
   size_t pos_;
@@ -152,11 +159,13 @@ private:
 
 class dataview {
 protected:
-  dataview(size_t n, const std::vector<runtime_type_info> &types);
+  dataview(size_t n, const std::vector<runtime_type> &types);
 
   inline const std::vector<size_t> & offsets() const { return offsets_; }
+
   // in bytes
   inline size_t rowsize() const { return rowsize_; }
+  inline size_t maskrowsize() const { return maskrowsize_; }
 
 public:
   virtual ~dataview() {}
@@ -169,14 +178,15 @@ public:
   virtual bool end() const = 0;
 
   inline size_t size() const { return n_; }
-  inline const std::vector<runtime_type_info> & types() const { return types_; }
+  inline const std::vector<runtime_type> & types() const { return types_; }
 
 private:
   size_t n_;
 
-  std::vector<runtime_type_info> types_;
+  std::vector<runtime_type> types_;
   std::vector<size_t> offsets_;
   size_t rowsize_;
+  size_t maskrowsize_;
 };
 
 class row_major_dataview : public dataview {
@@ -184,7 +194,7 @@ public:
   row_major_dataview(const uint8_t *data,
                      const bool *mask,
                      size_t n,
-                     const std::vector<runtime_type_info> &types);
+                     const std::vector<runtime_type> &types);
   row_accessor get() const override;
   size_t index() const override;
   void next() override;

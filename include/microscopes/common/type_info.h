@@ -7,19 +7,38 @@
 //
 // since cython can handle neither of them particularly well (if even)
 
-#define RUNTIME_TYPE_INFO(x) \
-  x(TYPE_INFO_B) \
-  x(TYPE_INFO_I8) \
-  x(TYPE_INFO_I16) \
-  x(TYPE_INFO_I32) \
-  x(TYPE_INFO_I64) \
-  x(TYPE_INFO_F32) \
-  x(TYPE_INFO_F64)
+#define PRIMITIVE_TYPES(x) \
+  x(TYPE_B) \
+  x(TYPE_I8) \
+  x(TYPE_U8) \
+  x(TYPE_I16) \
+  x(TYPE_U16) \
+  x(TYPE_I32) \
+  x(TYPE_U32) \
+  x(TYPE_I64) \
+  x(TYPE_U64) \
+  x(TYPE_F32) \
+  x(TYPE_F64)
 
-// WARNING: don't name this type_info otherwise might class with std::type_info
-enum runtime_type_info {
+#define PRIMITIVE_TYPE_MAPPINGS(x) \
+  x(bool, TYPE_B) \
+  x(int8_t, TYPE_I8) \
+  x(uint8_t, TYPE_U8) \
+  x(int16_t, TYPE_I16) \
+  x(uint16_t, TYPE_U16) \
+  x(int32_t, TYPE_I32) \
+  x(uint32_t, TYPE_U32) \
+  x(int64_t, TYPE_I64) \
+  x(uint64_t, TYPE_U64) \
+  x(float, TYPE_F32) \
+  x(double, TYPE_F64)
+
+static_assert(sizeof(float) == 4, "platform assumption violated");
+static_assert(sizeof(double) == 8, "platform assumption violated");
+
+enum primitive_type {
 #define _ENUM_CASE(name) name,
-  RUNTIME_TYPE_INFO(_ENUM_CASE)
+  PRIMITIVE_TYPES(_ENUM_CASE)
 #undef _ENUM_CASE
-  TYPE_INFO_NELEMS,
+  TYPE_NELEMS,
 };

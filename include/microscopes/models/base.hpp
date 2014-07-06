@@ -47,7 +47,7 @@ public:
   // know that all the types are float.
   virtual void * get_hp_raw_ptr(const std::string &key) = 0;
 
-  virtual runtime_type_info get_runtime_type_info() const = 0;
+  virtual common::runtime_type get_runtime_type() const = 0;
   virtual std::string debug_str() const = 0;
 };
 

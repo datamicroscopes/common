@@ -1,7 +1,7 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-from microscopes.cxx.common._type_info_h cimport runtime_type_info
+from microscopes.cxx.common._type_helper_h cimport runtime_type
 from microscopes.cxx.common._typedefs_h cimport hyperparam_bag_t, suffstats_bag_t
 from microscopes._shared_ptr_h cimport shared_ptr
 
@@ -9,7 +9,7 @@ cdef extern from "microscopes/models/base.hpp" namespace "microscopes::models":
     cdef cppclass model:
         hyperparam_bag_t get_hp() except +
         void set_hp(hyperparam_bag_t &) except +
-        vector[runtime_type_info] get_runtime_type_info() except +
+        vector[runtime_type] get_runtime_type() except +
     ctypedef model* model_raw_ptr
     ctypedef shared_ptr[model] model_shared_ptr
 

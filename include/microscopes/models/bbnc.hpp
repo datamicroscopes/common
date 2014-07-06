@@ -45,7 +45,7 @@ public:
 
   void * get_hp_raw_ptr(const std::string &key) override;
 
-  runtime_type_info get_runtime_type_info() const override;
+  common::runtime_type get_runtime_type() const override;
   std::string debug_str() const override;
 
   static inline std::shared_ptr<model>

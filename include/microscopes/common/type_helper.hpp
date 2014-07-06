@@ -1,6 +1,7 @@
 #pragma once
 
 #include <microscopes/common/type_info.h>
+#include <microscopes/common/assert.hpp>
 #include <microscopes/common/macros.hpp>
 
 #include <vector>
@@ -8,81 +9,106 @@
 #include <iostream>
 #include <sstream>
 
-// XXX: handle unsigned types
-
-#define PRIMITIVE_TYPE_MAPPINGS(x) \
-  x(bool, TYPE_INFO_B) \
-  x(int8_t, TYPE_INFO_I8) \
-  x(uint8_t, TYPE_INFO_I8) \
-  x(int16_t, TYPE_INFO_I16) \
-  x(uint16_t, TYPE_INFO_I16) \
-  x(int32_t, TYPE_INFO_I32) \
-  x(uint32_t, TYPE_INFO_I32) \
-  x(int64_t, TYPE_INFO_I64) \
-  x(uint64_t, TYPE_INFO_I64) \
-  x(float, TYPE_INFO_F32) \
-  x(double, TYPE_INFO_F64)
-
-#define CANONICAL_PRIMITIVE_TYPE_MAPPINGS(x) \
-  x(bool, TYPE_INFO_B) \
-  x(int8_t, TYPE_INFO_I8) \
-  x(int16_t, TYPE_INFO_I16) \
-  x(int32_t, TYPE_INFO_I32) \
-  x(int64_t, TYPE_INFO_I64) \
-  x(float, TYPE_INFO_F32) \
-  x(double, TYPE_INFO_F64)
-
 namespace microscopes {
 namespace common {
 
 template <typename T>
-struct _info {
-  static const size_t size = sizeof(T);
-};
-
-template <typename T>
-struct _static_type_to_runtime_id {};
+struct _static_type_to_primitive_type {};
 
 #define SPECIALIZE_STATIC_TYPE_TO_RUNTIME_ID(tpe, rvalue) \
-  template <> struct _static_type_to_runtime_id <tpe> { static const runtime_type_info value = rvalue; };
+  template <> struct _static_type_to_primitive_type <tpe> { static const primitive_type value = rvalue; };
 PRIMITIVE_TYPE_MAPPINGS(SPECIALIZE_STATIC_TYPE_TO_RUNTIME_ID)
 #undef SPECIALIZE_STATIC_TYPE_TO_RUNTIME_ID
 
-class runtime_type_traits {
+class runtime_type {
 public:
-  static inline size_t
-  TypeSize(runtime_type_info t)
+  // default ctor
+  runtime_type() : t_(), n_() {}
+
+  // scalar constructor
+  runtime_type(primitive_type t) : t_(t), n_(1) {}
+
+  // vector constructor
+  runtime_type(primitive_type t, unsigned n)
+    : t_(t), n_(n)
   {
-    return TypeSizes_[t];
+    MICROSCOPES_DCHECK(n_ >= 1, "limitation for now");
   }
 
-  static inline std::pair< std::vector<size_t>, size_t >
-  GetOffsetsAndSize(const std::vector<runtime_type_info> &types)
+  inline bool
+  operator==(const runtime_type &that) const
   {
-    std::vector<size_t> offsets;
-    offsets.reserve(types.size());
-    size_t acc = 0;
-    for (auto t : types) {
-      offsets.push_back(acc);
-      acc += TypeSize(t);
+    return t_ == that.t_ && n_ == that.n_;
+  }
+
+  inline bool
+  operator!=(const runtime_type &that) const
+  {
+    return !operator==(that);
+  }
+
+  primitive_type t_;
+  unsigned n_;
+};
+
+class runtime_type_traits {
+public:
+
+  static inline size_t
+  PrimitiveTypeSize(primitive_type t)
+  {
+    MICROSCOPES_ASSERT(t < TYPE_NELEMS);
+    return PrimitiveTypeSizes_[t];
+  }
+
+  static inline size_t
+  RuntimeTypeSize(const runtime_type &t)
+  {
+    return t.n_ * PrimitiveTypeSize(t.t_);
+  }
+
+  struct offsets_ret_t {
+    offsets_ret_t() : offsets_(), rowsize_(), maskrowsize_() {}
+    std::vector<size_t> offsets_;
+    size_t rowsize_;
+    size_t maskrowsize_;
+  };
+
+  static inline offsets_ret_t
+  GetOffsetsAndSize(const std::vector<runtime_type> &types)
+  {
+    offsets_ret_t ret;
+    ret.offsets_.reserve(types.size());
+    for (const auto &t : types) {
+      ret.offsets_.push_back(ret.rowsize_);
+      ret.rowsize_ += RuntimeTypeSize(t);
+      ret.maskrowsize_ += t.n_;
     }
-    return std::make_pair( std::move(offsets), acc );
+    return ret;
   }
 
   static const char *
-  TypeInfoString(runtime_type_info t)
+  PrimitiveTypeStr(primitive_type t)
   {
-#define _STRING_CASE(x) \
-    if (t == x) \
-      return #x;
-    RUNTIME_TYPE_INFO(_STRING_CASE)
+#define _STRING_CASE(x) if (t == x) return #x;
+    PRIMITIVE_TYPES(_STRING_CASE)
 #undef _STRING_CASE
     MICROSCOPES_NOT_REACHABLE();
     return nullptr;
   }
 
   static std::string
-  ToString(runtime_type_info t, const uint8_t *px)
+  RuntimeTypeStr(const runtime_type &t)
+  {
+    std::ostringstream oss;
+    oss << PrimitiveTypeStr(t.t_);
+    if (t.n_ > 1)
+      oss << "[" << t.n_ << "]";
+    return oss.str();
+  }
+
+  static std::string
+  ToString(primitive_type t, const uint8_t *px)
   {
     std::ostringstream oss;
     switch (t) {
@@ -90,7 +116,7 @@ public:
       case rtype: \
         oss << *reinterpret_cast< const ctype * >(px); \
         break;
-    CANONICAL_PRIMITIVE_TYPE_MAPPINGS(_CASE_STMT)
+    PRIMITIVE_TYPE_MAPPINGS(_CASE_STMT)
 #undef _CASE_STMT
     default:
       MICROSCOPES_NOT_REACHABLE();
@@ -100,21 +126,20 @@ public:
   }
 
 private:
-  static const size_t TypeSizes_[TYPE_INFO_NELEMS];
+  static const size_t PrimitiveTypeSizes_[TYPE_NELEMS];
 };
 
-template <typename T>
 struct runtime_cast {
 
+  template <typename T>
   static inline ALWAYS_INLINE T
-  cast(const uint8_t *px, runtime_type_info t)
+  cast(const uint8_t *px, primitive_type t)
   {
-    // XXX: branch predictor hints
     switch (t) {
 #define _CASE_STMT(ctype, rtype) \
       case rtype: \
         return *reinterpret_cast< const ctype * >(px);
-    CANONICAL_PRIMITIVE_TYPE_MAPPINGS(_CASE_STMT)
+    PRIMITIVE_TYPE_MAPPINGS(_CASE_STMT)
 #undef _CASE_STMT
     default:
       break;
@@ -123,21 +148,38 @@ struct runtime_cast {
     return T();
   }
 
+  template <typename T>
   static inline ALWAYS_INLINE void
-  uncast(uint8_t *px, runtime_type_info t, T value)
+  uncast(uint8_t *px, primitive_type t, T value)
   {
-    // XXX: branch predictor hints
     switch (t) {
 #define _CASE_STMT(ctype, rtype) \
       case rtype: \
         *reinterpret_cast< ctype *>(px) = value; \
         return;
-    CANONICAL_PRIMITIVE_TYPE_MAPPINGS(_CASE_STMT)
+    PRIMITIVE_TYPE_MAPPINGS(_CASE_STMT)
 #undef _CASE_STMT
     default:
       break;
     }
     MICROSCOPES_NOT_REACHABLE();
+  }
+
+  static inline void
+  copy(uint8_t *dst, primitive_type dst_t,
+       const uint8_t *src, primitive_type src_t)
+  {
+    switch (src_t) {
+#define _SRC_CASE_STMT(src_ctype, src_rtype) \
+      case src_rtype: \
+        uncast(dst, dst_t, *reinterpret_cast<const src_ctype *>(src)); \
+        return;
+    PRIMITIVE_TYPE_MAPPINGS(_SRC_CASE_STMT)
+#undef _SRC_CASE_STMT
+    default:
+      MICROSCOPES_NOT_REACHABLE();
+      break;
+    }
   }
 };
 

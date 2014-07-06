@@ -9,26 +9,39 @@ using namespace std;
 using namespace microscopes::common;
 
 static vector<string>
-runtime_type_strings(const vector<runtime_type_info> &types)
+runtime_type_strings(const vector<runtime_type> &types)
 {
   vector<string> ret;
   ret.reserve(types.size());
-  for (auto t : types)
-    ret.push_back(runtime_type_traits::TypeInfoString(t));
+  for (const auto &t : types)
+    ret.push_back(runtime_type_traits::RuntimeTypeStr(t));
   return ret;
 }
 
 string
 row_accessor::debug_str() const
 {
+  const auto ret = runtime_type_traits::GetOffsetsAndSize(*types_);
   vector<string> values_repr;
   values_repr.reserve(types_->size());
   for (size_t i = 0; i < types_->size(); i++) {
-    if (!mask_ || !mask_[i])
-      values_repr.push_back(
-          runtime_type_traits::ToString((*types_)[i], data_ + (*offsets_)[i]));
-    else
+    if (!mask_ || !mask_[i]) {
+      const auto &type = (*types_)[i];
+      if (type.n_ == 1) {
+        values_repr.push_back(
+            runtime_type_traits::ToString(type.t_, data_ + ret.offsets_[i]));
+      } else {
+        const size_t s = runtime_type_traits::PrimitiveTypeSize(type.t_);
+        vector<string> strs;
+        strs.reserve(type.n_);
+        for (size_t j = 0; j < type.n_; j++)
+          strs.push_back(
+              runtime_type_traits::ToString(type.t_, data_ + ret.offsets_[i] + j * s));
+        values_repr.push_back(util::to_string(strs));
+      }
+    } else {
       values_repr.push_back("--");
+    }
   }
   ostringstream oss;
   oss << "{"
@@ -50,24 +63,25 @@ string
 row_mutator::debug_str() const
 {
   ostringstream oss;
-  row_accessor acc(data_, nullptr, types_, offsets_);
+  row_accessor acc(data_, nullptr, types_);
   oss << "{view=" << acc.debug_str() << "}";
   return oss.str();
 }
 
-dataview::dataview(size_t n, const vector<runtime_type_info> &types)
-  : n_(n), types_(types), rowsize_()
+dataview::dataview(size_t n, const vector<runtime_type> &types)
+  : n_(n), types_(types), rowsize_(), maskrowsize_()
 {
   const auto ret = runtime_type_traits::GetOffsetsAndSize(types);
-  offsets_ = ret.first;
-  rowsize_ = ret.second;
+  offsets_ = ret.offsets_;
+  rowsize_ = ret.rowsize_;
+  maskrowsize_ = ret.maskrowsize_;
 }
 
 row_major_dataview::row_major_dataview(
     const uint8_t *data,
     const bool *mask,
     size_t n,
-    const vector<runtime_type_info> &types)
+    const vector<runtime_type> &types)
     : dataview(n, types), data_(data), mask_(mask), pos_()
 {
     //cout << "types:" << endl;
@@ -84,8 +98,8 @@ row_major_dataview::get() const
 {
   const size_t actual_pos = pi_.empty() ? pos_ : pi_[pos_];
   const uint8_t *cursor = data_ + rowsize() * actual_pos;
-  const bool *mask_cursor = !mask_ ? nullptr : mask_ + types().size() * actual_pos;
-  return row_accessor(cursor, mask_cursor, &types(), &offsets());
+  const bool *mask_cursor = !mask_ ? nullptr : mask_ + maskrowsize() * actual_pos;
+  return row_accessor(cursor, mask_cursor, &types());
 }
 
 size_t

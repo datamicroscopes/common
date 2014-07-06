@@ -20,7 +20,8 @@ typedef BetaBernoulliNonConj::Shared shared_message_type;
 void
 bbnc_feature_group::add_value(const model &m, const row_accessor &value, rng_t &rng)
 {
-  if (value.get<bool>())
+  MICROSCOPES_ASSERT(value.curshape() == 1);
+  if (value.get<bool>(0))
     heads_++;
   else
     tails_++;
@@ -29,7 +30,8 @@ bbnc_feature_group::add_value(const model &m, const row_accessor &value, rng_t &
 void
 bbnc_feature_group::remove_value(const model &m, const row_accessor &value, rng_t &rng)
 {
-  if (value.get<bool>()) {
+  MICROSCOPES_ASSERT(value.curshape() == 1);
+  if (value.get<bool>(0)) {
     MICROSCOPES_ASSERT(heads_ > 0);
     heads_--;
   } else {
@@ -42,7 +44,8 @@ float
 bbnc_feature_group::score_value(const model &m, const row_accessor &value, rng_t &rng) const
 {
   MICROSCOPES_ASSERT(p_ >= 0.0 && p_ <= 1.0);
-  return value.get<bool>() ? fast_log(p_) : fast_log(1.-p_);
+  MICROSCOPES_ASSERT(value.curshape() == 1);
+  return value.get<bool>(0) ? fast_log(p_) : fast_log(1.-p_);
 }
 
 static inline float
@@ -69,7 +72,8 @@ void
 bbnc_feature_group::sample_value(const model &m, row_mutator &value, rng_t &rng) const
 {
   MICROSCOPES_ASSERT(p_ >= 0.0 && p_ <= 1.0);
-  value.set<bool>(sample_bernoulli(rng, p_));
+  MICROSCOPES_ASSERT(value.curshape() == 1);
+  value.set<bool>(sample_bernoulli(rng, p_), 0);
 }
 
 suffstats_bag_t
@@ -142,10 +146,10 @@ bbnc_model::get_hp_raw_ptr(const string &key)
   throw runtime_error("unknown key: " + key);
 }
 
-runtime_type_info
-bbnc_model::get_runtime_type_info() const
+runtime_type
+bbnc_model::get_runtime_type() const
 {
-  return TYPE_INFO_B;
+  return runtime_type(TYPE_B);
 }
 
 string

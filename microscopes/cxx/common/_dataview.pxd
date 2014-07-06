@@ -5,6 +5,7 @@ from libc.stdint cimport uint8_t
 from microscopes.cxx.common._dataview_h cimport dataview, row_major_dataview
 from microscopes.cxx.common._rng cimport rng
 cimport microscopes.cxx.common._type_info_h as ti
+from microscopes.cxx.common._type_helper_h cimport runtime_type
 
 cimport numpy as np
 
@@ -17,4 +18,4 @@ cdef class numpy_dataview(abstract_dataview):
     cdef np.ndarray _mask
 
 """helper function"""
-cdef vector[ti.runtime_type_info] get_c_types(dtype)
+cdef vector[runtime_type] get_c_types(dtype)

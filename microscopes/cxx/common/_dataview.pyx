@@ -22,7 +22,7 @@ cdef class numpy_dataview(abstract_dataview):
         else:
             self._mask = None
 
-        cdef vector[ti.runtime_type_info] ctypes
+        cdef vector[runtime_type] ctypes
         ctypes = get_c_types(dtype)
 
         if self._mask is not None:
@@ -49,24 +49,35 @@ cdef class numpy_dataview(abstract_dataview):
         return self._n
 
 def get_c_type(tpe):
-    if tpe in (bool, np.bool):
-        return ti.TYPE_INFO_B
-    if tpe == np.int8:
-        return ti.TYPE_INFO_I8
-    if tpe == np.int16:
-        return ti.TYPE_INFO_I16
-    if tpe == np.int32:
-        return ti.TYPE_INFO_I32
-    if tpe in (int, np.int, np.int64):
-        return ti.TYPE_INFO_I64
-    if tpe == np.float32:
-        return ti.TYPE_INFO_F32
-    if tpe in (float, np.float, np.float64):
-        return ti.TYPE_INFO_F64
-    raise Exception("Unknown type: " + tpe)
+    types = (
+        ('bool'   , ti.TYPE_B)   , 
+        ('int8'   , ti.TYPE_I8)  , 
+        ('uint8'  , ti.TYPE_U8)  , 
+        ('int16'  , ti.TYPE_I16) , 
+        ('uint16' , ti.TYPE_U16) , 
+        ('int32'  , ti.TYPE_I32) , 
+        ('uint32' , ti.TYPE_U32) , 
+        ('int64'  , ti.TYPE_I64) , 
+        ('uint64' , ti.TYPE_U64) , 
+        ('f4'     , ti.TYPE_F32) , 
+        ('f8'     , ti.TYPE_F64) , 
+    )
+    for name, ctype in types:
+        if np.dtype(name) == tpe:
+            return ctype
+    raise ValueError("Unknown type: " + tpe)
 
-cdef vector[ti.runtime_type_info] get_c_types(dtype):
-    cdef vector[ti.runtime_type_info] ctypes
+cdef vector[runtime_type] get_c_types(dtype):
+    cdef vector[runtime_type] ctypes
+    ctypes.reserve(len(dtype))
     for i in xrange(len(dtype)):
-        ctypes.push_back(get_c_type(dtype[i]))
+        if dtype[i].subdtype is None:
+            # scalar field
+            ctypes.push_back(runtime_type(get_c_type(dtype[i])))
+        else:
+            # vector field
+            subdtype, shape = dtype[i].subdtype
+            if len(shape) != 1:
+                raise ValueError("unsupported shape: " + shape)
+            ctypes.push_back(runtime_type(get_c_type(subdtype, shape[0])))
     return ctypes
