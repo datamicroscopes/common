@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.ma as ma
 
 cdef class abstract_dataview:
     def __cinit__(self):
@@ -19,11 +20,25 @@ cdef class abstract_dataview:
         cdef np.ndarray array = np.zeros(1, dtype=dtypes)
         self._thisptr[0].next()
         cdef row_mutator mut = row_mutator(<uint8_t *> array.data, types)
+        masks = []
+        has_any_masks = [False]
+        def mark(b):
+            if b: 
+                has_any_masks[0] = True
+            return b
         for i in xrange(types.size()):
             mut.set(acc)
+            m = [mark(acc.ismasked(j)) for j in xrange(acc.curshape())]
+            if not acc.curtype().vec():
+                assert len(m) == 1
+                m = m[0]
+            masks.append(m)
             mut.bump()
             acc.bump()
-        return array[0]
+        if not has_any_masks[0]:
+            return array[0]
+        masks = tuple(masks) # this seems to matter
+        return ma.array(array, mask=[masks])[0]
 
 cdef class numpy_dataview(abstract_dataview):
     def __cinit__(self, npd):

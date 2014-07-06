@@ -16,5 +16,12 @@ cdef extern from "microscopes/common/type_helper.hpp" namespace "microscopes::co
         cbool vec()
 
 cdef extern from "microscopes/common/type_helper.hpp" namespace "microscopes::common::runtime_type_traits":
-    pair[vector[size_t], size_t] GetOffsetsAndSize(vector[runtime_type] &) except +
+
+    cdef cppclass offsets_ret_t:
+        offsets_ret_t()
+        vector[size_t] offsets_
+        size_t rowsize_
+        size_t maskrowsize_
+
+    offsets_ret_t GetOffsetsAndSize(vector[runtime_type] &) except +
     string RuntimeTypeStr(runtime_type &) except +

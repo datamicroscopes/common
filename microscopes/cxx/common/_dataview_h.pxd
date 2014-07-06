@@ -10,6 +10,9 @@ cdef extern from "microscopes/common/dataview.hpp" namespace "microscopes::commo
     cdef cppclass row_accessor:
         row_accessor()
         row_accessor(uint8_t *, cbool *, vector[runtime_type] *)
+        cbool ismasked(size_t)
+        const runtime_type & curtype()
+        unsigned curshape()
         void bump()
 
     cdef cppclass row_mutator:
