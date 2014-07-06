@@ -32,7 +32,7 @@ public:
   inline size_t nfeatures() const { return types_->size(); }
 
   inline const runtime_type & curtype() const { return (*types_)[pos_]; }
-  inline unsigned curshape() const { return curtype().n_; }
+  inline unsigned curshape() const { return curtype().n(); }
 
   inline bool
   ismasked(size_t idx) const
@@ -48,8 +48,8 @@ public:
     MICROSCOPES_ASSERT(pos_ < nfeatures());
     MICROSCOPES_ASSERT(cursor_);
     MICROSCOPES_ASSERT(idx < curshape());
-    const size_t s = runtime_type_traits::PrimitiveTypeSize(curtype().t_);
-    return runtime_cast::cast<T>(cursor_ + idx * s, curtype().t_);
+    const size_t s = runtime_type_traits::PrimitiveTypeSize(curtype().t());
+    return runtime_cast::cast<T>(cursor_ + idx * s, curtype().t());
   }
 
   inline void
@@ -57,7 +57,7 @@ public:
   {
     MICROSCOPES_ASSERT(pos_ <= nfeatures());
     cursor_ += runtime_type_traits::RuntimeTypeSize(curtype());
-    mask_cursor_ += curtype().n_;
+    mask_cursor_ += curtype().n();
     pos_++;
   }
 
@@ -103,7 +103,7 @@ public:
   inline size_t nfeatures() const { return types_->size(); }
 
   inline const runtime_type & curtype() const { return (*types_)[pos_]; }
-  inline unsigned curshape() const { return curtype().n_; }
+  inline unsigned curshape() const { return curtype().n(); }
 
   template <typename T>
   inline void
@@ -112,8 +112,8 @@ public:
     MICROSCOPES_ASSERT(pos_ < nfeatures());
     MICROSCOPES_ASSERT(cursor_);
     MICROSCOPES_ASSERT(idx < curshape());
-    const size_t s = runtime_type_traits::PrimitiveTypeSize(curtype().t_);
-    runtime_cast::uncast<T>(cursor_ + idx * s, curtype().t_, t);
+    const size_t s = runtime_type_traits::PrimitiveTypeSize(curtype().t());
+    runtime_cast::uncast<T>(cursor_ + idx * s, curtype().t(), t);
   }
 
   void
@@ -122,12 +122,12 @@ public:
     MICROSCOPES_DCHECK(curshape() == acc.curshape(), "shapes do not match");
     MICROSCOPES_ASSERT(cursor_);
     MICROSCOPES_ASSERT(acc.cursor());
-    const size_t s0 = runtime_type_traits::PrimitiveTypeSize(curtype().t_);
-    const size_t s1 = runtime_type_traits::PrimitiveTypeSize(acc.curtype().t_);
+    const size_t s0 = runtime_type_traits::PrimitiveTypeSize(curtype().t());
+    const size_t s1 = runtime_type_traits::PrimitiveTypeSize(acc.curtype().t());
     for (unsigned i = 0; i < curshape(); i++)
       runtime_cast::copy(
-          cursor_ + i * s0, curtype().t_,
-          acc.cursor() + i * s1, acc.curtype().t_);
+          cursor_ + i * s0, curtype().t(),
+          acc.cursor() + i * s1, acc.curtype().t());
   }
 
   inline void

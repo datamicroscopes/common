@@ -23,22 +23,21 @@ PRIMITIVE_TYPE_MAPPINGS(SPECIALIZE_STATIC_TYPE_TO_RUNTIME_ID)
 class runtime_type {
 public:
   // default ctor
-  runtime_type() : t_(), n_() {}
+  runtime_type() : t_(), n_(), vec_() {}
 
   // scalar constructor
-  runtime_type(primitive_type t) : t_(t), n_(1) {}
+  runtime_type(primitive_type t) : t_(t), n_(1), vec_(false) {}
 
   // vector constructor
   runtime_type(primitive_type t, unsigned n)
-    : t_(t), n_(n)
+    : t_(t), n_(n), vec_(true)
   {
-    MICROSCOPES_DCHECK(n_ >= 1, "limitation for now");
   }
 
   inline bool
   operator==(const runtime_type &that) const
   {
-    return t_ == that.t_ && n_ == that.n_;
+    return t_ == that.t_ && n_ == that.n_ && vec_ == that.vec_;
   }
 
   inline bool
@@ -47,8 +46,14 @@ public:
     return !operator==(that);
   }
 
+  inline primitive_type t() const { return t_; }
+  inline unsigned n() const { return n_; }
+  inline bool vec() const { return vec_; }
+
+private:
   primitive_type t_;
   unsigned n_;
+  bool vec_;
 };
 
 class runtime_type_traits {
@@ -64,7 +69,7 @@ public:
   static inline size_t
   RuntimeTypeSize(const runtime_type &t)
   {
-    return t.n_ * PrimitiveTypeSize(t.t_);
+    return t.n() * PrimitiveTypeSize(t.t());
   }
 
   struct offsets_ret_t {
@@ -82,7 +87,7 @@ public:
     for (const auto &t : types) {
       ret.offsets_.push_back(ret.rowsize_);
       ret.rowsize_ += RuntimeTypeSize(t);
-      ret.maskrowsize_ += t.n_;
+      ret.maskrowsize_ += t.n();
     }
     return ret;
   }
@@ -101,9 +106,9 @@ public:
   RuntimeTypeStr(const runtime_type &t)
   {
     std::ostringstream oss;
-    oss << PrimitiveTypeStr(t.t_);
-    if (t.n_ > 1)
-      oss << "[" << t.n_ << "]";
+    oss << PrimitiveTypeStr(t.t());
+    if (t.vec())
+      oss << "[" << t.n() << "]";
     return oss.str();
   }
 

@@ -27,16 +27,16 @@ row_accessor::debug_str() const
   for (size_t i = 0; i < types_->size(); i++) {
     if (!mask_ || !mask_[i]) {
       const auto &type = (*types_)[i];
-      if (type.n_ == 1) {
+      if (!type.vec()) {
         values_repr.push_back(
-            runtime_type_traits::ToString(type.t_, data_ + ret.offsets_[i]));
+            runtime_type_traits::ToString(type.t(), data_ + ret.offsets_[i]));
       } else {
-        const size_t s = runtime_type_traits::PrimitiveTypeSize(type.t_);
+        const size_t s = runtime_type_traits::PrimitiveTypeSize(type.t());
         vector<string> strs;
-        strs.reserve(type.n_);
-        for (size_t j = 0; j < type.n_; j++)
+        strs.reserve(type.n());
+        for (size_t j = 0; j < type.n(); j++)
           strs.push_back(
-              runtime_type_traits::ToString(type.t_, data_ + ret.offsets_[i] + j * s));
+              runtime_type_traits::ToString(type.t(), data_ + ret.offsets_[i] + j * s));
         values_repr.push_back(util::to_string(strs));
       }
     } else {

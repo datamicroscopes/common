@@ -5,6 +5,25 @@ cdef class abstract_dataview:
         pass
     def __dealloc__(self):
         del self._thisptr
+    def __iter__(self):
+        self._thisptr[0].reset()
+        return self
+    def next(self):
+        if self._thisptr[0].end():
+            raise StopIteration
+        cdef row_accessor acc = self._thisptr[0].get()
+        cdef const vector[runtime_type] *types = &self._thisptr[0].types()
+        dtypes = []
+        for i in xrange(types.size()):
+            dtypes.append(('', get_np_type(types[0][i])))
+        cdef np.ndarray array = np.zeros(1, dtype=dtypes)
+        self._thisptr[0].next()
+        cdef row_mutator mut = row_mutator(<uint8_t *> array.data, types)
+        for i in xrange(types.size()):
+            mut.set(acc)
+            mut.bump()
+            acc.bump()
+        return array[0]
 
 cdef class numpy_dataview(abstract_dataview):
     def __cinit__(self, npd):
@@ -48,21 +67,22 @@ cdef class numpy_dataview(abstract_dataview):
     def size(self):
         return self._n
 
+TYPES = (
+    ('bool'   , ti.TYPE_B)   , 
+    ('int8'   , ti.TYPE_I8)  , 
+    ('uint8'  , ti.TYPE_U8)  , 
+    ('int16'  , ti.TYPE_I16) , 
+    ('uint16' , ti.TYPE_U16) , 
+    ('int32'  , ti.TYPE_I32) , 
+    ('uint32' , ti.TYPE_U32) , 
+    ('int64'  , ti.TYPE_I64) , 
+    ('uint64' , ti.TYPE_U64) , 
+    ('f4'     , ti.TYPE_F32) , 
+    ('f8'     , ti.TYPE_F64) , 
+)
+
 def get_c_type(tpe):
-    types = (
-        ('bool'   , ti.TYPE_B)   , 
-        ('int8'   , ti.TYPE_I8)  , 
-        ('uint8'  , ti.TYPE_U8)  , 
-        ('int16'  , ti.TYPE_I16) , 
-        ('uint16' , ti.TYPE_U16) , 
-        ('int32'  , ti.TYPE_I32) , 
-        ('uint32' , ti.TYPE_U32) , 
-        ('int64'  , ti.TYPE_I64) , 
-        ('uint64' , ti.TYPE_U64) , 
-        ('f4'     , ti.TYPE_F32) , 
-        ('f8'     , ti.TYPE_F64) , 
-    )
-    for name, ctype in types:
+    for name, ctype in TYPES:
         if np.dtype(name) == tpe:
             return ctype
     raise ValueError("Unknown type: " + tpe)
@@ -79,5 +99,14 @@ cdef vector[runtime_type] get_c_types(dtype):
             subdtype, shape = dtype[i].subdtype
             if len(shape) != 1:
                 raise ValueError("unsupported shape: " + shape)
-            ctypes.push_back(runtime_type(get_c_type(subdtype, shape[0])))
+            ctypes.push_back(runtime_type(get_c_type(subdtype), shape[0]))
     return ctypes
+
+cdef np.dtype get_np_type(const runtime_type & tpe):
+    for name, ctype in TYPES:
+        if tpe.t() != ctype:
+            continue
+        if tpe.vec():
+            name = '({},){}'.format(tpe.n(), name)
+        return np.dtype(name)
+    raise Exception("unknown type: " + RuntimeTypeStr(tpe))
