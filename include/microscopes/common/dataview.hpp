@@ -41,6 +41,18 @@ public:
     return !mask_ ? false : *(mask_cursor_ + idx);
   }
 
+  inline bool
+  anymasked() const
+  {
+    if (!mask_)
+      return false;
+    // XXX: more efficient ways to do this!
+    for (size_t i = 0; i < curshape(); i++)
+      if (ismasked(i))
+        return true;
+    return false;
+  }
+
   template <typename T>
   inline T
   get(size_t idx) const
