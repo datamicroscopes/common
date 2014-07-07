@@ -1,6 +1,9 @@
 #include <microscopes/models/niw.hpp>
 #include <microscopes/io/schema.pb.h>
 #include <microscopes/common/special.hpp>
+#include <microscopes/common/random.hpp>
+#include <microscopes/common/util.hpp>
+
 #include <distributions/random.hpp>
 #include <distributions/special.hpp>
 
@@ -9,7 +12,7 @@
 #include <cmath>
 #include <limits>
 
-#include <eigen3/Eigen/Cholesky>
+#include <eigen3/Eigen/Dense>
 
 using namespace std;
 using namespace distributions;
@@ -20,56 +23,6 @@ using namespace Eigen;
 
 typedef NormalInverseWishart_Shared shared_message_type;
 typedef NormalInverseWishart_Group group_message_type;
-
-static inline VectorXf
-sample_mvn(const VectorXf &mu, const MatrixXf &sigma, rng_t &rng)
-{
-  LLT<MatrixXf> llt(sigma);
-
-  VectorXf z(mu.size());
-  normal_distribution<float> norm;
-  for (unsigned i = 0; i < mu.size(); i++)
-    z(i) = norm(rng);
-
-  return mu + llt.matrixL() * z;
-}
-
-// Taken from:
-// http://www.mit.edu/~mattjj/released-code/hsmm/stats_util.py
-static inline MatrixXf
-sample_w(float nu, const MatrixXf &scale, rng_t &rng)
-{
-  LLT<MatrixXf> llt(scale);
-
-  MatrixXf A(scale.rows(), scale.rows());
-  for (unsigned i = 0; i < scale.rows(); i++)
-    A(i, i) = sqrt(chi_squared_distribution<float>(nu - float(i))(rng));
-
-  normal_distribution<float> norm;
-  for (unsigned i = 1; i < scale.rows(); i++)
-    for (unsigned j = 0; j < i; j++)
-      A(i, j) = norm(rng);
-
-  const MatrixXf &X = llt.matrixL() * A;
-  return X * X.transpose();
-}
-
-static inline MatrixXf
-sample_iw(float nu, const MatrixXf &psi, rng_t &rng)
-{
-  // XXX: horrible
-  const MatrixXf &psi_inv = psi.inverse();
-  const MatrixXf &sigma_inv = sample_w(nu, psi_inv, rng);
-  return sigma_inv.inverse();
-}
-
-static inline pair<VectorXf, MatrixXf>
-sample_niw(const VectorXf &mu0, float lambda, const MatrixXf &psi, float nu, rng_t &rng)
-{
-  const MatrixXf &cov = 1./lambda * sample_iw(nu, psi, rng);
-  const VectorXf &mu = sample_mvn(mu0, cov, rng);
-  return make_pair(mu, cov);
-}
 
 static inline void
 extractVec(VectorXf &v, const row_accessor &value)
@@ -202,8 +155,8 @@ niw_feature_group::sample_value(const model &m, row_mutator &value, rng_t &rng) 
 {
   suffstats_t ss;
   postParams(static_cast<const niw_model &>(m), ss);
-  const auto p = sample_niw(ss.mu0_, ss.lambda_, ss.psi_, ss.nu_, rng);
-  const VectorXf &x = sample_mvn(p.first, p.second, rng);
+  const auto p = random::sample_normal_inverse_wishart(ss.mu0_, ss.lambda_, ss.psi_, ss.nu_, rng);
+  const VectorXf &x = random::sample_multivariate_normal(p.first, p.second, rng);
   MICROSCOPES_ASSERT(x.size() == value.curshape());
   for (unsigned i = 0; i < x.size(); i++)
     value.set<float>(x(i), i);
@@ -245,15 +198,7 @@ niw_feature_group::set_ss(const suffstats_bag_t &ss)
     for (size_t j = 0; j < dim; j++)
       sum_xxT_(i, j) = m.sum_xxt(i*dim + j);
 
-  MICROSCOPES_DCHECK(
-    sum_xxT_.isApprox(sum_xxT_.transpose()),
-    "sum xx^T must be symmetric");
-
-  LDLT<MatrixXf> ldlt;
-  ldlt.compute(sum_xxT_);
-  MICROSCOPES_DCHECK(
-    ldlt.isPositive(),
-    "sum xx^T must be positive (semi-) definite");
+  MICROSCOPES_DCHECK(util::is_symmetric_positive_definite(sum_xxT_), "sum xx^T must be SPD");
 }
 
 void *
@@ -308,16 +253,7 @@ niw_model::set_hp(const hyperparam_bag_t &hp)
     for (size_t j = 0; j < dim; j++)
       psi_(i, j) = m.psi(i*dim + j);
 
-  MICROSCOPES_DCHECK(
-    psi_.isApprox(psi_.transpose()),
-    "psi must be symmetric");
-
-  LDLT<MatrixXf> ldlt;
-  ldlt.compute(psi_);
-  MICROSCOPES_DCHECK(
-    ldlt.isPositive(),
-    "psi must be positive (semi-) definite");
-
+  MICROSCOPES_DCHECK(util::is_symmetric_positive_definite(psi_), "psi must be SPD");
   MICROSCOPES_DCHECK(m.nu() > float(dim) - 1., "DOF must be > D-1");
   nu_ = m.nu();
 }

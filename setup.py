@@ -84,6 +84,7 @@ extensions = cythonize([
     make_extension('microscopes.cxx.common._dataview'),
     make_extension('microscopes.cxx.common.rng'),
     make_extension('microscopes.cxx.common._rng'),
+    make_extension('microscopes.cxx.common.random'),
     make_extension('microscopes.cxx.common.scalar_functions'),
     make_extension('microscopes.cxx.common._scalar_functions'),
 ])

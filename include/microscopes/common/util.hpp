@@ -1,6 +1,10 @@
 #pragma once
 
 #include <microscopes/common/random_fwd.hpp>
+#include <microscopes/common/macros.hpp>
+
+#include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/Cholesky>
 
 #include <iostream>
 #include <sstream>
@@ -118,6 +122,29 @@ struct util {
     std::ostringstream oss;
     oss << t;
     return oss.str();
+  }
+
+  static inline bool
+  is_symmetric_positive_definite(const Eigen::MatrixXf &m)
+  {
+    if (!m.isApprox(m.transpose()))
+      return false;
+    Eigen::LDLT<Eigen::MatrixXf> ldlt;
+    ldlt.compute(m);
+    return ldlt.isPositive();
+  }
+
+  // helpers for python
+  static inline ALWAYS_INLINE void
+  set(Eigen::MatrixXf &m, unsigned i, unsigned j, float v)
+  {
+    m(i, j) = v;
+  }
+
+  static inline ALWAYS_INLINE float
+  get(const Eigen::MatrixXf &m, unsigned i, unsigned j)
+  {
+    return m(i, j);
   }
 };
 

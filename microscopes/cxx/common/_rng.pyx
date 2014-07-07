@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+
 import time
+import random
 
 def _seed():
-    import random
     return random.randint(0, 0x7FFFFFFF)
 
 cdef class rng:
