@@ -33,6 +33,15 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* BetaBernoulliNonConj_Group_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   BetaBernoulliNonConj_Group_reflection_ = NULL;
+const ::google::protobuf::Descriptor* NormalInverseWishart_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  NormalInverseWishart_reflection_ = NULL;
+const ::google::protobuf::Descriptor* NormalInverseWishart_Shared_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  NormalInverseWishart_Shared_reflection_ = NULL;
+const ::google::protobuf::Descriptor* NormalInverseWishart_Group_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  NormalInverseWishart_Group_reflection_ = NULL;
 
 }  // namespace
 
@@ -103,6 +112,55 @@ void protobuf_AssignDesc_microscopes_2fio_2fschema_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(BetaBernoulliNonConj_Group));
+  NormalInverseWishart_descriptor_ = file->message_type(2);
+  static const int NormalInverseWishart_offsets_[1] = {
+  };
+  NormalInverseWishart_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      NormalInverseWishart_descriptor_,
+      NormalInverseWishart::default_instance_,
+      NormalInverseWishart_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(NormalInverseWishart));
+  NormalInverseWishart_Shared_descriptor_ = NormalInverseWishart_descriptor_->nested_type(0);
+  static const int NormalInverseWishart_Shared_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart_Shared, mu0_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart_Shared, lambda_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart_Shared, psi_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart_Shared, nu_),
+  };
+  NormalInverseWishart_Shared_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      NormalInverseWishart_Shared_descriptor_,
+      NormalInverseWishart_Shared::default_instance_,
+      NormalInverseWishart_Shared_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart_Shared, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart_Shared, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(NormalInverseWishart_Shared));
+  NormalInverseWishart_Group_descriptor_ = NormalInverseWishart_descriptor_->nested_type(1);
+  static const int NormalInverseWishart_Group_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart_Group, count_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart_Group, sum_x_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart_Group, sum_xxt_),
+  };
+  NormalInverseWishart_Group_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      NormalInverseWishart_Group_descriptor_,
+      NormalInverseWishart_Group::default_instance_,
+      NormalInverseWishart_Group_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart_Group, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NormalInverseWishart_Group, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(NormalInverseWishart_Group));
 }
 
 namespace {
@@ -123,6 +181,12 @@ void protobuf_RegisterTypes(const ::std::string&) {
     BetaBernoulliNonConj_Shared_descriptor_, &BetaBernoulliNonConj_Shared::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     BetaBernoulliNonConj_Group_descriptor_, &BetaBernoulliNonConj_Group::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    NormalInverseWishart_descriptor_, &NormalInverseWishart::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    NormalInverseWishart_Shared_descriptor_, &NormalInverseWishart_Shared::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    NormalInverseWishart_Group_descriptor_, &NormalInverseWishart_Group::default_instance());
 }
 
 }  // namespace
@@ -136,6 +200,12 @@ void protobuf_ShutdownFile_microscopes_2fio_2fschema_2eproto() {
   delete BetaBernoulliNonConj_Shared_reflection_;
   delete BetaBernoulliNonConj_Group::default_instance_;
   delete BetaBernoulliNonConj_Group_reflection_;
+  delete NormalInverseWishart::default_instance_;
+  delete NormalInverseWishart_reflection_;
+  delete NormalInverseWishart_Shared::default_instance_;
+  delete NormalInverseWishart_Shared_reflection_;
+  delete NormalInverseWishart_Group::default_instance_;
+  delete NormalInverseWishart_Group_reflection_;
 }
 
 void protobuf_AddDesc_microscopes_2fio_2fschema_2eproto() {
@@ -148,17 +218,27 @@ void protobuf_AddDesc_microscopes_2fio_2fschema_2eproto() {
     "\n\033microscopes/io/schema.proto\022\016microscop"
     "es.io\"\024\n\003CRP\022\r\n\005alpha\030\001 \002(\002\"Q\n\024BetaBerno"
     "ulliNonConj\032%\n\006Shared\022\r\n\005alpha\030\001 \002(\002\022\014\n\004"
-    "beta\030\002 \002(\002\032\022\n\005Group\022\t\n\001p\030\001 \002(\002", 150);
+    "beta\030\002 \002(\002\032\022\n\005Group\022\t\n\001p\030\001 \002(\002\"\216\001\n\024Norma"
+    "lInverseWishart\032>\n\006Shared\022\013\n\003mu0\030\001 \003(\002\022\016"
+    "\n\006lambda\030\002 \002(\002\022\013\n\003psi\030\003 \003(\002\022\n\n\002nu\030\004 \002(\002\032"
+    "6\n\005Group\022\r\n\005count\030\001 \002(\005\022\r\n\005sum_x\030\002 \003(\002\022\017"
+    "\n\007sum_xxT\030\003 \003(\002", 295);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "microscopes/io/schema.proto", &protobuf_RegisterTypes);
   CRP::default_instance_ = new CRP();
   BetaBernoulliNonConj::default_instance_ = new BetaBernoulliNonConj();
   BetaBernoulliNonConj_Shared::default_instance_ = new BetaBernoulliNonConj_Shared();
   BetaBernoulliNonConj_Group::default_instance_ = new BetaBernoulliNonConj_Group();
+  NormalInverseWishart::default_instance_ = new NormalInverseWishart();
+  NormalInverseWishart_Shared::default_instance_ = new NormalInverseWishart_Shared();
+  NormalInverseWishart_Group::default_instance_ = new NormalInverseWishart_Group();
   CRP::default_instance_->InitAsDefaultInstance();
   BetaBernoulliNonConj::default_instance_->InitAsDefaultInstance();
   BetaBernoulliNonConj_Shared::default_instance_->InitAsDefaultInstance();
   BetaBernoulliNonConj_Group::default_instance_->InitAsDefaultInstance();
+  NormalInverseWishart::default_instance_->InitAsDefaultInstance();
+  NormalInverseWishart_Shared::default_instance_->InitAsDefaultInstance();
+  NormalInverseWishart_Group::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_microscopes_2fio_2fschema_2eproto);
 }
 
@@ -980,6 +1060,797 @@ void BetaBernoulliNonConj::Swap(BetaBernoulliNonConj* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = BetaBernoulliNonConj_descriptor_;
   metadata.reflection = BetaBernoulliNonConj_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int NormalInverseWishart_Shared::kMu0FieldNumber;
+const int NormalInverseWishart_Shared::kLambdaFieldNumber;
+const int NormalInverseWishart_Shared::kPsiFieldNumber;
+const int NormalInverseWishart_Shared::kNuFieldNumber;
+#endif  // !_MSC_VER
+
+NormalInverseWishart_Shared::NormalInverseWishart_Shared()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void NormalInverseWishart_Shared::InitAsDefaultInstance() {
+}
+
+NormalInverseWishart_Shared::NormalInverseWishart_Shared(const NormalInverseWishart_Shared& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void NormalInverseWishart_Shared::SharedCtor() {
+  _cached_size_ = 0;
+  lambda_ = 0;
+  nu_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+NormalInverseWishart_Shared::~NormalInverseWishart_Shared() {
+  SharedDtor();
+}
+
+void NormalInverseWishart_Shared::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void NormalInverseWishart_Shared::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* NormalInverseWishart_Shared::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return NormalInverseWishart_Shared_descriptor_;
+}
+
+const NormalInverseWishart_Shared& NormalInverseWishart_Shared::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  return *default_instance_;
+}
+
+NormalInverseWishart_Shared* NormalInverseWishart_Shared::default_instance_ = NULL;
+
+NormalInverseWishart_Shared* NormalInverseWishart_Shared::New() const {
+  return new NormalInverseWishart_Shared;
+}
+
+void NormalInverseWishart_Shared::Clear() {
+  if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
+    lambda_ = 0;
+    nu_ = 0;
+  }
+  mu0_.Clear();
+  psi_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool NormalInverseWishart_Shared::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated float mu0 = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_mu0:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 13, input, this->mutable_mu0())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_mu0())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(13)) goto parse_mu0;
+        if (input->ExpectTag(21)) goto parse_lambda;
+        break;
+      }
+
+      // required float lambda = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_lambda:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &lambda_)));
+          set_has_lambda();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(29)) goto parse_psi;
+        break;
+      }
+
+      // repeated float psi = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_psi:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 29, input, this->mutable_psi())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_psi())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(29)) goto parse_psi;
+        if (input->ExpectTag(37)) goto parse_nu;
+        break;
+      }
+
+      // required float nu = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_nu:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &nu_)));
+          set_has_nu();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void NormalInverseWishart_Shared::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // repeated float mu0 = 1;
+  for (int i = 0; i < this->mu0_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      1, this->mu0(i), output);
+  }
+
+  // required float lambda = 2;
+  if (has_lambda()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->lambda(), output);
+  }
+
+  // repeated float psi = 3;
+  for (int i = 0; i < this->psi_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      3, this->psi(i), output);
+  }
+
+  // required float nu = 4;
+  if (has_nu()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->nu(), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* NormalInverseWishart_Shared::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // repeated float mu0 = 1;
+  for (int i = 0; i < this->mu0_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(1, this->mu0(i), target);
+  }
+
+  // required float lambda = 2;
+  if (has_lambda()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->lambda(), target);
+  }
+
+  // repeated float psi = 3;
+  for (int i = 0; i < this->psi_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(3, this->psi(i), target);
+  }
+
+  // required float nu = 4;
+  if (has_nu()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->nu(), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int NormalInverseWishart_Shared::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
+    // required float lambda = 2;
+    if (has_lambda()) {
+      total_size += 1 + 4;
+    }
+
+    // required float nu = 4;
+    if (has_nu()) {
+      total_size += 1 + 4;
+    }
+
+  }
+  // repeated float mu0 = 1;
+  {
+    int data_size = 0;
+    data_size = 4 * this->mu0_size();
+    total_size += 1 * this->mu0_size() + data_size;
+  }
+
+  // repeated float psi = 3;
+  {
+    int data_size = 0;
+    data_size = 4 * this->psi_size();
+    total_size += 1 * this->psi_size() + data_size;
+  }
+
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void NormalInverseWishart_Shared::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const NormalInverseWishart_Shared* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const NormalInverseWishart_Shared*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void NormalInverseWishart_Shared::MergeFrom(const NormalInverseWishart_Shared& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  mu0_.MergeFrom(from.mu0_);
+  psi_.MergeFrom(from.psi_);
+  if (from._has_bits_[1 / 32] & (0xffu << (1 % 32))) {
+    if (from.has_lambda()) {
+      set_lambda(from.lambda());
+    }
+    if (from.has_nu()) {
+      set_nu(from.nu());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void NormalInverseWishart_Shared::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void NormalInverseWishart_Shared::CopyFrom(const NormalInverseWishart_Shared& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool NormalInverseWishart_Shared::IsInitialized() const {
+  if ((_has_bits_[0] & 0x0000000a) != 0x0000000a) return false;
+
+  return true;
+}
+
+void NormalInverseWishart_Shared::Swap(NormalInverseWishart_Shared* other) {
+  if (other != this) {
+    mu0_.Swap(&other->mu0_);
+    std::swap(lambda_, other->lambda_);
+    psi_.Swap(&other->psi_);
+    std::swap(nu_, other->nu_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata NormalInverseWishart_Shared::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = NormalInverseWishart_Shared_descriptor_;
+  metadata.reflection = NormalInverseWishart_Shared_reflection_;
+  return metadata;
+}
+
+
+// -------------------------------------------------------------------
+
+#ifndef _MSC_VER
+const int NormalInverseWishart_Group::kCountFieldNumber;
+const int NormalInverseWishart_Group::kSumXFieldNumber;
+const int NormalInverseWishart_Group::kSumXxTFieldNumber;
+#endif  // !_MSC_VER
+
+NormalInverseWishart_Group::NormalInverseWishart_Group()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void NormalInverseWishart_Group::InitAsDefaultInstance() {
+}
+
+NormalInverseWishart_Group::NormalInverseWishart_Group(const NormalInverseWishart_Group& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void NormalInverseWishart_Group::SharedCtor() {
+  _cached_size_ = 0;
+  count_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+NormalInverseWishart_Group::~NormalInverseWishart_Group() {
+  SharedDtor();
+}
+
+void NormalInverseWishart_Group::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void NormalInverseWishart_Group::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* NormalInverseWishart_Group::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return NormalInverseWishart_Group_descriptor_;
+}
+
+const NormalInverseWishart_Group& NormalInverseWishart_Group::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  return *default_instance_;
+}
+
+NormalInverseWishart_Group* NormalInverseWishart_Group::default_instance_ = NULL;
+
+NormalInverseWishart_Group* NormalInverseWishart_Group::New() const {
+  return new NormalInverseWishart_Group;
+}
+
+void NormalInverseWishart_Group::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    count_ = 0;
+  }
+  sum_x_.Clear();
+  sum_xxt_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool NormalInverseWishart_Group::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required int32 count = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &count_)));
+          set_has_count();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(21)) goto parse_sum_x;
+        break;
+      }
+
+      // repeated float sum_x = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_sum_x:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 21, input, this->mutable_sum_x())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_sum_x())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(21)) goto parse_sum_x;
+        if (input->ExpectTag(29)) goto parse_sum_xxT;
+        break;
+      }
+
+      // repeated float sum_xxT = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_sum_xxT:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 29, input, this->mutable_sum_xxt())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_sum_xxt())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(29)) goto parse_sum_xxT;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void NormalInverseWishart_Group::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required int32 count = 1;
+  if (has_count()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->count(), output);
+  }
+
+  // repeated float sum_x = 2;
+  for (int i = 0; i < this->sum_x_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      2, this->sum_x(i), output);
+  }
+
+  // repeated float sum_xxT = 3;
+  for (int i = 0; i < this->sum_xxt_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      3, this->sum_xxt(i), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* NormalInverseWishart_Group::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required int32 count = 1;
+  if (has_count()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->count(), target);
+  }
+
+  // repeated float sum_x = 2;
+  for (int i = 0; i < this->sum_x_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(2, this->sum_x(i), target);
+  }
+
+  // repeated float sum_xxT = 3;
+  for (int i = 0; i < this->sum_xxt_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(3, this->sum_xxt(i), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int NormalInverseWishart_Group::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required int32 count = 1;
+    if (has_count()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->count());
+    }
+
+  }
+  // repeated float sum_x = 2;
+  {
+    int data_size = 0;
+    data_size = 4 * this->sum_x_size();
+    total_size += 1 * this->sum_x_size() + data_size;
+  }
+
+  // repeated float sum_xxT = 3;
+  {
+    int data_size = 0;
+    data_size = 4 * this->sum_xxt_size();
+    total_size += 1 * this->sum_xxt_size() + data_size;
+  }
+
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void NormalInverseWishart_Group::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const NormalInverseWishart_Group* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const NormalInverseWishart_Group*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void NormalInverseWishart_Group::MergeFrom(const NormalInverseWishart_Group& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  sum_x_.MergeFrom(from.sum_x_);
+  sum_xxt_.MergeFrom(from.sum_xxt_);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_count()) {
+      set_count(from.count());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void NormalInverseWishart_Group::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void NormalInverseWishart_Group::CopyFrom(const NormalInverseWishart_Group& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool NormalInverseWishart_Group::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+
+  return true;
+}
+
+void NormalInverseWishart_Group::Swap(NormalInverseWishart_Group* other) {
+  if (other != this) {
+    std::swap(count_, other->count_);
+    sum_x_.Swap(&other->sum_x_);
+    sum_xxt_.Swap(&other->sum_xxt_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata NormalInverseWishart_Group::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = NormalInverseWishart_Group_descriptor_;
+  metadata.reflection = NormalInverseWishart_Group_reflection_;
+  return metadata;
+}
+
+
+// -------------------------------------------------------------------
+
+#ifndef _MSC_VER
+#endif  // !_MSC_VER
+
+NormalInverseWishart::NormalInverseWishart()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void NormalInverseWishart::InitAsDefaultInstance() {
+}
+
+NormalInverseWishart::NormalInverseWishart(const NormalInverseWishart& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void NormalInverseWishart::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+NormalInverseWishart::~NormalInverseWishart() {
+  SharedDtor();
+}
+
+void NormalInverseWishart::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void NormalInverseWishart::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* NormalInverseWishart::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return NormalInverseWishart_descriptor_;
+}
+
+const NormalInverseWishart& NormalInverseWishart::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  return *default_instance_;
+}
+
+NormalInverseWishart* NormalInverseWishart::default_instance_ = NULL;
+
+NormalInverseWishart* NormalInverseWishart::New() const {
+  return new NormalInverseWishart;
+}
+
+void NormalInverseWishart::Clear() {
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool NormalInverseWishart::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+        ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+      return true;
+    }
+    DO_(::google::protobuf::internal::WireFormat::SkipField(
+          input, tag, mutable_unknown_fields()));
+  }
+  return true;
+#undef DO_
+}
+
+void NormalInverseWishart::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* NormalInverseWishart::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int NormalInverseWishart::ByteSize() const {
+  int total_size = 0;
+
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void NormalInverseWishart::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const NormalInverseWishart* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const NormalInverseWishart*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void NormalInverseWishart::MergeFrom(const NormalInverseWishart& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void NormalInverseWishart::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void NormalInverseWishart::CopyFrom(const NormalInverseWishart& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool NormalInverseWishart::IsInitialized() const {
+
+  return true;
+}
+
+void NormalInverseWishart::Swap(NormalInverseWishart* other) {
+  if (other != this) {
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata NormalInverseWishart::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = NormalInverseWishart_descriptor_;
+  metadata.reflection = NormalInverseWishart_reflection_;
   return metadata;
 }
 

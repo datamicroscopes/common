@@ -15,10 +15,14 @@ from distributions.io.schema_pb2 import BetaBernoulli as pb_bb, \
 
 from microscopes.cxx._models cimport \
   bb_factory, bnb_factory, gp_factory, \
-  nich_factory, dd_factory, bbnc_factory
+  nich_factory, dd_factory, bbnc_factory, \
+  niw_factory
 
-from microscopes.py.models import bbnc as py_bbnc
-from microscopes.io.schema_pb2 import BetaBernoulliNonConj as pb_bbnc
+from microscopes.py.models import bbnc as py_bbnc, \
+                                  niw as py_niw
+
+from microscopes.io.schema_pb2 import BetaBernoulliNonConj as pb_bbnc, \
+                                      NormalInverseWishart as pb_niw
 
 class py_model(object):
     def __init__(self, model_module, pb_type):
@@ -62,3 +66,4 @@ gp   = (py_model(dbg_gp, pb_gp), gp_factory())
 nich = (py_model(dbg_nich, pb_nich), nich_factory())
 dd   = (py_model(dbg_dd, pb_dd), dd_factory())
 bbnc = (py_model(py_bbnc, pb_bbnc), bbnc_factory())
+niw  = (py_model(py_niw, pb_niw), niw_factory())

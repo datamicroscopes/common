@@ -38,6 +38,9 @@ class CRP;
 class BetaBernoulliNonConj;
 class BetaBernoulliNonConj_Shared;
 class BetaBernoulliNonConj_Group;
+class NormalInverseWishart;
+class NormalInverseWishart_Shared;
+class NormalInverseWishart_Group;
 
 // ===================================================================
 
@@ -370,6 +373,307 @@ class BetaBernoulliNonConj : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static BetaBernoulliNonConj* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class NormalInverseWishart_Shared : public ::google::protobuf::Message {
+ public:
+  NormalInverseWishart_Shared();
+  virtual ~NormalInverseWishart_Shared();
+
+  NormalInverseWishart_Shared(const NormalInverseWishart_Shared& from);
+
+  inline NormalInverseWishart_Shared& operator=(const NormalInverseWishart_Shared& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const NormalInverseWishart_Shared& default_instance();
+
+  void Swap(NormalInverseWishart_Shared* other);
+
+  // implements Message ----------------------------------------------
+
+  NormalInverseWishart_Shared* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const NormalInverseWishart_Shared& from);
+  void MergeFrom(const NormalInverseWishart_Shared& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated float mu0 = 1;
+  inline int mu0_size() const;
+  inline void clear_mu0();
+  static const int kMu0FieldNumber = 1;
+  inline float mu0(int index) const;
+  inline void set_mu0(int index, float value);
+  inline void add_mu0(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      mu0() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_mu0();
+
+  // required float lambda = 2;
+  inline bool has_lambda() const;
+  inline void clear_lambda();
+  static const int kLambdaFieldNumber = 2;
+  inline float lambda() const;
+  inline void set_lambda(float value);
+
+  // repeated float psi = 3;
+  inline int psi_size() const;
+  inline void clear_psi();
+  static const int kPsiFieldNumber = 3;
+  inline float psi(int index) const;
+  inline void set_psi(int index, float value);
+  inline void add_psi(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      psi() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_psi();
+
+  // required float nu = 4;
+  inline bool has_nu() const;
+  inline void clear_nu();
+  static const int kNuFieldNumber = 4;
+  inline float nu() const;
+  inline void set_nu(float value);
+
+  // @@protoc_insertion_point(class_scope:microscopes.io.NormalInverseWishart.Shared)
+ private:
+  inline void set_has_lambda();
+  inline void clear_has_lambda();
+  inline void set_has_nu();
+  inline void clear_has_nu();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::RepeatedField< float > mu0_;
+  ::google::protobuf::RepeatedField< float > psi_;
+  float lambda_;
+  float nu_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+
+  friend void  protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_AssignDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_ShutdownFile_microscopes_2fio_2fschema_2eproto();
+
+  void InitAsDefaultInstance();
+  static NormalInverseWishart_Shared* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class NormalInverseWishart_Group : public ::google::protobuf::Message {
+ public:
+  NormalInverseWishart_Group();
+  virtual ~NormalInverseWishart_Group();
+
+  NormalInverseWishart_Group(const NormalInverseWishart_Group& from);
+
+  inline NormalInverseWishart_Group& operator=(const NormalInverseWishart_Group& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const NormalInverseWishart_Group& default_instance();
+
+  void Swap(NormalInverseWishart_Group* other);
+
+  // implements Message ----------------------------------------------
+
+  NormalInverseWishart_Group* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const NormalInverseWishart_Group& from);
+  void MergeFrom(const NormalInverseWishart_Group& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required int32 count = 1;
+  inline bool has_count() const;
+  inline void clear_count();
+  static const int kCountFieldNumber = 1;
+  inline ::google::protobuf::int32 count() const;
+  inline void set_count(::google::protobuf::int32 value);
+
+  // repeated float sum_x = 2;
+  inline int sum_x_size() const;
+  inline void clear_sum_x();
+  static const int kSumXFieldNumber = 2;
+  inline float sum_x(int index) const;
+  inline void set_sum_x(int index, float value);
+  inline void add_sum_x(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      sum_x() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_sum_x();
+
+  // repeated float sum_xxT = 3;
+  inline int sum_xxt_size() const;
+  inline void clear_sum_xxt();
+  static const int kSumXxTFieldNumber = 3;
+  inline float sum_xxt(int index) const;
+  inline void set_sum_xxt(int index, float value);
+  inline void add_sum_xxt(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      sum_xxt() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_sum_xxt();
+
+  // @@protoc_insertion_point(class_scope:microscopes.io.NormalInverseWishart.Group)
+ private:
+  inline void set_has_count();
+  inline void clear_has_count();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::RepeatedField< float > sum_x_;
+  ::google::protobuf::RepeatedField< float > sum_xxt_;
+  ::google::protobuf::int32 count_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+  friend void  protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_AssignDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_ShutdownFile_microscopes_2fio_2fschema_2eproto();
+
+  void InitAsDefaultInstance();
+  static NormalInverseWishart_Group* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class NormalInverseWishart : public ::google::protobuf::Message {
+ public:
+  NormalInverseWishart();
+  virtual ~NormalInverseWishart();
+
+  NormalInverseWishart(const NormalInverseWishart& from);
+
+  inline NormalInverseWishart& operator=(const NormalInverseWishart& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const NormalInverseWishart& default_instance();
+
+  void Swap(NormalInverseWishart* other);
+
+  // implements Message ----------------------------------------------
+
+  NormalInverseWishart* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const NormalInverseWishart& from);
+  void MergeFrom(const NormalInverseWishart& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  typedef NormalInverseWishart_Shared Shared;
+  typedef NormalInverseWishart_Group Group;
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:microscopes.io.NormalInverseWishart)
+ private:
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[1];
+
+  friend void  protobuf_AddDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_AssignDesc_microscopes_2fio_2fschema_2eproto();
+  friend void protobuf_ShutdownFile_microscopes_2fio_2fschema_2eproto();
+
+  void InitAsDefaultInstance();
+  static NormalInverseWishart* default_instance_;
+};
 // ===================================================================
 
 
@@ -476,6 +780,184 @@ inline void BetaBernoulliNonConj_Group::set_p(float value) {
 // -------------------------------------------------------------------
 
 // BetaBernoulliNonConj
+
+// -------------------------------------------------------------------
+
+// NormalInverseWishart_Shared
+
+// repeated float mu0 = 1;
+inline int NormalInverseWishart_Shared::mu0_size() const {
+  return mu0_.size();
+}
+inline void NormalInverseWishart_Shared::clear_mu0() {
+  mu0_.Clear();
+}
+inline float NormalInverseWishart_Shared::mu0(int index) const {
+  return mu0_.Get(index);
+}
+inline void NormalInverseWishart_Shared::set_mu0(int index, float value) {
+  mu0_.Set(index, value);
+}
+inline void NormalInverseWishart_Shared::add_mu0(float value) {
+  mu0_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+NormalInverseWishart_Shared::mu0() const {
+  return mu0_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+NormalInverseWishart_Shared::mutable_mu0() {
+  return &mu0_;
+}
+
+// required float lambda = 2;
+inline bool NormalInverseWishart_Shared::has_lambda() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void NormalInverseWishart_Shared::set_has_lambda() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void NormalInverseWishart_Shared::clear_has_lambda() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void NormalInverseWishart_Shared::clear_lambda() {
+  lambda_ = 0;
+  clear_has_lambda();
+}
+inline float NormalInverseWishart_Shared::lambda() const {
+  return lambda_;
+}
+inline void NormalInverseWishart_Shared::set_lambda(float value) {
+  set_has_lambda();
+  lambda_ = value;
+}
+
+// repeated float psi = 3;
+inline int NormalInverseWishart_Shared::psi_size() const {
+  return psi_.size();
+}
+inline void NormalInverseWishart_Shared::clear_psi() {
+  psi_.Clear();
+}
+inline float NormalInverseWishart_Shared::psi(int index) const {
+  return psi_.Get(index);
+}
+inline void NormalInverseWishart_Shared::set_psi(int index, float value) {
+  psi_.Set(index, value);
+}
+inline void NormalInverseWishart_Shared::add_psi(float value) {
+  psi_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+NormalInverseWishart_Shared::psi() const {
+  return psi_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+NormalInverseWishart_Shared::mutable_psi() {
+  return &psi_;
+}
+
+// required float nu = 4;
+inline bool NormalInverseWishart_Shared::has_nu() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void NormalInverseWishart_Shared::set_has_nu() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void NormalInverseWishart_Shared::clear_has_nu() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void NormalInverseWishart_Shared::clear_nu() {
+  nu_ = 0;
+  clear_has_nu();
+}
+inline float NormalInverseWishart_Shared::nu() const {
+  return nu_;
+}
+inline void NormalInverseWishart_Shared::set_nu(float value) {
+  set_has_nu();
+  nu_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// NormalInverseWishart_Group
+
+// required int32 count = 1;
+inline bool NormalInverseWishart_Group::has_count() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void NormalInverseWishart_Group::set_has_count() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void NormalInverseWishart_Group::clear_has_count() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void NormalInverseWishart_Group::clear_count() {
+  count_ = 0;
+  clear_has_count();
+}
+inline ::google::protobuf::int32 NormalInverseWishart_Group::count() const {
+  return count_;
+}
+inline void NormalInverseWishart_Group::set_count(::google::protobuf::int32 value) {
+  set_has_count();
+  count_ = value;
+}
+
+// repeated float sum_x = 2;
+inline int NormalInverseWishart_Group::sum_x_size() const {
+  return sum_x_.size();
+}
+inline void NormalInverseWishart_Group::clear_sum_x() {
+  sum_x_.Clear();
+}
+inline float NormalInverseWishart_Group::sum_x(int index) const {
+  return sum_x_.Get(index);
+}
+inline void NormalInverseWishart_Group::set_sum_x(int index, float value) {
+  sum_x_.Set(index, value);
+}
+inline void NormalInverseWishart_Group::add_sum_x(float value) {
+  sum_x_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+NormalInverseWishart_Group::sum_x() const {
+  return sum_x_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+NormalInverseWishart_Group::mutable_sum_x() {
+  return &sum_x_;
+}
+
+// repeated float sum_xxT = 3;
+inline int NormalInverseWishart_Group::sum_xxt_size() const {
+  return sum_xxt_.size();
+}
+inline void NormalInverseWishart_Group::clear_sum_xxt() {
+  sum_xxt_.Clear();
+}
+inline float NormalInverseWishart_Group::sum_xxt(int index) const {
+  return sum_xxt_.Get(index);
+}
+inline void NormalInverseWishart_Group::set_sum_xxt(int index, float value) {
+  sum_xxt_.Set(index, value);
+}
+inline void NormalInverseWishart_Group::add_sum_xxt(float value) {
+  sum_xxt_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+NormalInverseWishart_Group::sum_xxt() const {
+  return sum_xxt_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+NormalInverseWishart_Group::mutable_sum_xxt() {
+  return &sum_xxt_;
+}
+
+// -------------------------------------------------------------------
+
+// NormalInverseWishart
 
 
 // @@protoc_insertion_point(namespace_scope)

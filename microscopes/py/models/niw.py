@@ -46,22 +46,44 @@ class Shared(SharedMixin, SharedIoMixin):
         self._nu0 = None
         self._D = None
 
-    #def plus_group(self, group)
-
     def dimension(self):
         return self._D
 
     def load(self, raw):
-        self._mu0 = raw['mu']
-        self._lam0 = float(raw['lam'])
+        self._mu0 = raw['mu0']
+        self._lam0 = float(raw['lambda'])
         self._psi0 = raw['psi']
         assert self._psi0.shape[0] == self._psi0.shape[1]
         self._nu0 = float(raw['nu'])
         self._D = self._psi0.shape[0]
 
-    #def dump(self)
-    #def load_protobuf(self, message)
-    #def dump_protobuf(self, message)
+    def dump(self):
+        return {
+            'mu0' : self._mu0,
+            'lambda' : self._lam0,
+            'psi' : self._psi0,
+            'nu' : self._nu0,
+        }
+
+    def load_protobuf(self, message):
+        self._mu0 = np.array(message.mu0, dtype=np.float)
+        self._lam0 = getattr(message, 'lambda')
+        self._D = self._mu0.shape[0]
+        self._psi0 = np.array(message.psi, dtype=np.float)
+        assert self._psi0.shape[0] == self._D * self._D
+        self._psi0 = self._psi0.reshape((self._D, self._D))
+        self._nu0 = self.nu
+        assert self._nu0 > float(self._D) - 1.
+
+    def dump_protobuf(self, message):
+        message.Clear()
+        for x in self._mu0:
+            message.mu0.append(x)
+        setattr(message, 'lambda', self._lam0)
+        for x in self._psi0:
+            for y in x:
+                message.psi.append(y)
+        message.nu = self._nu0
 
 class Group(GroupIoMixin):
     def __init__(self):
@@ -85,7 +107,10 @@ class Group(GroupIoMixin):
         self._sum_x -= value
         self._sum_xxT -= np.outer(value, value)
 
-    #def merge(self, shared, source)
+    def merge(self, shared, source):
+        self._cnts += source._cnts
+        self._sum_x += source._sum_x
+        self._sum_xxT += seource._sum_xxT
 
     def _post_params(self, shared):
         mu0, lam0, psi0, nu0 = shared._mu0, shared._lam0, shared._psi0, shared._nu0
@@ -128,19 +153,51 @@ class Group(GroupIoMixin):
         sampler.init(shared, self)
         return sampler.eval(shared)
 
-    #def load(self, raw)
-    #def dump(self)
-    #def load_protobuf(self, message)
-    #def dump_protobuf(self, message)
+    def load(self, raw):
+        self._cnts = int(raw['count'])
+        assert self._cnts >= 0
+        self._sum_x = raw['sum_x']
+        self._sum_xxT = raw['sum_xxT']
+        D = self._sum_x.shape[0]
+        assert self._sum_xxT.shape == (D,D)
+
+    def dump(self):
+        return {
+            'count' : self._cnts,
+            'sum_x' : self._sum_x,
+            'sum_xxT' : self._sum_xxT,
+        }
+
+    def load_protobuf(self, message):
+        self._cnts = message.count
+        self._sum_x = np.array(message.sum_x, dtype=np.float)
+        self._sum_xxT = np.array(message.sum_xxT, dtype=np.float)
+        D = self._sum_x.shape[0]
+        self._sum_xxT = self._sum_xxT.reshape((D, D))
+
+    def dump_protobuf(self, message):
+        message.Clear()
+        message.count = self._cnts
+        for x in self._sum_x:
+            message.sum_x.append(x)
+        for x in self._sum_xxT:
+            for y in x:
+                message.sum_xxT.append(y)
 
 class Sampler(object):
     def init(self, shared, group=None):
         if group is not None:
-            raise Exception('XXX: implement me!')
-        mu0, lam0, psi0, nu0 = shared._mu0, shared._lam0, shared._psi0, shared._nu0
+            mu0, lam0, psi0, nu0 = group._post_params(self)
+        else:
+            mu0, lam0, psi0, nu0 = shared._mu0, shared._lam0, shared._psi0, shared._nu0
         self._mu, self._sigma = sample_niw(mu0, lam0, psi0, nu0)
 
     def eval(self, shared):
         return np.random.multivariate_normal(self._mu, self._sigma)
 
-#def sample_group(shared, size)
+def sample_group(shared, size):
+    group = Group()
+    group.init(shared)
+    sampler = Sampler()
+    sampler.init(shared, group)
+    return [sampler.eval(shared) for _ in xrange(size)]

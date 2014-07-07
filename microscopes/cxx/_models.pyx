@@ -5,6 +5,7 @@ from microscopes.cxx._models_h cimport distributions_factory, \
                                        NormalInverseChiSq as c_nich, \
                                        DirichletDiscrete128 as c_dd
 from microscopes.cxx._bbnc_h cimport new_instance as bbnc_new_instance
+from microscopes.cxx._niw_h cimport new_instance as niw_new_instance
 
 cdef class factory:
     cdef shared_ptr[model] new_cmodel(self):
@@ -39,3 +40,7 @@ cdef class dd_factory(factory):
 cdef class bbnc_factory(factory):
     cdef shared_ptr[model] new_cmodel(self):
         return bbnc_new_instance()
+
+cdef class niw_factory(factory):
+    cdef shared_ptr[model] new_cmodel(self):
+        return niw_new_instance()

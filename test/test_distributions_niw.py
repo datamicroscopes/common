@@ -1,6 +1,6 @@
 from microscopes.py.common.util import random_orthonormal_matrix, almost_eq
-from microscopes.py.models import gcp
-from microscopes.py.models.gcp import sample_niw, sample_iw
+from microscopes.py.models import niw
+from microscopes.py.models.niw import sample_niw, sample_iw
 from distributions.dbg.models import nich
 
 import numpy as np
@@ -41,9 +41,9 @@ def test_niw_dist():
     nu0 = 3
 
     # make the NIW case
-    niw_shared = gcp.Shared()
-    niw_shared.load({'mu':mu0,'lam':lam0,'psi':psi0,'nu':nu0})
-    niw_group = gcp.Group()
+    niw_shared = niw.Shared()
+    niw_shared.load({'mu0':mu0,'lambda':lam0,'psi':psi0,'nu':nu0})
+    niw_group = niw.Group()
     niw_group.init(niw_shared)
 
     assert niw_shared.dimension() == 1
@@ -86,9 +86,9 @@ def test_niw_mv_dist():
     psi0 = np.dot(Q, np.dot(np.diag([1.0, 0.5, 0.2]), Q.T))
     lam0 = 0.3
 
-    niw_shared = gcp.Shared()
-    niw_shared.load({'mu':np.ones(3),'lam':lam0,'psi':psi0,'nu':nu0})
-    niw_group = gcp.Group()
+    niw_shared = niw.Shared()
+    niw_shared.load({'mu0':np.ones(3),'lambda':lam0,'psi':psi0,'nu':nu0})
+    niw_group = niw.Group()
     niw_group.init(niw_shared)
 
     niw_group.add_value(niw_shared, np.array([1., -3., 43.]))

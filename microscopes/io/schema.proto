@@ -6,11 +6,26 @@ message CRP {
 
 message BetaBernoulliNonConj {
     message Shared {
-      required float alpha = 1;
-      required float beta = 2;
+        required float alpha = 1;
+        required float beta = 2;
     }
 
     message Group {
-      required float p = 1;
+        required float p = 1;
+    }
+}
+
+message NormalInverseWishart {
+    message Shared {
+        repeated float mu0 = 1;
+        required float lambda = 2;
+        repeated float psi = 3;
+        required float nu = 4;
+    }
+
+    message Group {
+        required int32 count = 1;
+        repeated float sum_x = 2;
+        repeated float sum_xxT = 3;
     }
 }

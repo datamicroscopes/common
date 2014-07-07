@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='microscopes/io/schema.proto',
   package='microscopes.io',
-  serialized_pb='\n\x1bmicroscopes/io/schema.proto\x12\x0emicroscopes.io\"\x14\n\x03\x43RP\x12\r\n\x05\x61lpha\x18\x01 \x02(\x02\"Q\n\x14\x42\x65taBernoulliNonConj\x1a%\n\x06Shared\x12\r\n\x05\x61lpha\x18\x01 \x02(\x02\x12\x0c\n\x04\x62\x65ta\x18\x02 \x02(\x02\x1a\x12\n\x05Group\x12\t\n\x01p\x18\x01 \x02(\x02')
+  serialized_pb='\n\x1bmicroscopes/io/schema.proto\x12\x0emicroscopes.io\"\x14\n\x03\x43RP\x12\r\n\x05\x61lpha\x18\x01 \x02(\x02\"Q\n\x14\x42\x65taBernoulliNonConj\x1a%\n\x06Shared\x12\r\n\x05\x61lpha\x18\x01 \x02(\x02\x12\x0c\n\x04\x62\x65ta\x18\x02 \x02(\x02\x1a\x12\n\x05Group\x12\t\n\x01p\x18\x01 \x02(\x02\"\x8e\x01\n\x14NormalInverseWishart\x1a>\n\x06Shared\x12\x0b\n\x03mu0\x18\x01 \x03(\x02\x12\x0e\n\x06lambda\x18\x02 \x02(\x02\x12\x0b\n\x03psi\x18\x03 \x03(\x02\x12\n\n\x02nu\x18\x04 \x02(\x02\x1a\x36\n\x05Group\x12\r\n\x05\x63ount\x18\x01 \x02(\x05\x12\r\n\x05sum_x\x18\x02 \x03(\x02\x12\x0f\n\x07sum_xxT\x18\x03 \x03(\x02')
 
 
 
@@ -127,10 +127,123 @@ _BETABERNOULLINONCONJ = _descriptor.Descriptor(
   serialized_end=150,
 )
 
+
+_NORMALINVERSEWISHART_SHARED = _descriptor.Descriptor(
+  name='Shared',
+  full_name='microscopes.io.NormalInverseWishart.Shared',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='mu0', full_name='microscopes.io.NormalInverseWishart.Shared.mu0', index=0,
+      number=1, type=2, cpp_type=6, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='lambda', full_name='microscopes.io.NormalInverseWishart.Shared.lambda', index=1,
+      number=2, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='psi', full_name='microscopes.io.NormalInverseWishart.Shared.psi', index=2,
+      number=3, type=2, cpp_type=6, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='nu', full_name='microscopes.io.NormalInverseWishart.Shared.nu', index=3,
+      number=4, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=177,
+  serialized_end=239,
+)
+
+_NORMALINVERSEWISHART_GROUP = _descriptor.Descriptor(
+  name='Group',
+  full_name='microscopes.io.NormalInverseWishart.Group',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='count', full_name='microscopes.io.NormalInverseWishart.Group.count', index=0,
+      number=1, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='sum_x', full_name='microscopes.io.NormalInverseWishart.Group.sum_x', index=1,
+      number=2, type=2, cpp_type=6, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='sum_xxT', full_name='microscopes.io.NormalInverseWishart.Group.sum_xxT', index=2,
+      number=3, type=2, cpp_type=6, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=241,
+  serialized_end=295,
+)
+
+_NORMALINVERSEWISHART = _descriptor.Descriptor(
+  name='NormalInverseWishart',
+  full_name='microscopes.io.NormalInverseWishart',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[_NORMALINVERSEWISHART_SHARED, _NORMALINVERSEWISHART_GROUP, ],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=153,
+  serialized_end=295,
+)
+
 _BETABERNOULLINONCONJ_SHARED.containing_type = _BETABERNOULLINONCONJ;
 _BETABERNOULLINONCONJ_GROUP.containing_type = _BETABERNOULLINONCONJ;
+_NORMALINVERSEWISHART_SHARED.containing_type = _NORMALINVERSEWISHART;
+_NORMALINVERSEWISHART_GROUP.containing_type = _NORMALINVERSEWISHART;
 DESCRIPTOR.message_types_by_name['CRP'] = _CRP
 DESCRIPTOR.message_types_by_name['BetaBernoulliNonConj'] = _BETABERNOULLINONCONJ
+DESCRIPTOR.message_types_by_name['NormalInverseWishart'] = _NORMALINVERSEWISHART
 
 class CRP(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType
@@ -155,6 +268,24 @@ class BetaBernoulliNonConj(_message.Message):
   DESCRIPTOR = _BETABERNOULLINONCONJ
 
   # @@protoc_insertion_point(class_scope:microscopes.io.BetaBernoulliNonConj)
+
+class NormalInverseWishart(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+
+  class Shared(_message.Message):
+    __metaclass__ = _reflection.GeneratedProtocolMessageType
+    DESCRIPTOR = _NORMALINVERSEWISHART_SHARED
+
+    # @@protoc_insertion_point(class_scope:microscopes.io.NormalInverseWishart.Shared)
+
+  class Group(_message.Message):
+    __metaclass__ = _reflection.GeneratedProtocolMessageType
+    DESCRIPTOR = _NORMALINVERSEWISHART_GROUP
+
+    # @@protoc_insertion_point(class_scope:microscopes.io.NormalInverseWishart.Group)
+  DESCRIPTOR = _NORMALINVERSEWISHART
+
+  # @@protoc_insertion_point(class_scope:microscopes.io.NormalInverseWishart)
 
 
 # @@protoc_insertion_point(module_scope)
