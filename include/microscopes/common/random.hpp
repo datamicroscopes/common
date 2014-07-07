@@ -10,6 +10,7 @@
 #include <cmath>
 #include <random>
 #include <utility>
+#include <iostream>
 
 namespace microscopes {
 namespace common {
@@ -51,7 +52,8 @@ struct random {
     Eigen::LLT<Eigen::MatrixXf> llt(scale);
     MICROSCOPES_ASSERT(llt.info() == Eigen::Success);
 
-    Eigen::MatrixXf A(scale.rows(), scale.rows());
+    Eigen::MatrixXf A = Eigen::MatrixXf::Zero(scale.rows(), scale.rows());
+
     for (unsigned i = 0; i < scale.rows(); i++)
       A(i, i) = sqrt(std::chi_squared_distribution<float>(nu - float(i))(rng));
 
@@ -60,7 +62,11 @@ struct random {
       for (unsigned j = 0; j < i; j++)
         A(i, j) = norm(rng);
 
-    const Eigen::MatrixXf &X = llt.matrixL() * A;
+    //std::cout << "A: " << A << std::endl;
+
+    Eigen::MatrixXf X = llt.matrixL() * A;
+    //std::cout << "X: " << X << std::endl;
+    //std::cout << "XX^T: " << (X*X.transpose()) << std::endl;
     return X * X.transpose();
   }
 
@@ -68,16 +74,18 @@ struct random {
   sample_inverse_wishart(float nu, const Eigen::MatrixXf &psi, rng_t &rng)
   {
     // XXX: horrible
-    const Eigen::MatrixXf &psi_inv = psi.inverse();
-    const Eigen::MatrixXf &sigma_inv = sample_wishart(nu, psi_inv, rng);
+    Eigen::MatrixXf psi_inv = psi.inverse();
+    Eigen::MatrixXf sigma_inv = sample_wishart(nu, psi_inv, rng);
+    //std::cout << "psi_inv: " << psi_inv << std::endl;
+    //std::cout << "sigma_inv: " << sigma_inv << std::endl;
     return sigma_inv.inverse();
   }
 
   static inline std::pair<Eigen::VectorXf, Eigen::MatrixXf>
   sample_normal_inverse_wishart(const Eigen::VectorXf &mu0, float lambda, const Eigen::MatrixXf &psi, float nu, rng_t &rng)
   {
-    const Eigen::MatrixXf &cov = 1./lambda * sample_inverse_wishart(nu, psi, rng);
-    const Eigen::VectorXf &mu = sample_multivariate_normal(mu0, cov, rng);
+    Eigen::MatrixXf cov = 1./lambda * sample_inverse_wishart(nu, psi, rng);
+    Eigen::VectorXf mu = sample_multivariate_normal(mu0, cov, rng);
     return std::make_pair(mu, cov);
   }
 };

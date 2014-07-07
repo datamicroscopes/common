@@ -1,6 +1,8 @@
 from microscopes.py.common.util import random_orthonormal_matrix, almost_eq
 from microscopes.py.models import niw
-from microscopes.py.models.niw import sample_niw, sample_iw
+from microscopes.py.models.niw import sample_iw as py_sample_iw
+from microscopes.cxx.common.random import sample_inverse_wishart as cxx_sample_iw
+from microscopes.cxx.common.rng import rng
 from distributions.dbg.models import nich
 
 import numpy as np
@@ -11,7 +13,7 @@ from nose.plugins.attrib import attr
 #activate()
 #ro.r('library(MCMCpack)')
 
-def test_iw_sampler():
+def _test_iw_sampler(sample_iw_fn):
     Q = random_orthonormal_matrix(2)
     nu = 4
     S = np.dot(Q, np.dot(np.diag([1.0, 0.5]), Q.T))
@@ -19,18 +21,34 @@ def test_iw_sampler():
     #def r_sample_iw(nu, scale):
     #    return ro.r.riwish(nu, scale)
     #r_samples = [r_sample_iw(nu, S) for _ in xrange(10000)]
-    py_samples = [sample_iw(nu, S) for _ in xrange(10000)]
 
     true_mean = 1./(nu-S.shape[0]-1)*S
-    #r_mean = sum(r_samples) / len(r_samples)
-    py_mean = sum(py_samples) / len(py_samples)
 
-    print 'true:', true_mean
-    #print 'r:', r_mean
-    print 'py:', py_mean
-    diff = np.linalg.norm(true_mean - py_mean)
-    print 'F-norm:', diff
-    assert diff <= 0.3
+    ntries = 5
+    py_samples = []
+    while ntries:
+        py_samples.extend([sample_iw_fn(nu, S) for _ in xrange(10000)])
+
+        #r_mean = sum(r_samples) / len(r_samples)
+        py_mean = sum(py_samples) / len(py_samples)
+
+        print 'true:', true_mean
+        #print 'r:', r_mean
+        print 'py:', py_mean
+        diff = np.linalg.norm(true_mean - py_mean)
+        print 'F-norm:', diff
+        if diff <= 0.1:
+            return
+        ntries -= 1
+
+    assert False, "mean did not converge"
+
+def test_iw_sampler_py():
+    _test_iw_sampler(py_sample_iw)
+
+def test_iw_sampler_cxx():
+    r = rng()
+    _test_iw_sampler(lambda nu, S: cxx_sample_iw(nu, S, r))
 
 def test_niw_dist():
     # test by comparing to the 1D NIX model
