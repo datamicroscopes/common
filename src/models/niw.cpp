@@ -1,5 +1,6 @@
 #include <microscopes/models/niw.hpp>
 #include <microscopes/io/schema.pb.h>
+#include <microscopes/common/special.hpp>
 #include <distributions/random.hpp>
 #include <distributions/special.hpp>
 
@@ -20,30 +21,106 @@ using namespace Eigen;
 typedef NormalInverseWishart_Shared shared_message_type;
 typedef NormalInverseWishart_Group group_message_type;
 
+static inline void
+extractVec(VectorXf &v, const row_accessor &value)
+{
+  for (size_t i = 0; i < v.size(); i++)
+    v(i) = value.get<float>(i);
+}
+
+static inline float
+score_student_t(
+    const VectorXf &v,
+    float nu,
+    const VectorXf &mu,
+    const MatrixXf &sigma)
+{
+  const unsigned d = v.size();
+  const float term1 = fast_lgamma(nu/2. + float(d)/2.) - fast_lgamma(nu/2.);
+
+  // XXX: this is horribly inefficient, I know.
+  // deal with it for now
+
+  // XXX: use Cholesky decomposition to make this faster
+  const MatrixXf &sigma_inv = sigma.inverse();
+  const float sigma_det = sigma.determinant();
+
+  const float term2 = -0.5*fast_log(sigma_det) - float(d)/2.*(
+    fast_log(nu) + 1.1447298858494002 /* log(pi) */);
+
+  const VectorXf &diff = v - mu;
+
+  const float term3 = -0.5*(nu+float(d))*fast_log(1.+1./nu*(  diff.dot(sigma_inv*diff)   ));
+
+  return term1 + term2 + term3;
+}
+
+void
+niw_feature_group::postParams(const niw_model &m, suffstats_t &ss) const
+{
+  const float n = count_;
+  VectorXf xbar;
+  if (count_)
+    xbar = sum_x_ / n;
+  else
+    xbar = VectorXf::Zero(dim());
+  ss.mu0_ = m.lambda_/(m.lambda_+n)*m.mu0_ + n/(m.lambda_+n)*xbar;
+  ss.lambda_ = m.lambda_ + n;
+  ss.nu_ = m.nu_ + n;
+  const VectorXf &diff = xbar - m.mu0_;
+  const MatrixXf &C_n =
+    sum_xxT_ - sum_x_*xbar.transpose() - xbar*sum_x_.transpose() + n*xbar*xbar.transpose();
+  ss.psi_ = m.psi_ + C_n + m.lambda_*n/(m.lambda_+n)*diff*diff.transpose();
+}
+
 void
 niw_feature_group::add_value(const model &m, const row_accessor &value, rng_t &rng)
 {
   MICROSCOPES_ASSERT(value.curshape() == dim());
-
+  count_++;
+  VectorXf v(dim());
+  extractVec(v, value);
+  sum_x_ += v;
+  sum_xxT_ += v * v.transpose();
 }
 
 void
 niw_feature_group::remove_value(const model &m, const row_accessor &value, rng_t &rng)
 {
   MICROSCOPES_ASSERT(value.curshape() == dim());
+  MICROSCOPES_ASSERT(count_ > 0);
+  count_--;
+  VectorXf v(dim());
+  extractVec(v, value);
+  sum_x_ -= v;
+  sum_xxT_ -= v * v.transpose();
 }
 
 float
 niw_feature_group::score_value(const model &m, const row_accessor &value, rng_t &rng) const
 {
   MICROSCOPES_ASSERT(value.curshape() == dim());
-  return 0.;
+  VectorXf v(dim());
+  extractVec(v, value);
+  suffstats_t ss;
+  postParams(static_cast<const niw_model &>(m), ss);
+  const float dof = ss.nu_ - float(dim()) - 1.;
+  const MatrixXf sigma = ss.psi_ * (ss.lambda_+1.)/(ss.lambda_*dof);
+  return score_student_t(v, dof, ss.mu0_, sigma);
 }
 
 float
 niw_feature_group::score_data(const model &m, rng_t &rng) const
 {
-  return 0.;
+  const niw_model &m1 = static_cast<const niw_model &>(m);
+  suffstats_t ss;
+  postParams(m1, ss);
+  return special::lmultigamma(dim(), ss.nu_*0.5)
+    + m1.nu_*0.5*fast_log(m1.psi_.determinant())
+    - float(count_*dim())*0.5*1.1447298858494002 /* log(pi) */
+    - special::lmultigamma(dim(), m1.nu_*0.5)
+    - ss.nu_*0.5*fast_log(ss.psi_.determinant())
+    + float(count_)*0.5*fast_log(m1.lambda_/ss.lambda_);
 }
 
 void

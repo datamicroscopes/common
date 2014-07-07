@@ -72,7 +72,7 @@ class Shared(SharedMixin, SharedIoMixin):
         self._psi0 = np.array(message.psi, dtype=np.float)
         assert self._psi0.shape[0] == self._D * self._D
         self._psi0 = self._psi0.reshape((self._D, self._D))
-        self._nu0 = self.nu
+        self._nu0 = message.nu
         assert self._nu0 > float(self._D) - 1.
 
     def dump_protobuf(self, message):

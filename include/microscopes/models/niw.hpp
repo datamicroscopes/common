@@ -7,6 +7,8 @@
 namespace microscopes {
 namespace models {
 
+class niw_model; // forward decl
+
 class niw_feature_group : public feature_group {
   friend class niw_model;
 public:
@@ -27,6 +29,16 @@ public:
   void * get_ss_raw_ptr(const std::string &key) override;
 
 protected:
+
+  struct suffstats_t {
+    Eigen::VectorXf mu0_;
+    float lambda_;
+    Eigen::MatrixXf psi_;
+    float nu_;
+    suffstats_t() : mu0_(), lambda_(), psi_(), nu_() {}
+  };
+
+  void postParams(const niw_model &m, suffstats_t &ss) const;
 
   inline size_t
   dim() const
