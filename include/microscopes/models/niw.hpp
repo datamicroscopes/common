@@ -13,7 +13,9 @@ class niw_feature_group : public feature_group {
   friend class niw_model;
 public:
   niw_feature_group(unsigned dim)
-    : count_(), sum_x_(dim), sum_xxT_(dim, dim)
+    : count_(),
+      sum_x_(Eigen::VectorXf::Zero(dim)),
+      sum_xxT_(Eigen::MatrixXf::Zero(dim, dim))
   {
   }
 

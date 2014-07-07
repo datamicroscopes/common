@@ -123,6 +123,11 @@ class Group(GroupIoMixin):
         C_n = sum_xxT - np.outer(sum_x, xbar) - np.outer(xbar, sum_x) + n*np.outer(xbar, xbar)
         #print 'C_%d:'%(n), C_n
         psi_n = psi0 + C_n + lam0*n/(lam0+n)*np.outer(diff, diff)
+        #print "postparams:"
+        #print "  mu0" , mu_n
+        #print "  lam" , lam_n
+        #print "  psi" , psi_n
+        #print "  nu"  , nu_n
         return mu_n, lam_n, psi_n, nu_n
 
     def score_value(self, shared, value):
@@ -146,7 +151,27 @@ class Group(GroupIoMixin):
         mu_n, lam_n, psi_n, nu_n = self._post_params(shared)
         n = self._cnts
         D = shared.dimension()
-        return multigammaln(nu_n/2., D) + nu0/2.*np.log(np.linalg.det(psi0)) - (n*D/2.)*np.log(math.pi) - multigammaln(nu0/2., D) - nu_n/2.*np.log(np.linalg.det(psi_n)) + D/2.*np.log(lam0/lam_n)
+
+        #T1 = multigammaln(nu_n/2., D)
+        #T2 = + nu0/2.*np.log(np.linalg.det(psi0))
+        #T3 = - (n*D/2.)*np.log(math.pi)
+        #T4 = - multigammaln(nu0/2., D)
+        #T5 = - nu_n/2.*np.log(np.linalg.det(psi_n))
+        #T6 = + D/2.*np.log(lam0/lam_n)
+
+        #print 'py T1', T1, D, nu_n/2.
+        #print 'py T2', T2
+        #print 'py T3', T3
+        #print 'py T4', T4
+        #print 'py T5', T5
+        #print 'py T6', T6
+
+        return multigammaln(nu_n/2., D) \
+            + nu0/2.*np.log(np.linalg.det(psi0)) \
+            - (n*D/2.)*np.log(math.pi) \
+            - multigammaln(nu0/2., D) \
+            - nu_n/2.*np.log(np.linalg.det(psi_n)) \
+            + D/2.*np.log(lam0/lam_n)
 
     def sample_value(self, shared):
         sampler = Sampler()

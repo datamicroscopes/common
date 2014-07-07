@@ -71,6 +71,12 @@ niw_feature_group::postParams(const niw_model &m, suffstats_t &ss) const
   const MatrixXf &C_n =
     sum_xxT_ - sum_x_*xbar.transpose() - xbar*sum_x_.transpose() + n*xbar*xbar.transpose();
   ss.psi_ = m.psi_ + C_n + m.lambda_*n/(m.lambda_+n)*diff*diff.transpose();
+
+  //cout << "postParams(): " << endl
+  //     << "  mu0_: " << ss.mu0_ << endl
+  //     << "  lambda_: " << ss.lambda_ << endl
+  //     << "  psi_: " << ss.psi_ << endl
+  //     << "  nu_: " << ss.nu_ << endl;
 }
 
 void
@@ -104,8 +110,11 @@ niw_feature_group::score_value(const model &m, const row_accessor &value, rng_t 
   extractVec(v, value);
   suffstats_t ss;
   postParams(static_cast<const niw_model &>(m), ss);
-  const float dof = ss.nu_ - float(dim()) - 1.;
+  const float dof = ss.nu_ - float(dim()) + 1.;
   const MatrixXf sigma = ss.psi_ * (ss.lambda_+1.)/(ss.lambda_*dof);
+  //cout << "niw_feature_group::score_value" << endl
+  //     << "  dof: " << dof << endl
+  //     << "  sigma: " << sigma << endl;
   return score_student_t(v, dof, ss.mu0_, sigma);
 }
 
@@ -115,12 +124,27 @@ niw_feature_group::score_data(const model &m, rng_t &rng) const
   const niw_model &m1 = static_cast<const niw_model &>(m);
   suffstats_t ss;
   postParams(m1, ss);
+
+  //const auto T1 = special::lmultigamma(dim(), ss.nu_*0.5);
+  //const auto T2 = + m1.nu_*0.5*fast_log(m1.psi_.determinant());
+  //const auto T3 = - float(count_*dim())*0.5*1.1447298858494002 /* log(pi) */;
+  //const auto T4 = - special::lmultigamma(dim(), m1.nu_*0.5);
+  //const auto T5 = - ss.nu_*0.5*fast_log(ss.psi_.determinant());
+  //const auto T6 = + float(dim())*0.5*fast_log(m1.lambda_/ss.lambda_);
+
+  //cout << "cxx T1 " << T1 << " D " << dim() << " nu_n/2 " << ss.nu_*0.5 << endl;
+  //cout << "cxx T2 " << T2 << endl;
+  //cout << "cxx T3 " << T3 << endl;
+  //cout << "cxx T4 " << T4 << endl;
+  //cout << "cxx T5 " << T5 << endl;
+  //cout << "cxx T6 " << T6 << endl;
+
   return special::lmultigamma(dim(), ss.nu_*0.5)
     + m1.nu_*0.5*fast_log(m1.psi_.determinant())
     - float(count_*dim())*0.5*1.1447298858494002 /* log(pi) */
     - special::lmultigamma(dim(), m1.nu_*0.5)
     - ss.nu_*0.5*fast_log(ss.psi_.determinant())
-    + float(count_)*0.5*fast_log(m1.lambda_/ss.lambda_);
+    + float(dim())*0.5*fast_log(m1.lambda_/ss.lambda_);
 }
 
 void
