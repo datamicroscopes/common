@@ -1,4 +1,4 @@
-from microscopes.cxx.common.dataview import numpy_dataview
+from microscopes.cxx.common.recarray.dataview import numpy_dataview
 from microscopes.cxx.common.rng import rng
 
 import numpy as np

@@ -80,8 +80,9 @@ def make_extension(module_name):
 extensions = cythonize([
     make_extension('microscopes.cxx.models'),
     make_extension('microscopes.cxx._models'),
-    make_extension('microscopes.cxx.common.dataview'),
     make_extension('microscopes.cxx.common._dataview'),
+    make_extension('microscopes.cxx.common.recarray.dataview'),
+    make_extension('microscopes.cxx.common.recarray._dataview'),
     make_extension('microscopes.cxx.common.rng'),
     make_extension('microscopes.cxx.common._rng'),
     make_extension('microscopes.cxx.common.random'),

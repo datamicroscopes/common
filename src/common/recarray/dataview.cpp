@@ -1,4 +1,4 @@
-#include <microscopes/common/dataview.hpp>
+#include <microscopes/common/recarray/dataview.hpp>
 #include <microscopes/common/util.hpp>
 
 #include <cassert>
@@ -7,6 +7,7 @@
 
 using namespace std;
 using namespace microscopes::common;
+using namespace microscopes::common::recarray;
 
 static vector<string>
 runtime_type_strings(const vector<runtime_type> &types)

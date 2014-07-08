@@ -1,7 +1,7 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-from microscopes.cxx.common._type_helper_h cimport runtime_type
+from microscopes.cxx.common._runtime_type_h cimport runtime_type
 from microscopes.cxx.common._typedefs_h cimport hyperparam_bag_t, suffstats_bag_t
 from microscopes._shared_ptr_h cimport shared_ptr
 

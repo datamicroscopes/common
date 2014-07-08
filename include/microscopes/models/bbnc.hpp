@@ -15,11 +15,11 @@ public:
     MICROSCOPES_ASSERT(p >= 0.0 && p <= 1.0);
   }
 
-  void add_value(const model &m, const common::row_accessor &value, common::rng_t &rng) override;
-  void remove_value(const model &m, const common::row_accessor &value, common::rng_t &rng) override;
-  float score_value(const model &m, const common::row_accessor &value, common::rng_t &rng) const override;
+  void add_value(const model &m, const common::value_accessor &value, common::rng_t &rng) override;
+  void remove_value(const model &m, const common::value_accessor &value, common::rng_t &rng) override;
+  float score_value(const model &m, const common::value_accessor &value, common::rng_t &rng) const override;
   float score_data(const model &m, common::rng_t &rng) const override;
-  void sample_value(const model &m, common::row_mutator &value, common::rng_t &rng) const override;
+  void sample_value(const model &m, common::value_mutator &value, common::rng_t &rng) const override;
 
   common::suffstats_bag_t get_ss() const override;
   void set_ss(const common::suffstats_bag_t &ss) override;

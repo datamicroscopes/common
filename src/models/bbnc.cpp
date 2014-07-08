@@ -18,9 +18,9 @@ typedef BetaBernoulliNonConj::Group group_message_type;
 typedef BetaBernoulliNonConj::Shared shared_message_type;
 
 void
-bbnc_feature_group::add_value(const model &m, const row_accessor &value, rng_t &rng)
+bbnc_feature_group::add_value(const model &m, const value_accessor &value, rng_t &rng)
 {
-  MICROSCOPES_ASSERT(value.curshape() == 1);
+  MICROSCOPES_ASSERT(value.shape() == 1);
   if (value.get<bool>(0))
     heads_++;
   else
@@ -28,9 +28,9 @@ bbnc_feature_group::add_value(const model &m, const row_accessor &value, rng_t &
 }
 
 void
-bbnc_feature_group::remove_value(const model &m, const row_accessor &value, rng_t &rng)
+bbnc_feature_group::remove_value(const model &m, const value_accessor &value, rng_t &rng)
 {
-  MICROSCOPES_ASSERT(value.curshape() == 1);
+  MICROSCOPES_ASSERT(value.shape() == 1);
   if (value.get<bool>(0)) {
     MICROSCOPES_ASSERT(heads_ > 0);
     heads_--;
@@ -41,10 +41,10 @@ bbnc_feature_group::remove_value(const model &m, const row_accessor &value, rng_
 }
 
 float
-bbnc_feature_group::score_value(const model &m, const row_accessor &value, rng_t &rng) const
+bbnc_feature_group::score_value(const model &m, const value_accessor &value, rng_t &rng) const
 {
   MICROSCOPES_ASSERT(p_ >= 0.0 && p_ <= 1.0);
-  MICROSCOPES_ASSERT(value.curshape() == 1);
+  MICROSCOPES_ASSERT(value.shape() == 1);
   return value.get<bool>(0) ? fast_log(p_) : fast_log(1.-p_);
 }
 
@@ -69,10 +69,10 @@ bbnc_feature_group::score_data(const model &m, rng_t &rng) const
 }
 
 void
-bbnc_feature_group::sample_value(const model &m, row_mutator &value, rng_t &rng) const
+bbnc_feature_group::sample_value(const model &m, value_mutator &value, rng_t &rng) const
 {
   MICROSCOPES_ASSERT(p_ >= 0.0 && p_ <= 1.0);
-  MICROSCOPES_ASSERT(value.curshape() == 1);
+  MICROSCOPES_ASSERT(value.shape() == 1);
   value.set<bool>(sample_bernoulli(rng, p_), 0);
 }
 

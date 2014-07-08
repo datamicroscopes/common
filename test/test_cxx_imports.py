@@ -7,7 +7,7 @@ def test_import_models():
     assert bb and bnb and gp and nich and dd and bbnc and niw
 
 def test_import_dataview():
-    from microscopes.cxx.common.dataview import numpy_dataview
+    from microscopes.cxx.common.recarray.dataview import numpy_dataview
     assert numpy_dataview
 
 def test_import_rng():

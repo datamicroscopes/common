@@ -176,23 +176,23 @@ public:
   typedef typename distributions_model_types<T>::group_message_type message_type;
 
   inline void
-  add_value(const model &m, const common::row_accessor &value, common::rng_t &rng) override
+  add_value(const model &m, const common::value_accessor &value, common::rng_t &rng) override
   {
-    MICROSCOPES_ASSERT(value.curshape() == 1);
+    MICROSCOPES_ASSERT(value.shape() == 1);
     repr_.add_value(shared_repr(m), value.get< typename T::Value >(0), rng);
   }
 
   inline void
-  remove_value(const model &m, const common::row_accessor &value, common::rng_t &rng) override
+  remove_value(const model &m, const common::value_accessor &value, common::rng_t &rng) override
   {
-    MICROSCOPES_ASSERT(value.curshape() == 1);
+    MICROSCOPES_ASSERT(value.shape() == 1);
     repr_.remove_value(shared_repr(m), value.get< typename T::Value >(0), rng);
   }
 
   inline float
-  score_value(const model &m, const common::row_accessor &value, common::rng_t &rng) const override
+  score_value(const model &m, const common::value_accessor &value, common::rng_t &rng) const override
   {
-    MICROSCOPES_ASSERT(value.curshape() == 1);
+    MICROSCOPES_ASSERT(value.shape() == 1);
     return repr_.score_value(shared_repr(m), value.get< typename T::Value >(0), rng);
   }
 
@@ -203,9 +203,9 @@ public:
   }
 
   inline void
-  sample_value(const model &m, common::row_mutator &value, common::rng_t &rng) const override
+  sample_value(const model &m, common::value_mutator &value, common::rng_t &rng) const override
   {
-    MICROSCOPES_ASSERT(value.curshape() == 1);
+    MICROSCOPES_ASSERT(value.shape() == 1);
     typename T::Value sampled = repr_.sample_value(shared_repr(m), rng);
     value.set< typename T::Value >(sampled, 0);
   }

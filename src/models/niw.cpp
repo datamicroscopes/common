@@ -25,7 +25,7 @@ typedef NormalInverseWishart_Shared shared_message_type;
 typedef NormalInverseWishart_Group group_message_type;
 
 static inline void
-extractVec(VectorXf &v, const row_accessor &value)
+extractVec(VectorXf &v, const value_accessor &value)
 {
   for (size_t i = 0; i < v.size(); i++)
     v(i) = value.get<float>(i);
@@ -83,9 +83,9 @@ niw_feature_group::postParams(const niw_model &m, suffstats_t &ss) const
 }
 
 void
-niw_feature_group::add_value(const model &m, const row_accessor &value, rng_t &rng)
+niw_feature_group::add_value(const model &m, const value_accessor &value, rng_t &rng)
 {
-  MICROSCOPES_ASSERT(value.curshape() == dim());
+  MICROSCOPES_ASSERT(value.shape() == dim());
   count_++;
   VectorXf v(dim());
   extractVec(v, value);
@@ -94,9 +94,9 @@ niw_feature_group::add_value(const model &m, const row_accessor &value, rng_t &r
 }
 
 void
-niw_feature_group::remove_value(const model &m, const row_accessor &value, rng_t &rng)
+niw_feature_group::remove_value(const model &m, const value_accessor &value, rng_t &rng)
 {
-  MICROSCOPES_ASSERT(value.curshape() == dim());
+  MICROSCOPES_ASSERT(value.shape() == dim());
   MICROSCOPES_ASSERT(count_ > 0);
   count_--;
   VectorXf v(dim());
@@ -106,9 +106,9 @@ niw_feature_group::remove_value(const model &m, const row_accessor &value, rng_t
 }
 
 float
-niw_feature_group::score_value(const model &m, const row_accessor &value, rng_t &rng) const
+niw_feature_group::score_value(const model &m, const value_accessor &value, rng_t &rng) const
 {
-  MICROSCOPES_ASSERT(value.curshape() == dim());
+  MICROSCOPES_ASSERT(value.shape() == dim());
   VectorXf v(dim());
   extractVec(v, value);
   suffstats_t ss;
@@ -151,13 +151,13 @@ niw_feature_group::score_data(const model &m, rng_t &rng) const
 }
 
 void
-niw_feature_group::sample_value(const model &m, row_mutator &value, rng_t &rng) const
+niw_feature_group::sample_value(const model &m, value_mutator &value, rng_t &rng) const
 {
   suffstats_t ss;
   postParams(static_cast<const niw_model &>(m), ss);
   const auto p = random::sample_normal_inverse_wishart(ss.mu0_, ss.lambda_, ss.psi_, ss.nu_, rng);
   const VectorXf &x = random::sample_multivariate_normal(p.first, p.second, rng);
-  MICROSCOPES_ASSERT(x.size() == value.curshape());
+  MICROSCOPES_ASSERT(x.size() == value.shape());
   for (unsigned i = 0; i < x.size(); i++)
     value.set<float>(x(i), i);
 }

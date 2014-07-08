@@ -6,7 +6,7 @@ from libc.stddef cimport size_t
 
 from microscopes.cxx.common._type_info_h cimport primitive_type
 
-cdef extern from "microscopes/common/type_helper.hpp" namespace "microscopes::common":
+cdef extern from "microscopes/common/runtime_type.hpp" namespace "microscopes::common":
     cdef cppclass runtime_type:
         runtime_type()
         runtime_type(primitive_type)
@@ -15,7 +15,7 @@ cdef extern from "microscopes/common/type_helper.hpp" namespace "microscopes::co
         unsigned n()
         cbool vec()
 
-cdef extern from "microscopes/common/type_helper.hpp" namespace "microscopes::common::runtime_type_traits":
+cdef extern from "microscopes/common/runtime_type.hpp" namespace "microscopes::common::runtime_type_traits":
 
     cdef cppclass offsets_ret_t:
         offsets_ret_t()

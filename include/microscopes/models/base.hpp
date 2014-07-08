@@ -1,8 +1,8 @@
 #pragma once
 
-#include <microscopes/common/dataview.hpp>
+#include <microscopes/common/runtime_type.hpp>
+#include <microscopes/common/runtime_value.hpp>
 #include <microscopes/common/random_fwd.hpp>
-#include <microscopes/common/type_helper.hpp>
 #include <microscopes/common/typedefs.hpp>
 
 #include <memory>
@@ -18,11 +18,11 @@ class feature_group {
 public:
   virtual ~feature_group() {}
 
-  virtual void add_value(const model &m, const common::row_accessor &value, common::rng_t &rng) = 0;
-  virtual void remove_value(const model &m, const common::row_accessor &value, common::rng_t &rng) = 0;
-  virtual float score_value(const model &m, const common::row_accessor &value, common::rng_t &rng) const = 0;
+  virtual void add_value(const model &m, const common::value_accessor &value, common::rng_t &rng) = 0;
+  virtual void remove_value(const model &m, const common::value_accessor &value, common::rng_t &rng) = 0;
+  virtual float score_value(const model &m, const common::value_accessor &value, common::rng_t &rng) const = 0;
   virtual float score_data(const model &m, common::rng_t &rng) const = 0;
-  virtual void sample_value(const model &m, common::row_mutator &value, common::rng_t &rng) const = 0;
+  virtual void sample_value(const model &m, common::value_mutator &value, common::rng_t &rng) const = 0;
 
   virtual common::suffstats_bag_t get_ss() const = 0;
   virtual void set_ss(const common::suffstats_bag_t &ss) = 0;

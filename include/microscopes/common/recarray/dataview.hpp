@@ -1,6 +1,7 @@
 #pragma once
 
-#include <microscopes/common/type_helper.hpp>
+#include <microscopes/common/runtime_type.hpp>
+#include <microscopes/common/runtime_value.hpp>
 #include <microscopes/common/random_fwd.hpp>
 #include <microscopes/common/macros.hpp>
 #include <microscopes/common/assert.hpp>
@@ -11,6 +12,7 @@
 
 namespace microscopes {
 namespace common {
+namespace recarray {
 
 class row_accessor {
   friend class row_mutator;
@@ -34,23 +36,19 @@ public:
   inline const runtime_type & curtype() const { return (*types_)[pos_]; }
   inline unsigned curshape() const { return curtype().n(); }
 
+  inline value_accessor get() const { return value_accessor(cursor_, mask_cursor_, curtype()); }
+
   inline bool
   ismasked(size_t idx) const
   {
     MICROSCOPES_ASSERT(idx < curshape());
-    return !mask_ ? false : *(mask_cursor_ + idx);
+    return get().ismasked(idx);
   }
 
   inline bool
   anymasked() const
   {
-    if (!mask_)
-      return false;
-    // XXX: more efficient ways to do this!
-    for (size_t i = 0; i < curshape(); i++)
-      if (ismasked(i))
-        return true;
-    return false;
+    return get().anymasked();
   }
 
   template <typename T>
@@ -58,10 +56,7 @@ public:
   get(size_t idx) const
   {
     MICROSCOPES_ASSERT(pos_ < nfeatures());
-    MICROSCOPES_ASSERT(cursor_);
-    MICROSCOPES_ASSERT(idx < curshape());
-    const size_t s = runtime_type_traits::PrimitiveTypeSize(curtype().t());
-    return runtime_cast::cast<T>(cursor_ + idx * s, curtype().t());
+    get().get<T>(idx);
   }
 
   inline void
@@ -69,7 +64,8 @@ public:
   {
     MICROSCOPES_ASSERT(pos_ <= nfeatures());
     cursor_ += runtime_type_traits::RuntimeTypeSize(curtype());
-    mask_cursor_ += curtype().n();
+    if (mask_)
+      mask_cursor_ += curtype().n();
     pos_++;
   }
 
@@ -117,15 +113,14 @@ public:
   inline const runtime_type & curtype() const { return (*types_)[pos_]; }
   inline unsigned curshape() const { return curtype().n(); }
 
+  inline value_mutator set() const { return value_mutator(cursor_, curtype()); }
+
   template <typename T>
   inline void
   set(T t, size_t idx)
   {
     MICROSCOPES_ASSERT(pos_ < nfeatures());
-    MICROSCOPES_ASSERT(cursor_);
-    MICROSCOPES_ASSERT(idx < curshape());
-    const size_t s = runtime_type_traits::PrimitiveTypeSize(curtype().t());
-    runtime_cast::uncast<T>(cursor_ + idx * s, curtype().t(), t);
+    set().set<T>(t, idx);
   }
 
   void
@@ -224,5 +219,6 @@ private:
   std::vector<size_t> pi_;
 };
 
+} // namespace recarray
 } // namespace common
 } // namespace microscopes

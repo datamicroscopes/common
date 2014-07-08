@@ -1,4 +1,4 @@
-#include <microscopes/common/type_helper.hpp>
+#include <microscopes/common/runtime_type.hpp>
 
 using namespace microscopes::common;
 

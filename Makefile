@@ -22,7 +22,12 @@ ifneq ($(strip $(DISTRIBUTIONS_LIB)),)
 	LDFLAGS += -L$(DISTRIBUTIONS_LIB) -Wl,-rpath,$(DISTRIBUTIONS_LIB)
 endif
 
-SRCFILES := $(wildcard src/common/*.cpp src/io/*.cpp src/models/*.cpp) 
+SRCFILES := $(wildcard src/common/*.cpp) 
+SRCFILES += $(wildcard src/common/recarray/*.cpp)
+SRCFILES += $(wildcard src/common/sparse_ndarray/*.cpp)
+SRCFILES += $(wildcard src/io/*.cpp)
+SRCFILES += $(wildcard src/models/*.cpp)
+
 OBJFILES := $(patsubst src/%.cpp, $(O)/%.o, $(SRCFILES))
 
 UNAME_S := $(shell uname -s)
