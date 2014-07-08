@@ -146,6 +146,7 @@ struct util {
   {
     return m(i, j);
   }
+
 };
 
 } // namespace common
