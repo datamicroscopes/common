@@ -45,6 +45,7 @@ public:
     : dataview(shape, type), data_(data), mask_(mask),
       stepsize_(runtime_type_traits::RuntimeTypeSize(type))
   {
+    MICROSCOPES_DCHECK(data, "data cannot be null");
     multipliers_.push_back(1);
     auto rit = shape.rbegin();
     for (size_t i = 0; i < shape.size() - 1; ++i, ++rit)
