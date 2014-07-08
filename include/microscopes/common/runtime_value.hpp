@@ -46,6 +46,8 @@ public:
     return runtime_cast::cast<T>(data_ + idx * s, type_.t());
   }
 
+  std::string debug_str() const;
+
 private:
   const uint8_t *data_;
   const bool *mask_;
