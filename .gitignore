@@ -6,3 +6,5 @@
 /microscopes/**/*.cpp
 /build
 /out
+*.d
+*.prog

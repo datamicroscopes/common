@@ -27,8 +27,14 @@ SRCFILES += $(wildcard src/common/recarray/*.cpp)
 SRCFILES += $(wildcard src/common/sparse_ndarray/*.cpp)
 SRCFILES += $(wildcard src/io/*.cpp)
 SRCFILES += $(wildcard src/models/*.cpp)
-
 OBJFILES := $(patsubst src/%.cpp, $(O)/%.o, $(SRCFILES))
+
+TESTPROG_SRCFILES := $(wildcard test/cxx/*.cpp)
+TESTPROG_BINFILES := $(patsubst %.cpp, %.prog, $(TESTPROG_SRCFILES))
+
+TESTPROG_LDFLAGS := $(LDFLAGS)
+TESTPROG_LDFLAGS += -L$(TOP)/out -Wl,-rpath,$(TOP)/out
+TESTPROG_LDFLAGS += -lmicroscopes_common
 
 UNAME_S := $(shell uname -s)
 TARGETS :=
@@ -36,33 +42,44 @@ LIBPATH_VARNAME :=
 ifeq ($(UNAME_S),Linux)
 	TARGETS := $(O)/libmicroscopes_common.so
 	LIBPATH_VARNAME := LD_LIBRARY_PATH
+	EXTNAME := so
+	SHARED_FLAG := -shared
 endif
 ifeq ($(UNAME_S),Darwin)
 	TARGETS := $(O)/libmicroscopes_common.dylib
 	LIBPATH_VARNAME := DYLD_LIBRARY_PATH
+	EXTNAME := dylib
+	SHARED_FLAG := -dynamiclib
 endif
 
 all: $(TARGETS)
+
+.PHONY: build_test_cxx
+build_test_cxx: $(TESTPROG_BINFILES)
 
 $(O)/%.o: src/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(O)/libmicroscopes_common.so: $(OBJFILES)
-	gcc -shared -o $(O)/libmicroscopes_common.so $(OBJFILES) $(LDFLAGS)
+$(O)/libmicroscopes_common.$(EXTNAME): $(OBJFILES)
+	gcc $(SHARED_FLAG) -o $@ $(OBJFILES) $(LDFLAGS)
 
-$(O)/libmicroscopes_common.dylib: $(OBJFILES)
-	g++ -dynamiclib -o $(O)/libmicroscopes_common.dylib $(OBJFILES) $(LDFLAGS)
+%.prog: %.cpp $(O)/libmicroscopes_common.$(EXTNAME)
+	$(CXX) $(CXXFLAGS) $< -o $@ $(TESTPROG_LDFLAGS)
 
-DEPFILES := $(wildcard out/common/*.d out/io/*.d out/models/*.d)
+DEPFILES := $(wildcard out/common/*.d)
+DEPFILES := $(wildcard out/common/recarray/*.d)
+DEPFILES := $(wildcard out/common/sparse_ndarray/*.d)
+DEPFILES += $(wildcard out/io/*.d)
+DEPFILES += $(wildcard out/models/*.d)
 ifneq ($(DEPFILES),)
 -include $(DEPFILES)
 endif
 
 .PHONY: clean
 clean: 
-	rm -rf out
-	find microscopes \( -name '*.cpp' -or -name '*.so' -or -name '*.pyc' \) -type f -print0 | xargs -0 rm --
+	rm -rf out test/cxx/*.{d,prog}
+	find microscopes \( -name '*.cpp' -or -name '*.so' -or -name '*.pyc' \) -type f -print0 | xargs -0 rm -f --
 
 .PHONY: protobuf
 protobuf:
@@ -71,5 +88,10 @@ protobuf:
 	mv include/microscopes/io/schema.pb.cc src/io/schema.pb.cpp
 
 .PHONY: test
-test:
+test: test_cxx
+	python setup.py build_ext --inplace
 	$(LIBPATH_VARNAME)=$$$(LIBPATH_VARNAME):./out nosetests
+
+.PHONY: test_cxx
+test_cxx: build_test_cxx
+	test/cxx/test_sparse_ndarray.prog
