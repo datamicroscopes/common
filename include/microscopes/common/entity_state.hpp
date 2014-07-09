@@ -41,7 +41,7 @@ public:
   virtual std::vector<ident_t> suffstats_identifiers(size_t component) const = 0;
   virtual suffstats_bag_t get_suffstats(size_t component, ident_t id) const = 0;
   virtual void set_suffstats(size_t component, ident_t id, const suffstats_bag_t &ss) = 0;
-  virtual value_mutator get_suffstats_value_mutator(size_t component, ident_t id, const std::string &key) = 0;
+  virtual value_mutator get_suffstats_mutator(size_t component, ident_t id, const std::string &key) = 0;
 
   // Routines for manipulating cluster membership
 

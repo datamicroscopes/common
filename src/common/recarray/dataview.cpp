@@ -129,6 +129,15 @@ row_major_dataview::end() const
   return pos_ == size();
 }
 
+row_accessor
+row_major_dataview::get(size_t actual_pos) const
+{
+  MICROSCOPES_DCHECK(actual_pos < size(), "invalid position");
+  const uint8_t *cursor = data_ + rowsize() * actual_pos;
+  const bool *mask_cursor = !mask_ ? nullptr : mask_ + maskrowsize() * actual_pos;
+  return row_accessor(cursor, mask_cursor, &types());
+}
+
 void
 row_major_dataview::permute(rng_t &rng)
 {

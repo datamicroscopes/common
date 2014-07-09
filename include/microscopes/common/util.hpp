@@ -119,6 +119,15 @@ struct util {
     return probs.size() - 1;
   }
 
+  template <typename T>
+  static inline T
+  sample_choice(const std::vector<T> &choices, rng_t &rng)
+  {
+    float prob = 1./float(choices.size());
+    const std::vector<float> probs(choices.size(), prob);
+    return choices[sample_discrete(probs, rng)];
+  }
+
   static inline std::string
   hexify(const uint8_t *buf, size_t n)
   {

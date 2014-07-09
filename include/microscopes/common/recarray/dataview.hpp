@@ -184,6 +184,9 @@ public:
   virtual void reset() = 0;
   virtual bool end() const = 0;
 
+  // non-iterator API; warning-- possibly inefficient (seeking)
+  virtual row_accessor get(size_t idx) const = 0;
+
   inline size_t size() const { return n_; }
   inline const std::vector<runtime_type> & types() const { return types_; }
 
@@ -207,6 +210,8 @@ public:
   void next() override;
   void reset() override;
   bool end() const override;
+
+  row_accessor get(size_t idx) const override;
 
   inline void reset_permutation() { pi_.clear(); }
   void permute(rng_t &rng);
