@@ -146,7 +146,7 @@ public:
   get_runtime_type() const override
   {
     return common::runtime_type(
-        common::_static_type_to_primitive_type< typename T::Value >::value);
+        common::static_type_to_primitive_type< typename T::Value >::value);
   }
 
   inline std::string

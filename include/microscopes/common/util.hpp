@@ -53,16 +53,32 @@ struct util {
       a.push_back(i);
   }
 
+  static inline std::vector<size_t>
+  range(size_t n)
+  {
+    std::vector<size_t> ret;
+    inplace_range(ret, n);
+    return ret;
+  }
+
   // generate a random permutation of the integers [0, ..., n-1]
   static inline void
-  permute(std::vector<size_t> &pi, size_t n, rng_t &rng)
+  inplace_permute(std::vector<size_t> &pi, size_t n, rng_t &rng)
   {
     inplace_range(pi, n);
     for (size_t i = pi.size() - 1; i >= 1; i--) {
-      std::uniform_int_distribution<> dist(0, i);
+      std::uniform_int_distribution<size_t> dist(0, i);
       const size_t j = dist(rng);
       std::swap(pi[j], pi[i]);
     }
+  }
+
+  static inline std::vector<size_t>
+  permute(size_t n, rng_t &rng)
+  {
+    std::vector<size_t> ret;
+    inplace_permute(ret, n, rng);
+    return ret;
   }
 
   static std::uniform_real_distribution<float> Unif01_;

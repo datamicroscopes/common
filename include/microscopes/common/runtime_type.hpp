@@ -13,10 +13,10 @@ namespace microscopes {
 namespace common {
 
 template <typename T>
-struct _static_type_to_primitive_type {};
+struct static_type_to_primitive_type {};
 
 #define SPECIALIZE_STATIC_TYPE_TO_RUNTIME_ID(tpe, rvalue) \
-  template <> struct _static_type_to_primitive_type <tpe> { static const primitive_type value = rvalue; };
+  template <> struct static_type_to_primitive_type <tpe> { static const primitive_type value = rvalue; };
 PRIMITIVE_TYPE_MAPPINGS(SPECIALIZE_STATIC_TYPE_TO_RUNTIME_ID)
 #undef SPECIALIZE_STATIC_TYPE_TO_RUNTIME_ID
 

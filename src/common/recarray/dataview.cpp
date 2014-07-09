@@ -132,5 +132,5 @@ row_major_dataview::end() const
 void
 row_major_dataview::permute(rng_t &rng)
 {
-  util::permute(pi_, size(), rng);
+  util::inplace_permute(pi_, size(), rng);
 }

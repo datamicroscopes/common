@@ -9,6 +9,11 @@ namespace common {
 class value_accessor {
 public:
   value_accessor() : data_(), mask_(), type_() {}
+  template <typename T>
+  value_accessor(const T *data)
+    : data_(reinterpret_cast<const uint8_t *>(data)),
+      mask_(nullptr),
+      type_(runtime_type(static_type_to_primitive_type<T>::value)) {}
   value_accessor(const uint8_t *data,
                  const bool *mask,
                  const runtime_type &type)
@@ -71,6 +76,12 @@ public:
     MICROSCOPES_ASSERT(idx < shape());
     const size_t s = runtime_type_traits::PrimitiveTypeSize(type_.t());
     runtime_cast::uncast<T>(data_ + idx * s, type_.t(), t);
+  }
+
+  inline value_accessor
+  accessor() const
+  {
+    return value_accessor(data_, nullptr, type_);
   }
 
 private:
