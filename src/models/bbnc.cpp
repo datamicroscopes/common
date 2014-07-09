@@ -21,6 +21,7 @@ void
 bbnc_feature_group::add_value(const model &m, const value_accessor &value, rng_t &rng)
 {
   MICROSCOPES_ASSERT(value.shape() == 1);
+  MICROSCOPES_ASSERT(!value.ismasked(0));
   if (value.get<bool>(0))
     heads_++;
   else
@@ -31,6 +32,7 @@ void
 bbnc_feature_group::remove_value(const model &m, const value_accessor &value, rng_t &rng)
 {
   MICROSCOPES_ASSERT(value.shape() == 1);
+  MICROSCOPES_ASSERT(!value.ismasked(0));
   if (value.get<bool>(0)) {
     MICROSCOPES_ASSERT(heads_ > 0);
     heads_--;
@@ -45,6 +47,7 @@ bbnc_feature_group::score_value(const model &m, const value_accessor &value, rng
 {
   MICROSCOPES_ASSERT(p_ >= 0.0 && p_ <= 1.0);
   MICROSCOPES_ASSERT(value.shape() == 1);
+  MICROSCOPES_ASSERT(!value.ismasked(0));
   return value.get<bool>(0) ? fast_log(p_) : fast_log(1.-p_);
 }
 
@@ -95,11 +98,11 @@ bbnc_feature_group::set_ss(const suffstats_bag_t &ss)
   p_ = m.p();
 }
 
-void *
-bbnc_feature_group::get_ss_raw_ptr(const string &key)
+value_mutator
+bbnc_feature_group::get_ss_mutator(const string &key)
 {
   if (key == "p")
-    return &p_;
+    return value_mutator(&p_);
   throw runtime_error("unknown key: " + key);
 }
 
@@ -136,13 +139,13 @@ bbnc_model::set_hp(const model &m)
   *this = static_cast<const bbnc_model &>(m);
 }
 
-void *
-bbnc_model::get_hp_raw_ptr(const string &key)
+value_mutator
+bbnc_model::get_hp_mutator(const string &key)
 {
   if (key == "alpha")
-    return &alpha_;
+    return value_mutator(&alpha_);
   if (key == "beta")
-    return &beta_;
+    return value_mutator(&beta_);
   throw runtime_error("unknown key: " + key);
 }
 

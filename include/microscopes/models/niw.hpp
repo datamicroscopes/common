@@ -28,7 +28,7 @@ public:
   common::suffstats_bag_t get_ss() const override;
   void set_ss(const common::suffstats_bag_t &ss) override;
 
-  void * get_ss_raw_ptr(const std::string &key) override;
+  common::value_mutator get_ss_mutator(const std::string &key) override;
 
 protected:
 
@@ -64,7 +64,7 @@ public:
   void set_hp(const common::hyperparam_bag_t &hp) override;
   void set_hp(const model &m) override;
 
-  void * get_hp_raw_ptr(const std::string &key) override;
+  common::value_mutator get_hp_mutator(const std::string &key) override;
 
   common::runtime_type get_runtime_type() const override;
   std::string debug_str() const override;

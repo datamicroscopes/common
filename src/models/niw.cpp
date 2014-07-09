@@ -201,8 +201,8 @@ niw_feature_group::set_ss(const suffstats_bag_t &ss)
   MICROSCOPES_DCHECK(util::is_symmetric_positive_definite(sum_xxT_), "sum xx^T must be SPD");
 }
 
-void *
-niw_feature_group::get_ss_raw_ptr(const string &key)
+value_mutator
+niw_feature_group::get_ss_mutator(const string &key)
 {
   // XXX: support this safely
   throw runtime_error("unknown key: " + key);
@@ -264,8 +264,8 @@ niw_model::set_hp(const model &m)
   *this = static_cast<const niw_model &>(m);
 }
 
-void *
-niw_model::get_hp_raw_ptr(const string &key)
+value_mutator
+niw_model::get_hp_mutator(const string &key)
 {
   // XXX: support this safely
   throw runtime_error("unknown key: " + key);

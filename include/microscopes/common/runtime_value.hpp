@@ -9,11 +9,13 @@ namespace common {
 class value_accessor {
 public:
   value_accessor() : data_(), mask_(), type_() {}
+
   template <typename T>
   value_accessor(const T *data)
     : data_(reinterpret_cast<const uint8_t *>(data)),
       mask_(nullptr),
       type_(runtime_type(static_type_to_primitive_type<T>::value)) {}
+
   value_accessor(const uint8_t *data,
                  const bool *mask,
                  const runtime_type &type)
@@ -62,6 +64,12 @@ private:
 class value_mutator {
 public:
   value_mutator() : data_(), type_() {}
+
+  template <typename T>
+  value_mutator(T *data)
+    : data_(reinterpret_cast<uint8_t *>(data)),
+      type_(runtime_type(static_type_to_primitive_type<T>::value)) {}
+
   value_mutator(uint8_t *data, const runtime_type &type)
     : data_(data), type_(type) {}
 

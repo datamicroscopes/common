@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include <microscopes/models/base.hpp>
+#include <microscopes/common/runtime_value.hpp>
 #include <microscopes/common/util.hpp>
 
 #include <distributions/io/protobuf.hpp>
@@ -32,9 +33,6 @@
   x(sigmasq) \
   x(nu)
 
-#define DISTRIB_DD128_FIELDS(x) \
-  x(alphas)
-
 #define DISTRIB_FOR_EACH_DISTRIBUTION(x) \
   x(BetaBernoulli) \
   x(BetaNegativeBinomial) \
@@ -42,26 +40,21 @@
   x(NormalInverseChiSq) \
   x(DirichletDiscrete128)
 
+// NOTE: DirichletDiscrete128 does not appear here since it is special
 #define DISTRIB_FOR_EACH_DISTRIBUTION_WITH_FIELDS(x) \
   x(BetaBernoulli, DISTRIB_BB_FIELDS) \
   x(BetaNegativeBinomial, DISTRIB_BNB_FIELDS) \
   x(GammaPoisson, DISTRIB_GP_FIELDS) \
-  x(NormalInverseChiSq, DISTRIB_NICH_FIELDS) \
-  x(DirichletDiscrete128, DISTRIB_DD128_FIELDS)
+  x(NormalInverseChiSq, DISTRIB_NICH_FIELDS)
 
 // somewhat of a hack
 namespace distributions {
-
-extern template struct DirichletDiscrete<128>;
-typedef DirichletDiscrete<128> DirichletDiscrete128;
-
-namespace protobuf {
-
-typedef DirichletDiscrete_Shared DirichletDiscrete128_Shared;
-typedef DirichletDiscrete_Group DirichletDiscrete128_Group;
-
-} // namespace protobuf
-
+  extern template struct DirichletDiscrete<128>;
+  typedef DirichletDiscrete<128> DirichletDiscrete128;
+  namespace protobuf {
+    typedef DirichletDiscrete_Shared DirichletDiscrete128_Shared;
+    typedef DirichletDiscrete_Group DirichletDiscrete128_Group;
+  } // namespace protobuf
 } // namespace distributions
 
 namespace microscopes {
@@ -81,17 +74,16 @@ DISTRIB_FOR_EACH_DISTRIBUTION(DISTRIB_SPECIALIZE_MODEL_TYPES)
 
 #undef DISTRIB_SPECIALIZE_MODEL_TYPES
 
-// cringe
 template <typename T> struct distributions_model_hp {};
 
 #define DISTRIB_SPECIALIZE_HP_RAW_PTR(fname) \
-  if (key == #fname) return &s.fname;
+  if (key == #fname) return common::value_mutator(&s.fname);
 
 #define DISTRIB_SPECIALIZE_HP(name, fields) \
   template <> \
   struct distributions_model_hp< distributions::name > \
   { \
-    static inline void * \
+    static inline common::value_mutator \
     get(distributions::name::Shared &s, const std::string &key) \
     { \
       fields(DISTRIB_SPECIALIZE_HP_RAW_PTR) \
@@ -103,6 +95,25 @@ DISTRIB_FOR_EACH_DISTRIBUTION_WITH_FIELDS(DISTRIB_SPECIALIZE_HP)
 
 #undef DISTRIB_SPECIALIZE_HP_RAW_PTR
 #undef DISTRIB_SPECIALIZE_HP
+
+// NOTE: DirichletDiscrete128 is special
+template <>
+struct distributions_model_hp< distributions::DirichletDiscrete128 >
+{
+  static inline common::value_mutator
+  get(distributions::DirichletDiscrete128::Shared &s, const std::string &key)
+  {
+    if (key == "alphas")
+      return common::value_mutator(
+          reinterpret_cast<uint8_t *>(&s.alphas[0]),
+          common::runtime_type(
+            common::static_type_to_primitive_type<
+              std::remove_reference<decltype(s.alphas[0])>::type
+            >::value,
+            s.dim));
+    throw std::runtime_error("Unknown HP param key: " + key);
+  }
+};
 
 template <typename T>
 class distributions_model : public model {
@@ -136,8 +147,8 @@ public:
     repr_ = static_cast<const distributions_model<T> &>(m).repr_;
   }
 
-  inline void *
-  get_hp_raw_ptr(const std::string &name) override
+  inline common::value_mutator
+  get_hp_mutator(const std::string &name) override
   {
     return distributions_model_hp<T>::get(repr_, name);
   }
@@ -179,6 +190,7 @@ public:
   add_value(const model &m, const common::value_accessor &value, common::rng_t &rng) override
   {
     MICROSCOPES_ASSERT(value.shape() == 1);
+    MICROSCOPES_ASSERT(!value.ismasked(0));
     repr_.add_value(shared_repr(m), value.get< typename T::Value >(0), rng);
   }
 
@@ -186,6 +198,7 @@ public:
   remove_value(const model &m, const common::value_accessor &value, common::rng_t &rng) override
   {
     MICROSCOPES_ASSERT(value.shape() == 1);
+    MICROSCOPES_ASSERT(!value.ismasked(0));
     repr_.remove_value(shared_repr(m), value.get< typename T::Value >(0), rng);
   }
 
@@ -193,6 +206,7 @@ public:
   score_value(const model &m, const common::value_accessor &value, common::rng_t &rng) const override
   {
     MICROSCOPES_ASSERT(value.shape() == 1);
+    MICROSCOPES_ASSERT(!value.ismasked(0));
     return repr_.score_value(shared_repr(m), value.get< typename T::Value >(0), rng);
   }
 
@@ -229,9 +243,10 @@ public:
     repr_.protobuf_load(m);
   }
 
-  inline void *
-  get_ss_raw_ptr(const std::string &name) override
+  inline common::value_mutator
+  get_ss_mutator(const std::string &name) override
   {
+    // XXX: implement me
     throw std::runtime_error("unsupported");
   }
 

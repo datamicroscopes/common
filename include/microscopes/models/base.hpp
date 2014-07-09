@@ -27,8 +27,7 @@ public:
   virtual common::suffstats_bag_t get_ss() const = 0;
   virtual void set_ss(const common::suffstats_bag_t &ss) = 0;
 
-  // See note below about the lack of safety with this API
-  virtual void * get_ss_raw_ptr(const std::string &key) = 0;
+  virtual common::value_mutator get_ss_mutator(const std::string &key) = 0;
 };
 
 // abstract model
@@ -42,10 +41,7 @@ public:
   virtual void set_hp(const common::hyperparam_bag_t &hp) = 0;
   virtual void set_hp(const model &m) = 0;
 
-  // WARNING: this is a very unsafe API! is useful for performance when we know
-  // at compile time the type we are dealing with e.g. slice sampling, where we
-  // know that all the types are float.
-  virtual void * get_hp_raw_ptr(const std::string &key) = 0;
+  virtual common::value_mutator get_hp_mutator(const std::string &key) = 0;
 
   virtual common::runtime_type get_runtime_type() const = 0;
   virtual std::string debug_str() const = 0;
