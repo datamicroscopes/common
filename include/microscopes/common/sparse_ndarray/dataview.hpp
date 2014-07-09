@@ -127,6 +127,9 @@ public:
 
   virtual slice_iterable slice(size_t dim, size_t idx) const = 0;
 
+  virtual slice_iterator begin() const = 0;
+  virtual slice_iterator end() const = 0;
+
 protected:
   std::vector<size_t> shape_;
   runtime_type type_;
@@ -266,8 +269,8 @@ public:
   protected:
     slice_iterator_impl(
       const row_major_dense_dataview *px,
-      size_t dim,
-      size_t idx,
+      ssize_t dim,
+      ssize_t idx,
       const detail::product &iter)
       : px_(px), dim_(dim), idx_(idx), iter_(iter)
     {
@@ -318,8 +321,8 @@ public:
 
   private:
     const row_major_dense_dataview *px_;
-    size_t dim_;
-    size_t idx_;
+    ssize_t dim_;
+    ssize_t idx_;
     detail::product iter_;
     value_with_position_t storage_;
   };
@@ -354,8 +357,40 @@ public:
           idx,
           end_iter));
 
-    return std::move(
-        slice_iterable(std::move(begin), std::move(end)));
+    return std::move(slice_iterable(std::move(begin), std::move(end)));
+  }
+
+  slice_iterator
+  begin() const override
+  {
+    std::vector<detail::product::indices> is(dims());
+    for (size_t i = 0; i < dims(); i++)
+      is[i] = detail::product::indices(detail::product::RANGE, shape_[i]);
+    detail::product begin_iter(is);
+    std::unique_ptr<dataview::slice_iterator_impl> begin(
+        new slice_iterator_impl(
+          this,
+          -1,
+          -1,
+          begin_iter));
+    return slice_iterator(std::move(begin));
+  }
+
+  slice_iterator
+  end() const override
+  {
+    std::vector<detail::product::indices> is(dims());
+    for (size_t i = 0; i < dims(); i++)
+      is[i] = detail::product::indices(detail::product::RANGE, shape_[i]);
+    detail::product end_iter(is);
+    end_iter.setEnd();
+    std::unique_ptr<dataview::slice_iterator_impl> end(
+        new slice_iterator_impl(
+          this,
+          -1,
+          -1,
+          end_iter));
+    return slice_iterator(std::move(end));
   }
 
 private:
