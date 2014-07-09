@@ -117,6 +117,8 @@ public:
       MICROSCOPES_DCHECK(s, "empty-dimesion not allowed");
   }
 
+  virtual ~dataview() {}
+
   inline size_t dims() const { return shape_.size(); }
   inline const std::vector<size_t> & shape() const { return shape_; }
   inline const runtime_type & type() const { return type_; }
@@ -267,7 +269,14 @@ public:
       size_t dim,
       size_t idx,
       const detail::product &iter)
-      : px_(px), dim_(dim), idx_(idx), iter_(iter) {}
+      : px_(px), dim_(dim), idx_(idx), iter_(iter)
+    {
+      for (;;) {
+        if (iter_.end() || !px->accessor(iter_.value()).anymasked())
+          break;
+        iter_.next();
+      }
+    }
 
   public:
     std::unique_ptr<dataview::slice_iterator_impl>
@@ -288,7 +297,15 @@ public:
 
     bool end() const override { return iter_.end(); }
 
-    void next() override { iter_.next(); }
+    void
+    next() override
+    {
+      for (;;) {
+        iter_.next();
+        if (iter_.end() || !px_->accessor(iter_.value()).anymasked())
+          break;
+      }
+    }
 
     const value_with_position_t &
     value() const override
