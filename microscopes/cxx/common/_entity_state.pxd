@@ -12,3 +12,4 @@ cdef class fixed_entity_based_state_object:
 cdef class entity_based_state_object(fixed_entity_based_state_object):
     cdef void set_fixed(self, const shared_ptr[c_fixed_entity_based_state_object] &o)
     cdef void set_entity(self, const shared_ptr[c_entity_based_state_object] &o)
+    cdef shared_ptr[c_entity_based_state_object] px(self)

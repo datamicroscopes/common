@@ -21,6 +21,9 @@ class numpy_dataview(object):
     def __init__(self, Y):
         self._Y = Y
 
+    def get(self, idx):
+        return self._Y[idx]
+
     def view(self, shuffle, rng=None):
         inds = np.random.permutation(self.size()) if shuffle else None
         return _numpy_iter(self._Y, inds)
