@@ -81,6 +81,7 @@ extensions = cythonize([
     make_extension('microscopes.cxx.models'),
     make_extension('microscopes.cxx._models'),
     make_extension('microscopes.cxx.common._dataview'),
+    make_extension('microscopes.cxx.common._entity_state'),
     make_extension('microscopes.cxx.common.recarray.dataview'),
     make_extension('microscopes.cxx.common.recarray._dataview'),
     make_extension('microscopes.cxx.common.sparse_ndarray.dataview'),
