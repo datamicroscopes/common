@@ -2,10 +2,7 @@ import numpy as np
 #import numpy.ma as ma
 
 cdef class abstract_dataview:
-    def __cinit__(self):
-        pass
-    def __dealloc__(self):
-        del self._thisptr
+    pass
 
 cdef class numpy_dataview(abstract_dataview):
     def __cinit__(self, npd):
@@ -22,8 +19,8 @@ cdef class numpy_dataview(abstract_dataview):
             self._mask = np.ascontiguousarray(npd.mask)
         else:
             self._mask = None
-        self._thisptr = new row_major_dense_dataview(
+        self._thisptr.reset(new row_major_dense_dataview(
             <uint8_t *> self._data.data,
             <cbool *> self._mask.data if self._mask is not None else NULL,
             cshape,
-            ctype)
+            ctype))

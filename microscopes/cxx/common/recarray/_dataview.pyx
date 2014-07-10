@@ -2,23 +2,19 @@ import numpy as np
 import numpy.ma as ma
 
 cdef class abstract_dataview:
-    def __cinit__(self):
-        pass
-    def __dealloc__(self):
-        del self._thisptr
     def __iter__(self):
-        self._thisptr[0].reset()
+        self._thisptr.get().reset()
         return self
     def next(self):
-        if self._thisptr[0].end():
+        if self._thisptr.get().end():
             raise StopIteration
-        cdef row_accessor acc = self._thisptr[0].get()
-        cdef const vector[runtime_type] *types = &self._thisptr[0].types()
+        cdef row_accessor acc = self._thisptr.get().get()
+        cdef const vector[runtime_type] *types = &self._thisptr.get().types()
         dtypes = []
         for i in xrange(types.size()):
             dtypes.append(('', get_np_type(types[0][i])))
         cdef np.ndarray array = np.zeros(1, dtype=dtypes)
-        self._thisptr[0].next()
+        self._thisptr.get().next()
         cdef row_mutator mut = row_mutator(<uint8_t *> array.data, types)
         masks = []
         has_any_masks = [False]
@@ -60,23 +56,23 @@ cdef class numpy_dataview(abstract_dataview):
         ctypes = get_c_types(dtype)
 
         if self._mask is not None:
-            self._thisptr = new row_major_dataview(
+            self._thisptr.reset(new row_major_dataview(
                 <uint8_t *> self._data.data,
                 <cbool *> self._mask.data,
                 n,
-                ctypes)
+                ctypes))
         else:
-            self._thisptr = new row_major_dataview(
+            self._thisptr.reset(new row_major_dataview(
                 <uint8_t *> self._data.data,
                 NULL,
                 n,
-                ctypes)
+                ctypes))
 
     def view(self, shuffle, rng r):
         if not shuffle:
-            (<row_major_dataview *>self._thisptr)[0].reset_permutation()
+            (<row_major_dataview *>self._thisptr.get()).reset_permutation()
         else:
-            (<row_major_dataview *>self._thisptr)[0].permute(r._thisptr[0])
+            (<row_major_dataview *>self._thisptr.get()).permute(r._thisptr[0])
         return self
 
     def size(self):

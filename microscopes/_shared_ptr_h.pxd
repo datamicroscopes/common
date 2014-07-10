@@ -3,3 +3,4 @@ cdef extern from "<memory>" namespace "std":
         shared_ptr()
         shared_ptr(T *) except +
         T *get()
+        void reset(T *) except +
