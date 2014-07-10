@@ -1,6 +1,6 @@
 cdef class fixed_entity_based_state_object:
-    def __cinit__(self):
-        pass
+    def __cinit__(self, models):
+        self._models = list(models)
 
     cdef void set_fixed(self, const shared_ptr[c_fixed_entity_based_state_object] &o):
         self._thisptr = o
@@ -11,8 +11,6 @@ cdef class fixed_entity_based_state_object:
         return list(self._thisptr.get().assignments())
 
 cdef class entity_based_state_object(fixed_entity_based_state_object):
-    def __cinit__(self):
-        pass
 
     cdef void set_fixed(self, const shared_ptr[c_fixed_entity_based_state_object] &o):
         # XXX: hacky

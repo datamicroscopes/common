@@ -8,6 +8,7 @@ from microscopes.cxx.common._entity_state_h cimport \
 cdef class fixed_entity_based_state_object:
     cdef shared_ptr[c_fixed_entity_based_state_object] _thisptr
     cdef void set_fixed(self, const shared_ptr[c_fixed_entity_based_state_object] &o)
+    cdef list _models
 
 cdef class entity_based_state_object(fixed_entity_based_state_object):
     cdef void set_fixed(self, const shared_ptr[c_fixed_entity_based_state_object] &o)
