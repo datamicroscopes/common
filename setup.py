@@ -83,6 +83,8 @@ extensions = cythonize([
     make_extension('microscopes.cxx.common._dataview'),
     make_extension('microscopes.cxx.common.recarray.dataview'),
     make_extension('microscopes.cxx.common.recarray._dataview'),
+    make_extension('microscopes.cxx.common.sparse_ndarray.dataview'),
+    make_extension('microscopes.cxx.common.sparse_ndarray._dataview'),
     make_extension('microscopes.cxx.common.rng'),
     make_extension('microscopes.cxx.common._rng'),
     make_extension('microscopes.cxx.common.random'),

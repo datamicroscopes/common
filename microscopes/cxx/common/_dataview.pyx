@@ -14,25 +14,29 @@ TYPES = (
     ('f8'     , ti.TYPE_F64) ,
 )
 
-def get_c_type(tpe):
+def get_c_type_primitive(tpe):
     for name, ctype in TYPES:
         if np.dtype(name) == tpe:
             return ctype
     raise ValueError("Unknown type: " + tpe)
 
+cdef runtime_type get_c_type(dtype):
+    if dtype.subdtype is None:
+        # scalar field
+        return runtime_type(get_c_type_primitive(dtype))
+    else:
+        # vector field
+        subdtype, shape = dtype.subdtype
+        if len(shape) != 1:
+            raise ValueError("unsupported shape: " + shape)
+        return runtime_type(get_c_type_primitive(subdtype), shape[0])
+
 cdef vector[runtime_type] get_c_types(dtype):
     cdef vector[runtime_type] ctypes
     ctypes.reserve(len(dtype))
+    # note: dtypes are not iterable
     for i in xrange(len(dtype)):
-        if dtype[i].subdtype is None:
-            # scalar field
-            ctypes.push_back(runtime_type(get_c_type(dtype[i])))
-        else:
-            # vector field
-            subdtype, shape = dtype[i].subdtype
-            if len(shape) != 1:
-                raise ValueError("unsupported shape: " + shape)
-            ctypes.push_back(runtime_type(get_c_type(subdtype), shape[0]))
+        ctypes.push_back(get_c_type(dtype[i]))
     return ctypes
 
 cdef np.dtype get_np_type(const runtime_type & tpe):

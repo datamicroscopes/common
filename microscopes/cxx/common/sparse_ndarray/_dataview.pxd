@@ -1,4 +1,9 @@
-from microscopes.cxx.common.recarray._dataview_h cimport dataview
+from libcpp.vector cimport vector
+from libcpp cimport bool as cbool
+from libc.stdint cimport uint8_t
+
+from microscopes.cxx.common.sparse_ndarray._dataview_h cimport dataview, row_major_dense_dataview
+from microscopes.cxx.common._dataview cimport get_c_type
 from microscopes.cxx.common._runtime_type_h cimport runtime_type
 
 cimport numpy as np

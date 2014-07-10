@@ -6,8 +6,12 @@ def test_import_models():
     from microscopes.cxx.models import bb, bnb, gp, nich, dd, bbnc, niw
     assert bb and bnb and gp and nich and dd and bbnc and niw
 
-def test_import_dataview():
+def test_import_recarray_dataview():
     from microscopes.cxx.common.recarray.dataview import numpy_dataview
+    assert numpy_dataview
+
+def test_import_sparse_ndarray_dataview():
+    from microscopes.cxx.common.sparse_ndarray.dataview import numpy_dataview
     assert numpy_dataview
 
 def test_import_rng():
