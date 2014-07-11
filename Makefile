@@ -84,10 +84,12 @@ clean:
 	rm -rf out test/cxx/*.{d,dSYM,prog} $(PBGENFILES) 
 	find microscopes \( -name '*.cpp' -or -name '*.so' -or -name '*.pyc' \) -type f -print0 | xargs -0 rm -f --
 
-$(PBGENFILES): microscopes/io/schema.proto
+include/microscopes/io/schema.pb.h: microscopes/io/schema.proto
 	mkdir -p src/io
 	protoc --cpp_out=include --python_out=. microscopes/io/schema.proto
 	mv include/microscopes/io/schema.pb.cc src/io/schema.pb.cpp
+
+src/io/schema.pb.cpp: include/microscopes/io/schema.pb.h
 
 .PHONY: test
 test: test_cxx

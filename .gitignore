@@ -9,3 +9,6 @@
 *.d
 *.prog
 *.dSYM
+/include/microscopes/io/schema.pb.h
+/microscopes/io/schema_pb2.py
+/src/io/schema.pb.cpp
