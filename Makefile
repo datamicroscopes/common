@@ -27,6 +27,7 @@ SRCFILES += $(wildcard src/common/recarray/*.cpp)
 SRCFILES += $(wildcard src/common/sparse_ndarray/*.cpp)
 SRCFILES += $(wildcard src/io/*.cpp)
 SRCFILES += $(wildcard src/models/*.cpp)
+SRCFILES += src/io/schema.pb.cpp
 OBJFILES := $(patsubst src/%.cpp, $(O)/%.o, $(SRCFILES))
 
 TESTPROG_SRCFILES := $(wildcard test/cxx/*.cpp)
@@ -57,7 +58,7 @@ all: $(TARGETS)
 .PHONY: build_test_cxx
 build_test_cxx: $(TESTPROG_BINFILES)
 
-$(O)/%.o: src/%.cpp
+$(O)/%.o: src/%.cpp include/microscopes/io/schema.pb.h
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
@@ -76,13 +77,14 @@ ifneq ($(DEPFILES),)
 -include $(DEPFILES)
 endif
 
+PBGENFILES := src/io/schema.pb.cpp include/microscopes/io/schema.pb.h microscopes/io/schema_pb2.py
+
 .PHONY: clean
 clean: 
-	rm -rf out test/cxx/*.{d,dSYM,prog}
+	rm -rf out test/cxx/*.{d,dSYM,prog} $(PBGENFILES) 
 	find microscopes \( -name '*.cpp' -or -name '*.so' -or -name '*.pyc' \) -type f -print0 | xargs -0 rm -f --
 
-.PHONY: protobuf
-protobuf:
+$(PBGENFILES): microscopes/io/schema.proto
 	mkdir -p src/io
 	protoc --cpp_out=include --python_out=. microscopes/io/schema.proto
 	mv include/microscopes/io/schema.pb.cc src/io/schema.pb.cpp
