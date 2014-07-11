@@ -250,6 +250,15 @@ public:
     throw std::runtime_error("unsupported");
   }
 
+  inline std::string
+  debug_str() const override
+  {
+    // XXX: inefficient
+    message_type m;
+    repr_.protobuf_dump(m);
+    return m.ShortDebugString();
+  }
+
   // XXX: public for now so distributions_model can access
   typename T::Group repr_;
 };

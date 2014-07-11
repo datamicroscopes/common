@@ -106,6 +106,14 @@ bbnc_feature_group::get_ss_mutator(const string &key)
   throw runtime_error("unknown key: " + key);
 }
 
+string
+bbnc_feature_group::debug_str() const
+{
+  ostringstream oss;
+  oss << "{p:" << p_ << "}";
+  return oss.str();
+}
+
 shared_ptr<feature_group>
 bbnc_model::create_feature_group(rng_t &rng) const
 {

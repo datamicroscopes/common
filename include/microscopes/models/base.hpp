@@ -28,6 +28,7 @@ public:
   virtual void set_ss(const common::suffstats_bag_t &ss) = 0;
 
   virtual common::value_mutator get_ss_mutator(const std::string &key) = 0;
+  virtual std::string debug_str() const = 0;
 };
 
 // abstract model

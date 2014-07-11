@@ -208,6 +208,14 @@ niw_feature_group::get_ss_mutator(const string &key)
   throw runtime_error("unknown key: " + key);
 }
 
+string
+niw_feature_group::debug_str() const
+{
+  // XXX: implement me
+  ostringstream oss;
+  oss << "{NIW: XXX implement me}";
+  return oss.str();
+}
 
 shared_ptr<feature_group>
 niw_model::create_feature_group(rng_t &rng) const

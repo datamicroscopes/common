@@ -29,6 +29,7 @@ public:
   void set_ss(const common::suffstats_bag_t &ss) override;
 
   common::value_mutator get_ss_mutator(const std::string &key) override;
+  std::string debug_str() const override;
 
 protected:
 
