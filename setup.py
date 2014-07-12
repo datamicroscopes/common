@@ -30,8 +30,6 @@ if LooseVersion(cython_version) < LooseVersion(min_cython_version):
     raise ValueError(
         'cython support requires cython>={}'.format(min_cython_version))
 
-distributions_inc, distributions_lib, debug_build = None, None, False
-
 KEYS = ('DISTRIBUTIONS_INC', 'DISTRIBUTIONS_LIB', 'CC', 'CXX', 'DEBUG')
 
 def get_config_info(config):
