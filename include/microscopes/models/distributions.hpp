@@ -4,6 +4,7 @@
 
 #include <microscopes/models/base.hpp>
 #include <microscopes/common/runtime_value.hpp>
+#include <microscopes/common/macros.hpp>
 #include <microscopes/common/util.hpp>
 
 #include <distributions/io/protobuf.hpp>

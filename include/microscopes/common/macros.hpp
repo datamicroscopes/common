@@ -47,3 +47,14 @@
 #else
   #define ALWAYS_ASSERT(expr) assert((expr))
 #endif
+
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7)
+  #define GCC_AT_LEAST_47 1
+#else
+  #define GCC_AT_LEAST_47 0
+#endif
+
+// g++-4.6 does not support override, so we define it to be a no-op
+#if !GCC_AT_LEAST_47
+  #define override
+#endif

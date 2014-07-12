@@ -1,6 +1,7 @@
 #pragma once
 
 #include <microscopes/common/assert.hpp>
+#include <microscopes/common/macros.hpp>
 #include <microscopes/models/base.hpp>
 #include <eigen3/Eigen/Dense>
 
