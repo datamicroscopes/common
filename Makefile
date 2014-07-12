@@ -103,7 +103,7 @@ test_cxx: build_test_cxx
 	test/cxx/test_sparse_ndarray.prog
 
 SHELL := /bin/bash
-S := cd .travis && source venv/bin/activate
+S := cd .travis 
 S1 := $(S) && cd distributions
 
 .PHONY: travis_before_install
@@ -111,13 +111,12 @@ travis_before_install:
 	sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 	sudo add-apt-repository -y ppa:cython-dev/master-ppa
 	sudo apt-get update -qq
-	sudo apt-get install -qq g++-4.8 gfortran libprotobuf-dev libeigen3-dev python-scipy cython
+	sudo apt-get install -qq g++-4.8 gfortran protobuf-compiler libprotobuf-dev libeigen3-dev python-scipy cython
 
 .PHONY: travis_install_py_deps
 travis_install_py_deps: 
-	(cd .travis && virtualenv --system-site-packages venv)
-	($(S) && pip install --upgrade numpy)	
-	($(S) && pip install pymc)
+	pip install --upgrade numpy
+	pip install pymc
 
 .PHONY: travis_install_distributions
 travis_install_distributions: travis_install_py_deps
@@ -127,8 +126,7 @@ travis_install_distributions: travis_install_py_deps
 .PHONY: travis_install
 travis_install: travis_install_distributions
 	cp .travis/config.mk .
-	(source .travis/venv/bin/activate && make build_py build_test_cxx)
+	make build_py build_test_cxx
 
 .PHONY: travis_script
-travis_script:
-	(source .travis/venv/bin/activate && make test)
+travis_script: test

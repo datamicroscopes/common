@@ -32,31 +32,31 @@ if LooseVersion(cython_version) < LooseVersion(min_cython_version):
 
 distributions_inc, distributions_lib, debug_build = None, None, False
 
+KEYS = ('DISTRIBUTIONS_INC', 'DISTRIBUTIONS_LIB', 'CC', 'CXX', 'DEBUG')
+
 def get_config_info(config):
     config = parse_makefile(config)
-    distributions_inc = config.get('DISTRIBUTIONS_INC', None)
-    distributions_lib = config.get('DISTRIBUTIONS_LIB', None)
-    cc = config.get('CC', None)
-    cxx = config.get('CXX', None)
-    debug_build = config.get('DEBUG', None)
-    if debug_build is not None:
-        debug_build = debug_build == 1
-    return {
-        'distributions_inc' : distributions_inc,
-        'distributions_lib' : distributions_lib,
-	'cc' : cc,
-	'cxx' : cxx,
-        'debug_build' : debug_build,
-    }
+    ret = {}
+    for k in KEYS:
+        if k in config:
+            ret[k] = config[k]
+    return ret
 
+def merge_config(existing, overwriting):
+    existing.update(overwriting)
+
+config = {}
 for fname in ('../config.mk', 'config.mk'):
     try:
-        for k, v in get_config_info(fname).iteritems():
-            if v is None:
-                continue
-            locals()[k] = v
+        merge_config(config, get_config_info(fname))
     except IOError:
         pass
+
+distributions_inc = config.get('DISTRIBUTIONS_INC', None)
+distributions_lib = config.get('DISTRIBUTIONS_LIB', None)
+cc = config.get('CC', None)
+cxx = config.get('CXX', None)
+debug_build = config.get('DEBUG', 0) == 1
 
 if distributions_inc is not None:
     print 'Using distributions_inc:', distributions_inc
