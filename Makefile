@@ -57,6 +57,10 @@ all: $(TARGETS)
 .PHONY: build_test_cxx
 build_test_cxx: $(TESTPROG_BINFILES)
 
+.PHONY: build_py
+build_py: $(O)/libmicroscopes_common.$(EXTNAME)
+	python setup.py build_ext --inplace
+
 $(O)/%.o: src/%.cpp include/microscopes/io/schema.pb.h
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -91,10 +95,40 @@ include/microscopes/io/schema.pb.h: microscopes/io/schema.proto
 src/io/schema.pb.cpp: include/microscopes/io/schema.pb.h
 
 .PHONY: test
-test: test_cxx
-	python setup.py build_ext --inplace
+test: build_py test_cxx 
 	$(LIBPATH_VARNAME)=$$$(LIBPATH_VARNAME):./out nosetests
 
 .PHONY: test_cxx
 test_cxx: build_test_cxx
 	test/cxx/test_sparse_ndarray.prog
+
+SHELL := /bin/bash
+S := cd .travis && source venv/bin/activate
+S1 := $(S) && cd distributions
+
+.PHONY: travis_before_install
+travis_before_install: 
+	sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+	sudo add-apt-repository -y ppa:cython-dev/master-ppa
+	sudo apt-get update -qq
+	sudo apt-get install -qq g++-4.8 gfortran libprotobuf-dev libeigen3-dev python-scipy cython
+
+.PHONY: travis_install_py_deps
+travis_install_py_deps: 
+	(cd .travis && virtualenv --system-site-packages venv)
+	($(S) && pip install --upgrade numpy)	
+	($(S) && pip install pymc)
+
+.PHONY: travis_install_distributions
+travis_install_distributions: travis_install_py_deps
+	($(S) && git clone https://github.com/forcedotcom/distributions.git)
+	($(S1) && DISTRIBUTIONS_USE_PROTOBUF=1 PYDISTRIBUTIONS_USE_LIB=1 make install_cy)
+
+.PHONY: travis_install
+travis_install: travis_install_distributions
+	cp .travis/config.mk .
+	(source .travis/venv/bin/activate && make build_py build_test_cxx)
+
+.PHONY: travis_script
+travis_script:
+	(source .travis/venv/bin/activate && make test)
