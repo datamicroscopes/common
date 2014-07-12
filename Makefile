@@ -17,12 +17,12 @@ ifneq ($(strip $(DISTRIBUTIONS_INC)),)
 endif
 
 # set the LDFLAGS
-LDFLAGS := -lprotobuf -ldistributions_shared 
+LDFLAGS := -lprotobuf -ldistributions_shared
 ifneq ($(strip $(DISTRIBUTIONS_LIB)),)
 	LDFLAGS += -L$(DISTRIBUTIONS_LIB) -Wl,-rpath,$(DISTRIBUTIONS_LIB)
 endif
 
-SRCFILES := $(wildcard src/common/*.cpp) 
+SRCFILES := $(wildcard src/common/*.cpp)
 SRCFILES += $(wildcard src/common/recarray/*.cpp)
 SRCFILES += $(wildcard src/common/sparse_ndarray/*.cpp)
 SRCFILES += $(wildcard src/models/*.cpp)
@@ -83,8 +83,8 @@ endif
 PBGENFILES := src/io/schema.pb.cpp include/microscopes/io/schema.pb.h microscopes/io/schema_pb2.py
 
 .PHONY: clean
-clean: 
-	rm -rf out test/cxx/*.{d,dSYM,prog} $(PBGENFILES) 
+clean:
+	rm -rf out test/cxx/*.{d,dSYM,prog} $(PBGENFILES)
 	find microscopes \( -name '*.cpp' -or -name '*.so' -or -name '*.pyc' \) -type f -print0 | xargs -0 rm -f --
 
 include/microscopes/io/schema.pb.h: microscopes/io/schema.proto
@@ -95,7 +95,7 @@ include/microscopes/io/schema.pb.h: microscopes/io/schema.proto
 src/io/schema.pb.cpp: include/microscopes/io/schema.pb.h
 
 .PHONY: test
-test: build_py test_cxx 
+test: build_py test_cxx
 	$(LIBPATH_VARNAME)=$$$(LIBPATH_VARNAME):./out nosetests
 
 .PHONY: test_cxx
@@ -103,18 +103,18 @@ test_cxx: build_test_cxx
 	test/cxx/test_sparse_ndarray.prog
 
 SHELL := /bin/bash
-S := cd .travis 
+S := cd .travis
 S1 := $(S) && cd distributions
 
 .PHONY: travis_before_install
-travis_before_install: 
+travis_before_install:
 	sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 	sudo add-apt-repository -y ppa:cython-dev/master-ppa
 	sudo apt-get update -qq
 	sudo apt-get install -qq g++-4.8 gfortran protobuf-compiler libprotobuf-dev libeigen3-dev python-scipy cython
 
 .PHONY: travis_install_py_deps
-travis_install_py_deps: 
+travis_install_py_deps:
 	pip install --upgrade numpy
 	pip install pymc
 
@@ -126,6 +126,7 @@ travis_install_distributions: travis_install_py_deps
 .PHONY: travis_install
 travis_install: travis_install_distributions
 	cp .travis/config.mk .
+	echo "DISTRIBUTIONS_LIB = $$VIRTUAL_ENV/lib" >> config.mk
 	make build_py build_test_cxx
 
 .PHONY: travis_script
