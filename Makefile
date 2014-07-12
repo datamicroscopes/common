@@ -25,7 +25,6 @@ endif
 SRCFILES := $(wildcard src/common/*.cpp) 
 SRCFILES += $(wildcard src/common/recarray/*.cpp)
 SRCFILES += $(wildcard src/common/sparse_ndarray/*.cpp)
-SRCFILES += $(wildcard src/io/*.cpp)
 SRCFILES += $(wildcard src/models/*.cpp)
 SRCFILES += src/io/schema.pb.cpp
 OBJFILES := $(patsubst src/%.cpp, $(O)/%.o, $(SRCFILES))

@@ -36,12 +36,16 @@ def get_config_info(config):
     config = parse_makefile(config)
     distributions_inc = config.get('DISTRIBUTIONS_INC', None)
     distributions_lib = config.get('DISTRIBUTIONS_LIB', None)
+    cc = config.get('CC', None)
+    cxx = config.get('CXX', None)
     debug_build = config.get('DEBUG', None)
     if debug_build is not None:
         debug_build = debug_build == 1
     return {
         'distributions_inc' : distributions_inc,
         'distributions_lib' : distributions_lib,
+	'cc' : cc,
+	'cxx' : cxx,
         'debug_build' : debug_build,
     }
 
@@ -58,6 +62,12 @@ if distributions_inc is not None:
     print 'Using distributions_inc:', distributions_inc
 if distributions_lib is not None:
     print 'Using distributions_lib:', distributions_lib
+if cc is not None:
+    print 'Using CC={}'.format(cc)
+    os.environ['CC'] = cc
+if cxx is not None:
+    print 'Using CXX={}'.format(cxx)
+    os.environ['CXX'] = cxx
 if debug_build:
     print 'Debug build'
 
