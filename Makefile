@@ -115,8 +115,7 @@ travis_before_install:
 
 .PHONY: travis_install_py_deps
 travis_install_py_deps:
-	pip install --upgrade numpy
-	pip install pymc
+	pip install -r .travis/requirements.txt
 
 .PHONY: travis_install_distributions
 travis_install_distributions: travis_install_py_deps
