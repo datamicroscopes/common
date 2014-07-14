@@ -97,7 +97,7 @@ src/io/schema.pb.cpp: include/microscopes/io/schema.pb.h
 
 .PHONY: test
 test: build_py test_cxx
-	$(LIBPATH_VARNAME)=$$$(LIBPATH_VARNAME):./out nosetests
+	$(LIBPATH_VARNAME)=$$$(LIBPATH_VARNAME):./out nosetests --verbose
 
 .PHONY: test_cxx
 test_cxx: build_test_cxx
