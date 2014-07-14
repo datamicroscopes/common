@@ -217,6 +217,7 @@ public:
     std::istringstream inp(hp);
     message_type m;
     m.ParseFromIstream(&inp);
+    MICROSCOPES_DCHECK(m.alpha() > 0.0, "alpha must be positive");
     alpha_ = m.alpha();
   }
 
@@ -375,8 +376,10 @@ public:
   {
     if (g.count_)
       return g.count_;
-    else
+    else {
+      MICROSCOPES_ASSERT(gempty_.size());
       return alpha_ / float(gempty_.size());
+    }
   }
 
 protected:
