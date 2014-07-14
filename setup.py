@@ -69,7 +69,11 @@ if cxx is not None:
 if debug_build:
     print 'Debug build'
 
-extra_compile_args = ['-std=c++0x']
+extra_compile_args = [
+    '-std=c++0x',
+    '-Wno-deprecated-register',
+    '-Wno-unused-function',
+]
 if clang:
     extra_compile_args.extend([
         '-mmacosx-version-min=10.7',  # for anaconda

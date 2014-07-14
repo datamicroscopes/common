@@ -7,6 +7,7 @@ TOP := $(shell echo $${PWD-`pwd`})
 
 # set the CXXFLAGS
 CXXFLAGS := -fPIC -g -MD -Wall -std=c++0x -I$(TOP)/include
+CXXFLAGS += -Wno-deprecated-register
 ifneq ($(strip $(DEBUG)),1)
 	CXXFLAGS += -O3 -DNDEBUG
 else
