@@ -56,9 +56,17 @@ public:
     return std::make_shared<bbnc_model>();
   }
 
+  static inline size_t
+  CreateFeatureGroupInvocations()
+  {
+    return CreateFeatureGroupInvocations_;
+  }
+
 protected:
   float alpha_;
   float beta_;
+
+  static size_t CreateFeatureGroupInvocations_;
 };
 
 } // namespace models
