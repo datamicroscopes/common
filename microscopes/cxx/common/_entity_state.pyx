@@ -12,9 +12,6 @@ cdef class fixed_entity_based_state_object:
     def assignments(self):
         return list(self._thisptr.get().assignments())
 
-    def empty_groups(self):
-        return list(self._thisptr.get().empty_groups())
-
     def add_value(self, int gid, int eid, rng r):
         self._thisptr.get().add_value(gid, eid, r._thisptr[0])
 
@@ -41,6 +38,9 @@ cdef class entity_based_state_object(fixed_entity_based_state_object):
 
     cdef c_entity_based_state_object * raw_px(self):
         return <c_entity_based_state_object *> self._thisptr.get()
+
+    def empty_groups(self):
+        return list(self.raw_px().empty_groups())
 
     def create_group(self, rng r):
         return self.raw_px().create_group(r._thisptr[0])

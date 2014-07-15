@@ -20,11 +20,6 @@ public:
   virtual std::vector<ssize_t> assignments() const = 0;
   virtual std::vector<size_t> groups() const = 0;
 
-  /**
-   * A subset of groups()
-   */
-  virtual std::vector<size_t> empty_groups() const = 0;
-
   virtual size_t groupsize(size_t gid) const = 0;
 
   // Routines for manipulating the parameters
@@ -80,6 +75,10 @@ public:
  */
 class entity_based_state_object : public fixed_entity_based_state_object {
 public:
+  /**
+   * A subset of groups()
+   */
+  virtual std::vector<size_t> empty_groups() const = 0;
   virtual size_t create_group(rng_t &rng) = 0;
   virtual void delete_group(size_t gid) = 0;
 };
