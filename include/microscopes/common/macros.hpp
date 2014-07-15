@@ -55,6 +55,6 @@
 #endif
 
 // g++-4.6 does not support override, so we define it to be a no-op
-#if !GCC_AT_LEAST_47
+#if !defined(__clang__) && !GCC_AT_LEAST_47
   #define override
 #endif
