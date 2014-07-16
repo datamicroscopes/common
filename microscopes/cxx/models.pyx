@@ -24,6 +24,8 @@ from microscopes.py.models import bbnc as py_bbnc, \
 from microscopes.io.schema_pb2 import BetaBernoulliNonConj as pb_bbnc, \
                                       NormalInverseWishart as pb_niw
 
+from microscopes.cxx._bbnc_h cimport CreateFeatureGroupInvocations
+
 class py_model(object):
     def __init__(self, model_module, pb_type):
         self._model_module = model_module
@@ -67,3 +69,6 @@ nich = (py_model(dbg_nich, pb_nich), nich_factory())
 dd   = (py_model(dbg_dd, pb_dd), dd_factory())
 bbnc = (py_model(py_bbnc, pb_bbnc), bbnc_factory())
 niw  = (py_model(py_niw, pb_niw), niw_factory())
+
+def bbnc_create_feature_group_invocations():
+    return int(CreateFeatureGroupInvocations())

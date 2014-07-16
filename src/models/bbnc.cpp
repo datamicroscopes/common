@@ -117,6 +117,7 @@ bbnc_feature_group::debug_str() const
 shared_ptr<feature_group>
 bbnc_model::create_feature_group(rng_t &rng) const
 {
+  CreateFeatureGroupInvocations_++;
   return make_shared<bbnc_feature_group>(sample_beta(rng, alpha_, beta_));
 }
 
@@ -170,3 +171,6 @@ bbnc_model::debug_str() const
   oss << "{alpha:" << alpha_ << ",beta:" << beta_ << "}";
   return oss.str();
 }
+
+size_t
+bbnc_model::CreateFeatureGroupInvocations_ = 0;
