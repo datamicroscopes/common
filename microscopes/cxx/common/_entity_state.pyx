@@ -12,6 +12,9 @@ cdef class fixed_entity_based_state_object:
     def assignments(self):
         return list(self._thisptr.get().assignments())
 
+    def nentities(self):
+        return self._thisptr.get().nentities()
+
     def add_value(self, int gid, int eid, rng r):
         self._thisptr.get().add_value(gid, eid, r._thisptr[0])
 
