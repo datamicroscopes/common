@@ -22,7 +22,7 @@ COMPILER := CC=gcc-4.8 CXX=g++-4.8
 .PHONY: travis_install
 travis_install: travis_install_distributions
 	mkdir build
-	(cd build && $(COMPILER) cmake -DCMAKE_INSTALL_PREFIX=$$VIRTUAL_ENV .. && make -j && make install)
+	(cd build && $(COMPILER) cmake -DCMAKE_INSTALL_PREFIX=$$VIRTUAL_ENV .. && make && make install)
 	$(COMPILER) pip install .
 
 .PHONY: travis_script
