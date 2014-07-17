@@ -30,10 +30,8 @@ ADD_CUSTOM_COMMAND(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} 
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/microscopes/io/schema.proto)
 
-include_directories(../../distributions-1/include)
-
 include_directories(include)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h*")
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/ DESTINATION include FILES_MATCHING PATTERN "*.h*")
 
