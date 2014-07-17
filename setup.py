@@ -3,7 +3,6 @@
 from distutils.core import setup
 from distutils.extension import Extension
 from distutils.version import LooseVersion
-from distutils.sysconfig import parse_makefile
 from Cython.Distutils import build_ext
 from Cython.Build import cythonize
 from cython import __version__ as cython_version
@@ -12,60 +11,63 @@ import numpy
 import sys
 import os
 
+from subprocess import Popen, PIPE, check_call
+import json
+
+def find_dependency(soname, incname):
+    def test(prefix):
+        sofile = os.path.join(prefix, 'lib/{}'.format(soname))
+        incdir = os.path.join(prefix, 'include/{}'.format(incname))
+        if os.path.isfile(sofile) and os.path.isdir(incdir):
+            return os.path.join(prefix, 'lib'), \
+                   os.path.join(prefix, 'include')
+        return None
+    if 'VIRTUAL_ENV' in os.environ:
+        ret = test(os.environ['VIRTUAL_ENV'])
+        if ret is not None:
+            return ret[0], ret[1]
+    if 'CONDA_DEFAULT_ENV' in os.environ:
+        # shell out to conda to get info
+        s = Popen(['conda', 'info', '--json'], shell=False, stdout=PIPE).stdout.read()
+        s = json.loads(s)
+        if 'default_prefix' in s:
+            ret = test(str(s['default_prefix']))
+            if ret is not None:
+                return ret[0], ret[1]
+    return None, None
+
 clang = False
 if sys.platform.lower().startswith('darwin'):
     clang = True
 
-# make sure C shared library exists
-libmicroscopes_common = 'out/libmicroscopes_common.dylib' if clang else 'out/libmicroscopes_common.so'
-if not os.path.isfile(libmicroscopes_common):
-    raise ValueError(
-        "could not locate libmicroscopes_common shared object. make sure to run `make' first")
-
-# append to library path
-os.environ['LIBRARY_PATH'] = os.environ.get('LIBRARY_PATH', '') + ':out'
+so_ext = 'dylib' if clang else 'so'
 
 min_cython_version = '0.20.2b1' if clang else '0.20.1'
 if LooseVersion(cython_version) < LooseVersion(min_cython_version):
     raise ValueError(
         'cython support requires cython>={}'.format(min_cython_version))
 
-KEYS = ('DISTRIBUTIONS_INC', 'DISTRIBUTIONS_LIB', 'CC', 'CXX', 'DEBUG')
+cc = os.environ.get('CC', None)
+cxx = os.environ.get('CXX', None)
+debug_build = False
 
-def get_config_info(config):
-    config = parse_makefile(config)
-    ret = {}
-    for k in KEYS:
-        if k in config:
-            ret[k] = config[k]
-    return ret
-
-def merge_config(existing, overwriting):
-    existing.update(overwriting)
-
-config = {}
-for fname in ('../config.mk', 'config.mk'):
-    try:
-        merge_config(config, get_config_info(fname))
-    except IOError:
-        pass
-
-distributions_inc = config.get('DISTRIBUTIONS_INC', None)
-distributions_lib = config.get('DISTRIBUTIONS_LIB', None)
-cc = config.get('CC', None)
-cxx = config.get('CXX', None)
-debug_build = config.get('DEBUG', 0) == 1
+distributions_lib, distributions_inc = find_dependency(
+    'libdistributions_shared.{}'.format(so_ext), 'distributions')
+microscopes_common_lib, microscopes_common_inc = find_dependency(
+    'libmicroscopes_common.{}'.format(so_ext), 'microscopes')
 
 if distributions_inc is not None:
     print 'Using distributions_inc:', distributions_inc
 if distributions_lib is not None:
     print 'Using distributions_lib:', distributions_lib
+if microscopes_common_inc is not None:
+    print 'Using microscopes_common_inc:', microscopes_common_inc
+if microscopes_common_lib is not None:
+    print 'Using microscopes_common_lib:', microscopes_common_lib
 if cc is not None:
     print 'Using CC={}'.format(cc)
-    os.environ['CC'] = cc
 if cxx is not None:
     print 'Using CXX={}'.format(cxx)
-    os.environ['CXX'] = cxx
 if debug_build:
     print 'Debug build'
 
@@ -82,27 +84,32 @@ if clang:
 if debug_build:
     extra_compile_args.append('-DDEBUG_MODE')
 
-extra_include_dirs = []
+include_dirs = [numpy.get_include()]
 if distributions_inc is not None:
-    extra_include_dirs.append(distributions_inc)
+    include_dirs.append(distributions_inc)
+if microscopes_common_inc is not None:
+    include_dirs.append(microscopes_common_inc)
 
-extra_link_args = []
+library_dirs = []
 if distributions_lib is not None:
-    extra_link_args.extend([
-        '-L' + distributions_lib,
-        '-Wl,-rpath,' + distributions_lib
-    ])
+    library_dirs.append(distributions_lib)
+if microscopes_common_lib is not None:
+    library_dirs.append(microscopes_common_lib)
+
+# generate python protobuf file if not present
+if not os.path.isfile('microscopes/io/schema_pb2.py'):
+    check_call(['protoc', '--python_out=.', 'microscopes/io/schema.proto'])
 
 def make_extension(module_name):
     sources = [module_name.replace('.', '/') + '.pyx']
     return Extension(
         module_name,
         sources=sources,
-        libraries=["microscopes_common", "protobuf", "distributions_shared"],
         language="c++",
-        include_dirs=[numpy.get_include(), 'include'] + extra_include_dirs,
-        extra_compile_args=extra_compile_args,
-        extra_link_args=extra_link_args)
+        include_dirs=include_dirs,
+        libraries=["microscopes_common", "protobuf", "distributions_shared"],
+        library_dirs=library_dirs,
+        extra_compile_args=extra_compile_args)
 
 extensions = cythonize([
     make_extension('microscopes.cxx.models'),
@@ -120,4 +127,21 @@ extensions = cythonize([
     make_extension('microscopes.cxx.common._scalar_functions'),
 ])
 
-setup(ext_modules=extensions)
+setup(
+    version='0.1',
+    name='microscopes-common',
+    description='XYZ',
+    long_description='XYZ long',
+    packages=(
+        'microscopes',
+        'microscopes.io',
+        'microscopes.cxx',
+        'microscopes.cxx.common',
+        'microscopes.cxx.common.recarray',
+        'microscopes.cxx.common.sparse_ndarray',
+        'microscopes.py',
+        'microscopes.py.models',
+        'microscopes.py.common',
+        'microscopes.py.common.recarray',
+    ),
+    ext_modules=extensions)
