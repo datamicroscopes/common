@@ -42,7 +42,7 @@ if sys.platform.lower().startswith('darwin'):
 
 so_ext = 'dylib' if clang else 'so'
 
-min_cython_version = '0.20.2b1' if clang else '0.20.1'
+min_cython_version = '0.20.2' if clang else '0.20.1'
 if LooseVersion(cython_version) < LooseVersion(min_cython_version):
     raise ValueError(
         'cython support requires cython>={}'.format(min_cython_version))
