@@ -98,6 +98,10 @@ if distributions_lib is not None:
 if microscopes_common_lib is not None:
     library_dirs.append(microscopes_common_lib)
 
+extra_link_args = []
+if 'EXTRA_LINK_ARGS' in os.environ:
+    extra_link_args.append(os.environ['EXTRA_LINK_ARGS'])
+
 # generate python protobuf file if not present
 if not os.path.isfile('microscopes/io/schema_pb2.py'):
     check_call(['protoc', '--python_out=.', 'microscopes/io/schema.proto'])
@@ -111,7 +115,8 @@ def make_extension(module_name):
         include_dirs=include_dirs,
         libraries=["microscopes_common", "protobuf", "distributions_shared"],
         library_dirs=library_dirs,
-        extra_compile_args=extra_compile_args)
+        extra_compile_args=extra_compile_args,
+        extra_link_args=extra_link_args)
 
 extensions = cythonize([
     make_extension('microscopes.cxx.models'),
