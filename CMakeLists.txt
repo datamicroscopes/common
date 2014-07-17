@@ -34,7 +34,7 @@ include_directories(include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h*")
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/ DESTINATION include FILES_MATCHING PATTERN "*.h*")
-install(DIRECTORY microscopes DESTINATION cython FILES_MATCHING PATTERN "*.pxd")
+install(DIRECTORY microscopes DESTINATION cython FILES_MATCHING PATTERN "*.pxd"  PATTERN "__init__.py")
 
 set(MICROSCOPES_COMMON_SOURCE_FILES 
     ${CMAKE_CURRENT_BINARY_DIR}/src/io/schema.pb.cpp
