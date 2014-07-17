@@ -16,6 +16,13 @@ if [ -n "${VIRTUAL_ENV}" ]; then
     fi
 fi
 
+if [ "${CONDA_BUILD}" = "1" ]; then
+    if [ -f "${PREFIX}/lib/libdistributions_shared.${SOEXT}" ] && [ -d "${PREFIX}/include/distributions" ]; then
+        echo "${PREFIX}"
+        exit 0
+    fi
+fi
+
 if [ -n "${CONDA_DEFAULT_ENV}" ]; then
     DIR=`conda info | grep 'default environment' | awk '{print $4}'`
     if [ -f "${DIR}/lib/libdistributions_shared.${SOEXT}" ] && [ -d "${DIR}/include/distributions" ]; then

@@ -26,10 +26,14 @@ message(STATUS "found protobuf INC=${PROTOBUF_INCLUDE_DIRS}, LIB=${PROTOBUF_LIBR
 include_directories(${PROTOBUF_INCLUDE_DIRS})
 link_directories(${PROTOBUF_LIBRARY_DIRS})
 
-find_package(Distributions REQUIRED)
-message(STATUS "found distributions INC=${DISTRIBUTIONS_INCLUDE_DIRS}, LIB=${DISTRIBUTIONS_LIBRARY_DIRS}")
-include_directories(${DISTRIBUTIONS_INCLUDE_DIRS})
-link_directories(${DISTRIBUTIONS_LIBRARY_DIRS})
+find_package(Distributions)
+if(DISTRIBUTIONS_FOUND)
+  message(STATUS "found distributions INC=${DISTRIBUTIONS_INCLUDE_DIRS}, LIB=${DISTRIBUTIONS_LIBRARY_DIRS}")
+  include_directories(${DISTRIBUTIONS_INCLUDE_DIRS})
+  link_directories(${DISTRIBUTIONS_LIBRARY_DIRS})
+else()
+  message(FATAL_ERROR "Could not find distributions")
+endif()
 
 ADD_CUSTOM_COMMAND(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/io/schema.pb.cpp ${CMAKE_CURRENT_BINARY_DIR}/include/microscopes/io/schema.pb.h
