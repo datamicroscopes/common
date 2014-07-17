@@ -85,6 +85,8 @@ if debug_build:
     extra_compile_args.append('-DDEBUG_MODE')
 
 include_dirs = [numpy.get_include()]
+if 'EXTRA_INCLUDE_PATH' in os.environ:
+    include_dirs.append(os.environ['EXTRA_INCLUDE_PATH'])
 if distributions_inc is not None:
     include_dirs.append(distributions_inc)
 if microscopes_common_inc is not None:
