@@ -1,4 +1,11 @@
-SHELL := /bin/bash
+.PHONY: test
+test:
+	(cd build && make test)
+	(cd test && nosetests --verbose)
+
+.PHONY: clean
+clean:
+	rm -rf build
 
 .PHONY: travis_before_install
 travis_before_install:
@@ -26,6 +33,4 @@ travis_install: travis_install_distributions
 	$(COMPILER) pip install .
 
 .PHONY: travis_script
-travis_script: 
-	(cd build && make test)
-	(cd test && nosetests --verbose)
+travis_script: test
