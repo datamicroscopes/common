@@ -29,3 +29,20 @@ message NormalInverseWishart {
         repeated float sum_xxT = 3;
     }
 }
+
+message GroupData {
+    required uint32 id = 1;
+    required string data = 2;
+}
+
+message GroupManager {
+    required float alpha = 1;
+    repeated int32 assignments = 2;
+    repeated GroupData groups = 3;
+}
+
+message FixedGroupManager {
+    repeated float alphas = 1;
+    repeated int32 assignments = 2;
+    repeated string groups = 3;
+}

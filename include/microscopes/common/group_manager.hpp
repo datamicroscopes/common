@@ -26,6 +26,21 @@ namespace common {
 template <typename T>
 struct gd {
   gd() : count_(), data_() {}
+  gd(size_t count, const T& data) : count_(count), data_(data) {}
+  gd(size_t count, T&& data) : count_(count), data_(std::move(data)) {}
+
+  inline bool
+  operator==(const gd &that) const
+  {
+    return count_ == that.count_ && data_ == that.data_;
+  }
+
+  inline bool
+  operator!=(const gd &that) const
+  {
+    return !operator==(that);
+  }
+
   size_t count_;
   T data_;
 };
@@ -45,23 +60,49 @@ public:
       groups_[i].first = i;
   }
 
+  fixed_group_manager(
+      const serialized_t &repr,
+      std::function<T(const std::string &)> group_deserializer_fn)
+    : alphas_(), assignments_(), groups_()
+  {
+    io::FixedGroupManager m;
+    util::protobuf_from_string(m, repr);
+    MICROSCOPES_DCHECK(m.alphas_size() > 0, "no alphas given");
+    MICROSCOPES_DCHECK(m.assignments_size() > 0, "no entities given");
+    MICROSCOPES_DCHECK(m.alphas_size() == m.groups_size(), "size discrepancy");
+    for (size_t i = 0; i < m.alphas_size(); i++) {
+      MICROSCOPES_DCHECK(m.alphas(i) > 0., "alphas can only be positive");
+      alphas_.push_back(m.alphas(i));
+    }
+    std::vector<size_t> counts(alphas_.size());
+    for (size_t i = 0; i < m.assignments_size(); i++) {
+      MICROSCOPES_DCHECK(
+          m.assignments(i) == -1 ||
+          m.assignments(i) < alphas_.size(), "invalid group id");
+      assignments_.push_back(m.assignments(i));
+      if (assignments_.back() != -1)
+        counts[assignments_.back()]++;
+    }
+    for (size_t i = 0; i < m.groups_size(); i++) {
+      gd<T> g(counts[i], std::move(group_deserializer_fn(m.groups(i))));
+      groups_.emplace_back(i, std::move(g));
+    }
+  }
+
   inline hyperparam_bag_t
   get_hp() const
   {
     message_type m;
     for (auto a : alphas_)
       m.add_alphas(a);
-    std::ostringstream out;
-    m.SerializeToOstream(&out);
-    return out.str();
+    return util::protobuf_to_string(m);
   }
 
   inline void
   set_hp(const hyperparam_bag_t &hp)
   {
-    std::istringstream inp(hp);
     message_type m;
-    m.ParseFromIstream(&inp);
+    util::protobuf_from_string(m, hp);
     MICROSCOPES_DCHECK(m.alphas_size() == alphas_.size(), "size doesn't match");
     for (size_t i = 0; i < alphas_.size(); i++) {
       MICROSCOPES_DCHECK(m.alphas(i) > 0., "alphas need to be positive");
@@ -181,6 +222,19 @@ public:
     return alphas_[gid] + g.count_;
   }
 
+  serialized_t
+  serialize(std::function<serialized_t(const T &)> group_serializer_fn) const
+  {
+    io::FixedGroupManager m;
+    for (auto a : alphas_)
+      m.add_alphas(a);
+    for (auto s : assignments_)
+      m.add_assignments(s);
+    for (auto &p : groups_)
+      m.add_groups(group_serializer_fn(p.second.data_));
+    return util::protobuf_to_string(m);
+  }
+
 private:
   std::vector<float> alphas_;
   std::vector<ssize_t> assignments_;
@@ -201,22 +255,55 @@ public:
       groups_()
   {}
 
+  group_manager(
+      const serialized_t &repr,
+      std::function<T(const std::string &)> group_deserializer_fn)
+    : alpha_(), gcount_(), gempty_(), assignments_(), groups_()
+  {
+    io::GroupManager m;
+    util::protobuf_from_string(m, repr);
+    MICROSCOPES_DCHECK(m.alpha() > 0., "alphas can only be positive");
+    MICROSCOPES_DCHECK(m.assignments_size() > 0, "no entities given");
+
+    alpha_ = m.alpha();
+    std::map<size_t, size_t> counts;
+    for (size_t i = 0; i < m.assignments_size(); i++) {
+      MICROSCOPES_DCHECK(
+          m.assignments(i) == -1 || m.assignments(i) >= 0,
+          "invalid group id");
+      assignments_.push_back(m.assignments(i));
+      if (assignments_.back() != -1)
+        counts[assignments_.back()]++;
+    }
+
+    for (size_t i = 0; i < m.groups_size(); i++) {
+      const auto &g = m.groups(i);
+      const auto it = counts.find(g.id());
+      const size_t count = (it == counts.end()) ? 0 : it->second;
+      gd<T> gdata(count, std::move(group_deserializer_fn(g.data())));
+      groups_[g.id()] = std::move(gdata);
+      if (!count)
+        gempty_.insert(g.id());
+    }
+
+    // gcount_ is 1+max group id seen
+    if (!groups_.empty())
+      gcount_ = groups_.crbegin()->first + 1;
+  }
+
   inline hyperparam_bag_t
   get_hp() const
   {
     message_type m;
     m.set_alpha(alpha_);
-    std::ostringstream out;
-    m.SerializeToOstream(&out);
-    return out.str();
+    return util::protobuf_to_string(m);
   }
 
   inline void
   set_hp(const hyperparam_bag_t &hp)
   {
-    std::istringstream inp(hp);
     message_type m;
-    m.ParseFromIstream(&inp);
+    util::protobuf_from_string(m, hp);
     MICROSCOPES_DCHECK(m.alpha() > 0.0, "alpha must be positive");
     alpha_ = m.alpha();
   }
@@ -380,6 +467,21 @@ public:
       MICROSCOPES_ASSERT(gempty_.size());
       return alpha_ / float(gempty_.size());
     }
+  }
+
+  serialized_t
+  serialize(std::function<serialized_t(const T &)> group_serializer_fn) const
+  {
+    io::GroupManager m;
+    m.set_alpha(alpha_);
+    for (auto s : assignments_)
+      m.add_assignments(s);
+    for (auto &p : groups_) {
+      io::GroupData &g = *m.add_groups();
+      g.set_id(p.first);
+      g.set_data(group_serializer_fn(p.second.data_));
+    }
+    return util::protobuf_to_string(m);
   }
 
 protected:

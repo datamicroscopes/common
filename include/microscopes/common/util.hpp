@@ -3,6 +3,8 @@
 #include <microscopes/common/random_fwd.hpp>
 #include <microscopes/common/macros.hpp>
 
+#include <google/protobuf/message.h>
+
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/Cholesky>
 
@@ -170,6 +172,21 @@ struct util {
   get(const Eigen::MatrixXf &m, unsigned i, unsigned j)
   {
     return m(i, j);
+  }
+
+  static inline std::string
+  protobuf_to_string(const google::protobuf::Message &m)
+  {
+    std::ostringstream out;
+    m.SerializeToOstream(&out);
+    return out.str();
+  }
+
+  static inline void
+  protobuf_from_string(google::protobuf::Message &m, const std::string &s)
+  {
+    std::istringstream inp(s);
+    m.ParseFromIstream(&inp);
   }
 
 };
