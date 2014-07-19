@@ -6,7 +6,5 @@ cdef extern from "microscopes/models/bbnc.hpp" namespace "microscopes::models":
     cdef cppclass bbnc_model:
         pass
 
-cdef extern from "microscopes/models/bbnc.hpp" namespace "microscopes::models::bbnc_model":
-    shared_ptr[model] new_instance() except +
-
+cdef extern from "microscopes/models/bbnc.hpp" namespace "microscopes::models::bbnc_hypers":
     size_t CreateFeatureGroupInvocations()

@@ -14,9 +14,7 @@ from distributions.io.schema_pb2 import BetaBernoulli as pb_bb, \
                                         DirichletDiscrete as pb_dd
 
 from microscopes.cxx._models cimport \
-  bb_factory, bnb_factory, gp_factory, \
-  nich_factory, dd_factory, bbnc_factory, \
-  niw_factory
+  _bb, _bnb, _gp, _nich, _dd, _bbnc, _niw
 
 from microscopes.py.models import bbnc as py_bbnc, \
                                   niw as py_niw
@@ -62,13 +60,18 @@ class py_model(object):
         s.load_protobuf(m)
         return s.dump()
 
-bb   = (py_model(dbg_bb, pb_bb), bb_factory())
-bnb  = (py_model(dbg_bnb, pb_bnb), bnb_factory())
-gp   = (py_model(dbg_gp, pb_gp), gp_factory())
-nich = (py_model(dbg_nich, pb_nich), nich_factory())
-dd   = (py_model(dbg_dd, pb_dd), dd_factory())
-bbnc = (py_model(py_bbnc, pb_bbnc), bbnc_factory())
-niw  = (py_model(py_niw, pb_niw), niw_factory())
+class model_descriptor(object):
+    def __init__(self, py_descriptor, c_descriptor):
+        self._py_descriptor = py_descriptor
+        self._c_descriptor = c_descriptor
+
+bb   = model_descriptor(py_model(dbg_bb, pb_bb), _bb())
+bnb  = model_descriptor(py_model(dbg_bnb, pb_bnb), _bnb())
+gp   = model_descriptor(py_model(dbg_gp, pb_gp), _gp())
+nich = model_descriptor(py_model(dbg_nich, pb_nich), _nich())
+dd   = lambda size: model_descriptor(py_model(dbg_dd, pb_dd), _dd(size))
+bbnc = model_descriptor(py_model(py_bbnc, pb_bbnc), _bbnc())
+niw  = lambda dim: model_descriptor(py_model(py_niw, pb_niw), _niw(dim))
 
 def bbnc_create_feature_group_invocations():
     return int(CreateFeatureGroupInvocations())

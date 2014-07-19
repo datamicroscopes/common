@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <memory>
 
 #include <microscopes/models/base.hpp>
 #include <microscopes/common/runtime_value.hpp>
@@ -61,11 +62,11 @@ namespace distributions {
 namespace microscopes {
 namespace models {
 
-template <typename T> struct distributions_model_types {};
+template <typename T> struct distribution_types {};
 
 #define DISTRIB_SPECIALIZE_MODEL_TYPES(name) \
   template <> \
-  struct distributions_model_types< distributions::name > \
+  struct distribution_types< distributions::name > \
   { \
     typedef distributions::protobuf::name ## _Shared shared_message_type; \
     typedef distributions::protobuf::name ## _Group group_message_type; \
@@ -117,141 +118,83 @@ struct distributions_model_hp< distributions::DirichletDiscrete128 >
 };
 
 template <typename T>
-class distributions_model : public model {
-public:
-  typedef typename distributions_model_types<T>::shared_message_type message_type;
-
-  inline std::shared_ptr<feature_group> create_feature_group(common::rng_t &rng) const override;
-
-  inline common::hyperparam_bag_t
-  get_hp() const override
-  {
-    message_type m;
-    repr_.protobuf_dump(m);
-    std::ostringstream out;
-    m.SerializeToOstream(&out);
-    return out.str();
-  }
-
-  inline void
-  set_hp(const common::hyperparam_bag_t &hp) override
-  {
-    std::istringstream inp(hp);
-    message_type m;
-    m.ParseFromIstream(&inp);
-    repr_.protobuf_load(m);
-  }
-
-  inline void
-  set_hp(const model &m) override
-  {
-    repr_ = static_cast<const distributions_model<T> &>(m).repr_;
-  }
-
-  inline common::value_mutator
-  get_hp_mutator(const std::string &name) override
-  {
-    return distributions_model_hp<T>::get(repr_, name);
-  }
-
-  inline common::runtime_type
-  get_runtime_type() const override
-  {
-    return common::runtime_type(
-        common::static_type_to_primitive_type< typename T::Value >::value);
-  }
-
-  inline std::string
-  debug_str() const override
-  {
-    // XXX: inefficient
-    message_type m;
-    repr_.protobuf_dump(m);
-    return m.ShortDebugString();
-  }
-
-  // XXX: public for now so distributions_feature_group can access
-  typename T::Shared repr_;
-};
-
-template <typename T>
-class distributions_feature_group : public feature_group {
+class distributions_group : public group {
 private:
 
   static inline const typename T::Shared &
-  shared_repr(const model &m)
-  {
-    return static_cast<const distributions_model<T> &>(m).repr_;
-  }
+  shared_repr(const hypers &h);
 
 public:
-  typedef typename distributions_model_types<T>::group_message_type message_type;
+  typedef typename distribution_types<T>::group_message_type message_type;
 
-  inline void
-  add_value(const model &m, const common::value_accessor &value, common::rng_t &rng) override
+  void
+  add_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) override
   {
     MICROSCOPES_ASSERT(value.shape() == 1);
     MICROSCOPES_ASSERT(!value.ismasked(0));
     repr_.add_value(shared_repr(m), value.get< typename T::Value >(0), rng);
   }
 
-  inline void
-  remove_value(const model &m, const common::value_accessor &value, common::rng_t &rng) override
+  void
+  remove_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) override
   {
     MICROSCOPES_ASSERT(value.shape() == 1);
     MICROSCOPES_ASSERT(!value.ismasked(0));
     repr_.remove_value(shared_repr(m), value.get< typename T::Value >(0), rng);
   }
 
-  inline float
-  score_value(const model &m, const common::value_accessor &value, common::rng_t &rng) const override
+  float
+  score_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) const override
   {
     MICROSCOPES_ASSERT(value.shape() == 1);
     MICROSCOPES_ASSERT(!value.ismasked(0));
     return repr_.score_value(shared_repr(m), value.get< typename T::Value >(0), rng);
   }
 
-  inline float
-  score_data(const model &m, common::rng_t &rng) const override
+  float
+  score_data(const hypers &m, common::rng_t &rng) const override
   {
     return repr_.score_data(shared_repr(m), rng);
   }
 
-  inline void
-  sample_value(const model &m, common::value_mutator &value, common::rng_t &rng) const override
+  void
+  sample_value(const hypers &m, common::value_mutator &value, common::rng_t &rng) const override
   {
     MICROSCOPES_ASSERT(value.shape() == 1);
     typename T::Value sampled = repr_.sample_value(shared_repr(m), rng);
     value.set< typename T::Value >(sampled, 0);
   }
 
-  inline common::suffstats_bag_t
+  common::suffstats_bag_t
   get_ss() const override
   {
     message_type m;
     repr_.protobuf_dump(m);
-    std::ostringstream out;
-    m.SerializeToOstream(&out);
-    return out.str();
+    return common::util::protobuf_to_string(m);
   }
 
-  inline void
+  void
   set_ss(const common::suffstats_bag_t &ss) override
   {
-    std::istringstream inp(ss);
     message_type m;
-    m.ParseFromIstream(&inp);
+    common::util::protobuf_from_string(m, ss);
     repr_.protobuf_load(m);
   }
 
-  inline common::value_mutator
+  void
+  set_ss(const group &g) override
+  {
+    repr_ = static_cast<const distributions_group<T> &>(g).repr_;
+  }
+
+  common::value_mutator
   get_ss_mutator(const std::string &name) override
   {
     // XXX: implement me
     throw std::runtime_error("unsupported");
   }
 
-  inline std::string
+  std::string
   debug_str() const override
   {
     // XXX: inefficient
@@ -260,34 +203,167 @@ public:
     return m.ShortDebugString();
   }
 
-  // XXX: public for now so distributions_model can access
   typename T::Group repr_;
 };
 
-template <typename T>
-std::shared_ptr<feature_group>
-distributions_model<T>::create_feature_group(common::rng_t &rng) const
-{
-  auto p = std::make_shared<distributions_feature_group<T>>();
-  p->repr_.init(repr_, rng);
-  return p;
-}
+namespace detail {
 
-// makes it easier for python code to construct models
 template <typename T>
-struct distributions_factory {
-  inline std::shared_ptr<model>
-  new_instance() const
+class distributions_hypers : public hypers {
+public:
+  typedef typename distribution_types<T>::shared_message_type message_type;
+
+  std::shared_ptr<group>
+  create_group(common::rng_t &rng) const override
   {
-    return std::make_shared<distributions_model<T>>();
+    auto p = std::make_shared<distributions_group<T>>();
+    p->repr_.init(repr_, rng);
+    return p;
+  }
+
+  common::hyperparam_bag_t
+  get_hp() const override
+  {
+    message_type m;
+    repr_.protobuf_dump(m);
+    return common::util::protobuf_to_string(m);
+  }
+
+  void
+  set_hp(const common::hyperparam_bag_t &hp) override
+  {
+    message_type m;
+    common::util::protobuf_from_string(m, hp);
+    repr_.protobuf_load(m);
+  }
+
+  void
+  set_hp(const hypers &m) override
+  {
+    repr_ = static_cast<const distributions_hypers<T> &>(m).repr_;
+  }
+
+  common::value_mutator
+  get_hp_mutator(const std::string &name) override
+  {
+    return distributions_model_hp<T>::get(repr_, name);
+  }
+
+  std::string
+  debug_str() const override
+  {
+    // XXX: inefficient
+    message_type m;
+    repr_.protobuf_dump(m);
+    return m.ShortDebugString();
+  }
+
+  typename T::Shared repr_;
+};
+
+template <typename T>
+class distributions_model : public model {
+public:
+  common::runtime_type
+  get_runtime_type() const override
+  {
+    return common::runtime_type(
+        common::static_type_to_primitive_type< typename T::Value >::value);
   }
 };
 
+// shorten name
+typedef distributions::DirichletDiscrete128 DD128;
+
+} // namespace detail
+
+template <typename T>
+class distributions_hypers : public detail::distributions_hypers<T> {
+public:
+  typedef
+    typename detail::distributions_hypers<T>::message_type
+    message_type;
+};
+
+template <>
+class distributions_hypers<detail::DD128>
+  : public detail::distributions_hypers<detail::DD128> {
+public:
+  typedef
+    typename detail::distributions_hypers<detail::DD128>::message_type
+    message_type;
+
+  distributions_hypers(unsigned size)
+  {
+    MICROSCOPES_DCHECK(size > 0, "no elements");
+    this->repr_.dim = size;
+  }
+
+  void
+  set_hp(const common::hyperparam_bag_t &hp) override
+  {
+    message_type m;
+    common::util::protobuf_from_string(m, hp);
+    MICROSCOPES_DCHECK(this->repr_.dim == m.alphas_size(), "wrong dimension");
+    this->repr_.protobuf_load(m);
+  }
+
+  void
+  set_hp(const hypers &m) override
+  {
+    const auto &that = static_cast<const distributions_hypers<detail::DD128> &>(m);
+    MICROSCOPES_DCHECK(this->repr_.dim == that.repr_.dim, "wrong dimension");
+    this->repr_ = that.repr_;
+  }
+};
+
+template <typename T>
+class distributions_model : public detail::distributions_model<T> {
+public:
+  std::shared_ptr<hypers>
+  create_hypers() const override
+  {
+    return std::make_shared<distributions_hypers<T>>();
+  }
+};
+
+template <>
+class distributions_model<detail::DD128>
+  : public detail::distributions_model<detail::DD128> {
+public:
+  distributions_model(unsigned dim)
+    : dim_(dim)
+  {
+    MICROSCOPES_DCHECK(dim > 0, "no elements");
+  }
+
+  std::shared_ptr<hypers>
+  create_hypers() const override
+  {
+    return std::make_shared<distributions_hypers<detail::DD128>>(dim_);
+  }
+
+private:
+  unsigned dim_;
+};
+
+// for cython
+typedef distributions_model<detail::DD128> distributions_model_dd128;
+
 // explicitly instantiate C++ templates
 #define DISTRIB_EXPLICIT_INSTANTIATE(name) \
+  extern template class distributions_group< distributions::name >; \
+  extern template class distributions_hypers< distributions::name >; \
   extern template class distributions_model< distributions::name >;
 DISTRIB_FOR_EACH_DISTRIBUTION(DISTRIB_EXPLICIT_INSTANTIATE)
 #undef DISTRIB_EXPLICIT_INSTANTIATE
+
+template <typename T>
+inline const typename T::Shared &
+distributions_group<T>::shared_repr(const hypers &h)
+{
+  return static_cast<const distributions_hypers<T> &>(h).repr_;
+}
 
 } // namespace models
 } // namespace microscopes

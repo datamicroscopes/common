@@ -1,4 +1,3 @@
-from libcpp.string cimport string
 from libcpp.vector cimport vector
 
 from microscopes.cxx.common._runtime_type_h cimport runtime_type
@@ -6,17 +5,33 @@ from microscopes.cxx.common._typedefs_h cimport hyperparam_bag_t, suffstats_bag_
 from microscopes._shared_ptr_h cimport shared_ptr
 
 cdef extern from "microscopes/models/base.hpp" namespace "microscopes::models":
-    cdef cppclass model:
+    cdef cppclass group:
+        suffstats_bag_t get_ss() except +
+        void set_ss(const suffstats_bag_t &) except +
+
+    cdef cppclass hypers:
         hyperparam_bag_t get_hp() except +
-        void set_hp(hyperparam_bag_t &) except +
+        void set_hp(const hyperparam_bag_t &) except +
+
+    cdef cppclass model:
+        shared_ptr[hypers] create_hypers() except +
         vector[runtime_type] get_runtime_type() except +
+
+    ctypedef group* group_raw_ptr
+    ctypedef shared_ptr[group] group_shared_ptr
+
+    ctypedef hypers* hypers_raw_ptr
+    ctypedef shared_ptr[hypers] hypers_shared_ptr
+
     ctypedef model* model_raw_ptr
     ctypedef shared_ptr[model] model_shared_ptr
 
 cdef extern from "microscopes/models/distributions.hpp" namespace "microscopes::models":
-    cdef cppclass distributions_factory[T]:
-        distributions_factory()
-        shared_ptr[model] new_instance() except +
+    cdef cppclass distributions_model[T]:
+        distributions_model()
+
+    cdef cppclass distributions_model_dd128:
+        distributions_model_dd128(unsigned) except +
 
 cdef extern from "distributions/models/bb.hpp" namespace "distributions":
     cdef cppclass BetaBernoulli:

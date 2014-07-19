@@ -59,7 +59,7 @@ score_student_t(
 }
 
 void
-niw_feature_group::postParams(const niw_model &m, suffstats_t &ss) const
+niw_group::postParams(const niw_hypers &m, suffstats_t &ss) const
 {
   const float n = count_;
   VectorXf xbar;
@@ -83,7 +83,7 @@ niw_feature_group::postParams(const niw_model &m, suffstats_t &ss) const
 }
 
 void
-niw_feature_group::add_value(const model &m, const value_accessor &value, rng_t &rng)
+niw_group::add_value(const hypers &m, const value_accessor &value, rng_t &rng)
 {
   MICROSCOPES_ASSERT(value.shape() == dim());
   count_++;
@@ -94,7 +94,7 @@ niw_feature_group::add_value(const model &m, const value_accessor &value, rng_t 
 }
 
 void
-niw_feature_group::remove_value(const model &m, const value_accessor &value, rng_t &rng)
+niw_group::remove_value(const hypers &m, const value_accessor &value, rng_t &rng)
 {
   MICROSCOPES_ASSERT(value.shape() == dim());
   MICROSCOPES_ASSERT(count_ > 0);
@@ -106,25 +106,25 @@ niw_feature_group::remove_value(const model &m, const value_accessor &value, rng
 }
 
 float
-niw_feature_group::score_value(const model &m, const value_accessor &value, rng_t &rng) const
+niw_group::score_value(const hypers &m, const value_accessor &value, rng_t &rng) const
 {
   MICROSCOPES_ASSERT(value.shape() == dim());
   VectorXf v(dim());
   extractVec(v, value);
   suffstats_t ss;
-  postParams(static_cast<const niw_model &>(m), ss);
+  postParams(static_cast<const niw_hypers &>(m), ss);
   const float dof = ss.nu_ - float(dim()) + 1.;
   const MatrixXf sigma = ss.psi_ * (ss.lambda_+1.)/(ss.lambda_*dof);
-  //cout << "niw_feature_group::score_value" << endl
+  //cout << "niw_group::score_value" << endl
   //     << "  dof: " << dof << endl
   //     << "  sigma: " << sigma << endl;
   return score_student_t(v, dof, ss.mu0_, sigma);
 }
 
 float
-niw_feature_group::score_data(const model &m, rng_t &rng) const
+niw_group::score_data(const hypers &m, rng_t &rng) const
 {
-  const niw_model &m1 = static_cast<const niw_model &>(m);
+  const niw_hypers &m1 = static_cast<const niw_hypers &>(m);
   suffstats_t ss;
   postParams(m1, ss);
 
@@ -151,10 +151,10 @@ niw_feature_group::score_data(const model &m, rng_t &rng) const
 }
 
 void
-niw_feature_group::sample_value(const model &m, value_mutator &value, rng_t &rng) const
+niw_group::sample_value(const hypers &m, value_mutator &value, rng_t &rng) const
 {
   suffstats_t ss;
-  postParams(static_cast<const niw_model &>(m), ss);
+  postParams(static_cast<const niw_hypers &>(m), ss);
   const auto p = random::sample_normal_inverse_wishart(ss.mu0_, ss.lambda_, ss.psi_, ss.nu_, rng);
   const VectorXf &x = random::sample_multivariate_normal(p.first, p.second, rng);
   MICROSCOPES_ASSERT(x.size() == value.shape());
@@ -163,7 +163,7 @@ niw_feature_group::sample_value(const model &m, value_mutator &value, rng_t &rng
 }
 
 suffstats_bag_t
-niw_feature_group::get_ss() const
+niw_group::get_ss() const
 {
   group_message_type m;
   m.set_count(count_);
@@ -172,27 +172,23 @@ niw_feature_group::get_ss() const
   for (size_t i = 0; i < dim(); i++)
     for (size_t j = 0; j < dim(); j++)
       m.add_sum_xxt(sum_xxT_(i, j));
-  ostringstream out;
-  m.SerializeToOstream(&out);
-  return out.str();
+  return util::protobuf_to_string(m);
 }
 
 void
-niw_feature_group::set_ss(const suffstats_bag_t &ss)
+niw_group::set_ss(const suffstats_bag_t &ss)
 {
-  istringstream inp(ss);
   group_message_type m;
-  m.ParseFromIstream(&inp);
+  util::protobuf_from_string(m, ss);
 
   count_ = m.count();
 
   const size_t dim = m.sum_x_size();
-  sum_x_.resize(dim, 1);
+  MICROSCOPES_DCHECK(sum_x_.size() == dim, "size mismatch");
   for (size_t i = 0; i < dim; i++)
     sum_x_(i) = m.sum_x(i);
 
-  MICROSCOPES_DCHECK(m.sum_xxt_size() == dim*dim, "sum_xxT must be D*D matrix");
-  sum_xxT_.resize(dim, dim);
+  MICROSCOPES_DCHECK(size_t(m.sum_xxt_size()) == dim*dim, "sum_xxT must be D*D matrix");
 
   for (size_t i = 0; i < dim; i++)
     for (size_t j = 0; j < dim; j++)
@@ -201,15 +197,21 @@ niw_feature_group::set_ss(const suffstats_bag_t &ss)
   MICROSCOPES_DCHECK(util::is_symmetric_positive_definite(sum_xxT_), "sum xx^T must be SPD");
 }
 
+void
+niw_group::set_ss(const group &m)
+{
+  *this = static_cast<const niw_group &>(m);
+}
+
 value_mutator
-niw_feature_group::get_ss_mutator(const string &key)
+niw_group::get_ss_mutator(const string &key)
 {
   // XXX: support this safely
   throw runtime_error("unknown key: " + key);
 }
 
 string
-niw_feature_group::debug_str() const
+niw_group::debug_str() const
 {
   // XXX: implement me
   ostringstream oss;
@@ -217,14 +219,14 @@ niw_feature_group::debug_str() const
   return oss.str();
 }
 
-shared_ptr<feature_group>
-niw_model::create_feature_group(rng_t &rng) const
+shared_ptr<group>
+niw_hypers::create_group(rng_t &rng) const
 {
-  return make_shared<niw_feature_group>(dim());
+  return make_shared<niw_group>(dim());
 }
 
 hyperparam_bag_t
-niw_model::get_hp() const
+niw_hypers::get_hp() const
 {
   shared_message_type m;
   for (size_t i = 0; i < mu0_.size(); i++)
@@ -234,29 +236,25 @@ niw_model::get_hp() const
     for (size_t j = 0; j < psi_.cols(); j++)
       m.add_psi(psi_(i, j));
   m.set_nu(nu_);
-  ostringstream out;
-  m.SerializeToOstream(&out);
-  return out.str();
+  return util::protobuf_to_string(m);
 }
 
 void
-niw_model::set_hp(const hyperparam_bag_t &hp)
+niw_hypers::set_hp(const hyperparam_bag_t &hp)
 {
-  istringstream inp(hp);
   shared_message_type m;
-  m.ParseFromIstream(&inp);
+  util::protobuf_from_string(m, hp);
 
   const size_t dim = m.mu0_size();
-  mu0_.resize(dim, 1);
+  MICROSCOPES_DCHECK(mu0_.rows() == dim, "size mismatch");
   for (size_t i = 0; i < dim; i++)
     mu0_(i) = m.mu0(i);
 
   lambda_ = m.lambda();
   MICROSCOPES_DCHECK(lambda_ > 0., "lambda must be positive");
 
-  MICROSCOPES_DCHECK(m.psi_size() == dim*dim, "psi must be DxD matrix");
+  MICROSCOPES_DCHECK(size_t(m.psi_size()) == dim*dim, "psi must be DxD matrix");
 
-  psi_.resize(dim, dim);
   for (size_t i = 0; i < dim; i++)
     for (size_t j = 0; j < dim; j++)
       psi_(i, j) = m.psi(i*dim + j);
@@ -267,29 +265,29 @@ niw_model::set_hp(const hyperparam_bag_t &hp)
 }
 
 void
-niw_model::set_hp(const model &m)
+niw_hypers::set_hp(const hypers &m)
 {
-  *this = static_cast<const niw_model &>(m);
+  *this = static_cast<const niw_hypers &>(m);
 }
 
 value_mutator
-niw_model::get_hp_mutator(const string &key)
+niw_hypers::get_hp_mutator(const string &key)
 {
   // XXX: support this safely
   throw runtime_error("unknown key: " + key);
+}
+
+string
+niw_hypers::debug_str() const
+{
+  // XXX: implement me
+  ostringstream oss;
+  oss << "{NIW: XXX implement me}";
+  return oss.str();
 }
 
 runtime_type
 niw_model::get_runtime_type() const
 {
   return runtime_type(TYPE_F32, dim());
-}
-
-string
-niw_model::debug_str() const
-{
-  // XXX: implement me
-  ostringstream oss;
-  oss << "{NIW: XXX implement me}";
-  return oss.str();
 }

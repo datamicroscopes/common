@@ -1,46 +1,43 @@
-from microscopes.cxx._models_h cimport distributions_factory, \
-                                       BetaBernoulli as c_bb, \
+from microscopes.cxx._models_h cimport BetaBernoulli as c_bb, \
                                        BetaNegativeBinomial as c_bnb, \
                                        GammaPoisson as c_gp, \
                                        NormalInverseChiSq as c_nich, \
-                                       DirichletDiscrete128 as c_dd
-from microscopes.cxx._bbnc_h cimport new_instance as bbnc_new_instance
-from microscopes.cxx._niw_h cimport new_instance as niw_new_instance
+                                       DirichletDiscrete128 as c_dd, \
+                                       distributions_model as c_distributions_model, \
+                                       distributions_model_dd128 as c_distributions_model_dd128
+from microscopes.cxx._bbnc_h cimport bbnc_model as c_bbnc
+from microscopes.cxx._niw_h cimport niw_model as c_niw
 
-cdef class factory:
-    cdef shared_ptr[model] new_cmodel(self):
-        # XXX: cython does not support virtual abstract classes
-        raise Exception("Abstract class")
+cdef class _base:
+    cdef shared_ptr[model] get(self):
+        return self._thisptr
+    cdef shared_ptr[hypers] create_hypers(self):
+        return self._thisptr.get().create_hypers()
 
-cdef class bb_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self):
-        cdef distributions_factory[c_bb] f = distributions_factory[c_bb]()
-        return f.new_instance()
+cdef class _bb(_base):
+    def __cinit__(self):
+        self._thisptr.reset(new c_distributions_model[c_bb]())
 
-cdef class bnb_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self):
-        cdef distributions_factory[c_bnb] f = distributions_factory[c_bnb]()
-        return f.new_instance()
+cdef class _bnb(_base):
+    def __cinit__(self):
+        self._thisptr.reset(new c_distributions_model[c_bnb]())
 
-cdef class gp_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self):
-        cdef distributions_factory[c_gp] f = distributions_factory[c_gp]()
-        return f.new_instance()
+cdef class _gp(_base):
+    def __cinit__(self):
+        self._thisptr.reset(new c_distributions_model[c_gp]())
 
-cdef class nich_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self):
-        cdef distributions_factory[c_nich] f = distributions_factory[c_nich]()
-        return f.new_instance()
+cdef class _nich(_base):
+    def __cinit__(self):
+        self._thisptr.reset(new c_distributions_model[c_nich]())
 
-cdef class dd_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self):
-        cdef distributions_factory[c_dd] f = distributions_factory[c_dd]()
-        return f.new_instance()
+cdef class _dd(_base):
+    def __cinit__(self, int size):
+        self._thisptr.reset(new c_distributions_model_dd128(size))
 
-cdef class bbnc_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self):
-        return bbnc_new_instance()
+cdef class _bbnc(_base):
+    def __cinit__(self):
+        self._thisptr.reset(new c_bbnc())
 
-cdef class niw_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self):
-        return niw_new_instance()
+cdef class _niw(_base):
+    def __cinit__(self, int dim):
+        self._thisptr.reset(new c_niw(dim))

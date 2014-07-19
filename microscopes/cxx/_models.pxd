@@ -1,26 +1,28 @@
-from microscopes.cxx._models_h cimport model
+from microscopes.cxx._models_h cimport model, hypers
 from microscopes._shared_ptr_h cimport shared_ptr
 
-cdef class factory:
-    cdef shared_ptr[model] new_cmodel(self)
+cdef class _base:
+    cdef shared_ptr[model] _thisptr
+    cdef shared_ptr[model] get(self)
+    cdef shared_ptr[hypers] create_hypers(self)
 
-cdef class bb_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self)
+cdef class _bb(_base):
+    pass
 
-cdef class bnb_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self)
+cdef class _bnb(_base):
+    pass
 
-cdef class gp_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self)
+cdef class _gp(_base):
+    pass
 
-cdef class nich_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self)
+cdef class _nich(_base):
+    pass
 
-cdef class dd_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self)
+cdef class _dd(_base):
+    pass
 
-cdef class bbnc_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self)
+cdef class _bbnc(_base):
+    pass
 
-cdef class niw_factory(factory):
-    cdef shared_ptr[model] new_cmodel(self)
+cdef class _niw(_base):
+    pass

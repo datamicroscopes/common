@@ -1,5 +1,6 @@
 #include <microscopes/models/bbnc.hpp>
 #include <microscopes/io/schema.pb.h>
+#include <microscopes/common/util.hpp>
 #include <distributions/random.hpp>
 #include <distributions/special.hpp>
 
@@ -18,7 +19,7 @@ typedef BetaBernoulliNonConj::Group group_message_type;
 typedef BetaBernoulliNonConj::Shared shared_message_type;
 
 void
-bbnc_feature_group::add_value(const model &m, const value_accessor &value, rng_t &rng)
+bbnc_group::add_value(const hypers &m, const value_accessor &value, rng_t &rng)
 {
   MICROSCOPES_ASSERT(value.shape() == 1);
   MICROSCOPES_ASSERT(!value.ismasked(0));
@@ -29,7 +30,7 @@ bbnc_feature_group::add_value(const model &m, const value_accessor &value, rng_t
 }
 
 void
-bbnc_feature_group::remove_value(const model &m, const value_accessor &value, rng_t &rng)
+bbnc_group::remove_value(const hypers &m, const value_accessor &value, rng_t &rng)
 {
   MICROSCOPES_ASSERT(value.shape() == 1);
   MICROSCOPES_ASSERT(!value.ismasked(0));
@@ -43,7 +44,7 @@ bbnc_feature_group::remove_value(const model &m, const value_accessor &value, rn
 }
 
 float
-bbnc_feature_group::score_value(const model &m, const value_accessor &value, rng_t &rng) const
+bbnc_group::score_value(const hypers &m, const value_accessor &value, rng_t &rng) const
 {
   MICROSCOPES_ASSERT(p_ >= 0.0 && p_ <= 1.0);
   MICROSCOPES_ASSERT(value.shape() == 1);
@@ -58,12 +59,12 @@ fast_lbeta(float a, float b)
 }
 
 float
-bbnc_feature_group::score_data(const model &m, rng_t &rng) const
+bbnc_group::score_data(const hypers &m, rng_t &rng) const
 {
   if (p_ < 0.0 || p_ > 1.0)
     return -numeric_limits<float>::infinity();
-  const float alpha = static_cast<const bbnc_model &>(m).alpha_;
-  const float beta = static_cast<const bbnc_model &>(m).beta_;
+  const float alpha = static_cast<const bbnc_hypers &>(m).alpha_;
+  const float beta = static_cast<const bbnc_hypers &>(m).beta_;
   const float score_prior =
     (alpha-1.)*fast_log(p_) + (beta-1.)*fast_log(1.-p_) - fast_lbeta(alpha, beta);
   const float score_likelihood =
@@ -72,7 +73,7 @@ bbnc_feature_group::score_data(const model &m, rng_t &rng) const
 }
 
 void
-bbnc_feature_group::sample_value(const model &m, value_mutator &value, rng_t &rng) const
+bbnc_group::sample_value(const hypers &m, value_mutator &value, rng_t &rng) const
 {
   MICROSCOPES_ASSERT(p_ >= 0.0 && p_ <= 1.0);
   MICROSCOPES_ASSERT(value.shape() == 1);
@@ -80,26 +81,29 @@ bbnc_feature_group::sample_value(const model &m, value_mutator &value, rng_t &rn
 }
 
 suffstats_bag_t
-bbnc_feature_group::get_ss() const
+bbnc_group::get_ss() const
 {
   group_message_type m;
   m.set_p(p_);
-  ostringstream out;
-  m.SerializeToOstream(&out);
-  return out.str();
+  return util::protobuf_to_string(m);
 }
 
 void
-bbnc_feature_group::set_ss(const suffstats_bag_t &ss)
+bbnc_group::set_ss(const suffstats_bag_t &ss)
 {
-  istringstream inp(ss);
   group_message_type m;
-  m.ParseFromIstream(&inp);
+  util::protobuf_from_string(m, ss);
   p_ = m.p();
 }
 
+void
+bbnc_group::set_ss(const group &ss)
+{
+  *this = static_cast<const bbnc_group &>(ss);
+}
+
 value_mutator
-bbnc_feature_group::get_ss_mutator(const string &key)
+bbnc_group::get_ss_mutator(const string &key)
 {
   if (key == "p")
     return value_mutator(&p_);
@@ -107,49 +111,46 @@ bbnc_feature_group::get_ss_mutator(const string &key)
 }
 
 string
-bbnc_feature_group::debug_str() const
+bbnc_group::debug_str() const
 {
   ostringstream oss;
   oss << "{p:" << p_ << "}";
   return oss.str();
 }
 
-shared_ptr<feature_group>
-bbnc_model::create_feature_group(rng_t &rng) const
+shared_ptr<group>
+bbnc_hypers::create_group(rng_t &rng) const
 {
   CreateFeatureGroupInvocations_++;
-  return make_shared<bbnc_feature_group>(sample_beta(rng, alpha_, beta_));
+  return make_shared<bbnc_group>(sample_beta(rng, alpha_, beta_));
 }
 
 hyperparam_bag_t
-bbnc_model::get_hp() const
+bbnc_hypers::get_hp() const
 {
   shared_message_type m;
   m.set_alpha(alpha_);
   m.set_beta(beta_);
-  ostringstream out;
-  m.SerializeToOstream(&out);
-  return out.str();
+  return util::protobuf_to_string(m);
 }
 
 void
-bbnc_model::set_hp(const hyperparam_bag_t &hp)
+bbnc_hypers::set_hp(const hyperparam_bag_t &hp)
 {
-  istringstream inp(hp);
   shared_message_type m;
-  m.ParseFromIstream(&inp);
+  util::protobuf_from_string(m, hp);
   alpha_ = m.alpha();
   beta_ = m.beta();
 }
 
 void
-bbnc_model::set_hp(const model &m)
+bbnc_hypers::set_hp(const hypers &m)
 {
-  *this = static_cast<const bbnc_model &>(m);
+  *this = static_cast<const bbnc_hypers &>(m);
 }
 
 value_mutator
-bbnc_model::get_hp_mutator(const string &key)
+bbnc_hypers::get_hp_mutator(const string &key)
 {
   if (key == "alpha")
     return value_mutator(&alpha_);
@@ -158,14 +159,8 @@ bbnc_model::get_hp_mutator(const string &key)
   throw runtime_error("unknown key: " + key);
 }
 
-runtime_type
-bbnc_model::get_runtime_type() const
-{
-  return runtime_type(TYPE_B);
-}
-
 string
-bbnc_model::debug_str() const
+bbnc_hypers::debug_str() const
 {
   ostringstream oss;
   oss << "{alpha:" << alpha_ << ",beta:" << beta_ << "}";
@@ -173,4 +168,10 @@ bbnc_model::debug_str() const
 }
 
 size_t
-bbnc_model::CreateFeatureGroupInvocations_ = 0;
+bbnc_hypers::CreateFeatureGroupInvocations_ = 0;
+
+runtime_type
+bbnc_model::get_runtime_type() const
+{
+  return runtime_type(TYPE_B);
+}

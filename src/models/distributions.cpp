@@ -9,6 +9,8 @@ namespace microscopes {
 namespace models {
 
 #define DISTRIB_EXPLICIT_INSTANTIATE(x) \
+  template class distributions_group< x >; \
+  template class distributions_hypers< x >; \
   template class distributions_model< x >;
 DISTRIB_FOR_EACH_DISTRIBUTION(DISTRIB_EXPLICIT_INSTANTIATE)
 #undef DISTRIB_EXPLICIT_INSTANTIATE

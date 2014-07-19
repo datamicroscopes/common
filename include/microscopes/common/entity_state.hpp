@@ -30,7 +30,7 @@ public:
 
   virtual hyperparam_bag_t get_component_hp(size_t component) const = 0;
   virtual void set_component_hp(size_t component, const hyperparam_bag_t &hp) = 0;
-  virtual void set_component_hp(size_t component, const models::model &proto) = 0;
+  virtual void set_component_hp(size_t component, const models::hypers &proto) = 0;
   virtual value_mutator get_component_hp_mutator(size_t component, const std::string &key) = 0;
 
   virtual std::vector<ident_t> suffstats_identifiers(size_t component) const = 0;

@@ -7,23 +7,24 @@
 namespace microscopes {
 namespace models {
 
-class bbnc_feature_group : public feature_group {
-  friend class bbnc_model;
+class bbnc_group : public group {
+  friend class bbnc_hypers;
 public:
-  bbnc_feature_group(float p)
+  bbnc_group(float p)
     : heads_(), tails_(), p_(p)
   {
     MICROSCOPES_ASSERT(p >= 0.0 && p <= 1.0);
   }
 
-  void add_value(const model &m, const common::value_accessor &value, common::rng_t &rng) override;
-  void remove_value(const model &m, const common::value_accessor &value, common::rng_t &rng) override;
-  float score_value(const model &m, const common::value_accessor &value, common::rng_t &rng) const override;
-  float score_data(const model &m, common::rng_t &rng) const override;
-  void sample_value(const model &m, common::value_mutator &value, common::rng_t &rng) const override;
+  void add_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) override;
+  void remove_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) override;
+  float score_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) const override;
+  float score_data(const hypers &m, common::rng_t &rng) const override;
+  void sample_value(const hypers &m, common::value_mutator &value, common::rng_t &rng) const override;
 
   common::suffstats_bag_t get_ss() const override;
   void set_ss(const common::suffstats_bag_t &ss) override;
+  void set_ss(const group &g) override;
 
   common::value_mutator get_ss_mutator(const std::string &key) override;
   std::string debug_str() const override;
@@ -34,27 +35,19 @@ protected:
   float p_;
 };
 
-class bbnc_model : public model {
-  friend class bbnc_feature_group;
+class bbnc_hypers : public hypers {
+  friend class bbnc_group;
 public:
-  bbnc_model() : alpha_(), beta_() {}
+  bbnc_hypers() : alpha_(), beta_() {}
 
-  std::shared_ptr<feature_group> create_feature_group(common::rng_t &rng) const override;
+  std::shared_ptr<group> create_group(common::rng_t &rng) const override;
 
   common::hyperparam_bag_t get_hp() const override;
   void set_hp(const common::hyperparam_bag_t &hp) override;
-  void set_hp(const model &m) override;
-
+  void set_hp(const hypers &m) override;
   common::value_mutator get_hp_mutator(const std::string &key) override;
 
-  common::runtime_type get_runtime_type() const override;
   std::string debug_str() const override;
-
-  static inline std::shared_ptr<model>
-  new_instance()
-  {
-    return std::make_shared<bbnc_model>();
-  }
 
   static inline size_t
   CreateFeatureGroupInvocations()
@@ -69,5 +62,15 @@ protected:
   static size_t CreateFeatureGroupInvocations_;
 };
 
-} // namespace models
+class bbnc_model : public model {
+public:
+  std::shared_ptr<hypers>
+  create_hypers() const
+  {
+    return std::make_shared<bbnc_hypers>();
+  }
+  common::runtime_type get_runtime_type() const override;
+};
+
+} // namespace hyperss
 } // namespace microscopes

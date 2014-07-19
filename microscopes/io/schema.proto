@@ -46,3 +46,12 @@ message FixedGroupManager {
     repeated int32 assignments = 2;
     repeated string groups = 3;
 }
+
+message MixtureModelGroup {
+    repeated string suffstats = 1;
+}
+
+message MixtureModelState {
+    repeated string hypers = 1;
+    required string groups = 2;
+}
