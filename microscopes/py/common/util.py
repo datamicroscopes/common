@@ -108,3 +108,8 @@ except ImportError:
         return out
 
 assert logsumexp
+
+def random_assignment_vector(n):
+    # see include/microscopes/common/util.hpp
+    ngroups = min(100, n) + 1
+    return [np.random.randint(low=0,  high=ngroups) for _ in xrange(n)]
