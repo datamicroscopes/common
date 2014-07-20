@@ -45,7 +45,7 @@ public:
 
   template <typename T>
   inline T
-  get(size_t idx) const
+  get(size_t idx=0) const
   {
     MICROSCOPES_ASSERT(data_);
     MICROSCOPES_ASSERT(idx < shape());
@@ -78,7 +78,7 @@ public:
 
   template <typename T>
   inline void
-  set(T t, size_t idx)
+  set(T t, size_t idx=0)
   {
     MICROSCOPES_ASSERT(data_);
     MICROSCOPES_ASSERT(idx < shape());

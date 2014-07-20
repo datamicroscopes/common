@@ -55,7 +55,9 @@ public:
 class model {
 public:
   virtual ~model() {}
+
   virtual std::shared_ptr<hypers> create_hypers() const = 0;
+
   virtual common::runtime_type get_runtime_type() const = 0;
 };
 
