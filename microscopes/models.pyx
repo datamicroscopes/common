@@ -73,6 +73,15 @@ class model_descriptor(object):
         self._c_descriptor = c_descriptor
         self._default_params = default_params
 
+    def py_desc(self):
+        return self._py_descriptor
+
+    def c_desc(self):
+        return self._c_descriptor
+
+    def default_params(self):
+        return self._default_params
+
 _scalar = None
 
 bb   = model_descriptor(

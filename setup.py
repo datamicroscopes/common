@@ -127,7 +127,7 @@ def make_extension(module_name):
         extra_link_args=extra_link_args)
 
 extensions = cythonize([
-    make_extension('microscopes.cxx.models'),
+    make_extension('microscopes.models'),
     make_extension('microscopes.cxx._models'),
     make_extension('microscopes.cxx.common._dataview'),
     make_extension('microscopes.cxx.common._entity_state'),
