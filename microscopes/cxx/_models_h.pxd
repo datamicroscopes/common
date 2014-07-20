@@ -15,7 +15,7 @@ cdef extern from "microscopes/models/base.hpp" namespace "microscopes::models":
 
     cdef cppclass model:
         shared_ptr[hypers] create_hypers() except +
-        vector[runtime_type] get_runtime_type() except +
+        runtime_type get_runtime_type() except +
 
     ctypedef group* group_raw_ptr
     ctypedef shared_ptr[group] group_shared_ptr
