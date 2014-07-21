@@ -1,7 +1,12 @@
+from microscopes.models import model_descriptor
 import numpy as np
 
 cdef class fixed_entity_based_state_object:
-    def __cinit__(self, models):
+    def __init__(self, models):
+        for m in models:
+            if not isinstance(m, model_descriptor):
+                raise ValueError(
+                    "expecting model_descriptor, got {}".format(repr(m)))
         self._models = list(models)
 
     cdef void set_fixed(self, const shared_ptr[c_fixed_entity_based_state_object] &o):
