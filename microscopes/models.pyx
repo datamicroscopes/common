@@ -114,13 +114,15 @@ bbnc = model_descriptor(
         c_descriptor=_bbnc(),
         default_params=bb._default_params)
 
-def _raise_unimplemented():
-    raise RuntimeError("not implemented")
-# XXX: default params
 niw  = lambda dim: model_descriptor(
         py_descriptor=py_model(py_niw, pb_niw, dim=dim), 
         c_descriptor=_niw(dim), 
-        default_params=_raise_unimplemented())
+        default_params={ 
+            'mu0': np.array([0.]*dim), 
+            'lambda' : 1.0,
+            'psi' : np.eye(dim),
+            'nu' : float(dim),
+        })
 
 def bbnc_create_feature_group_invocations():
     return int(CreateFeatureGroupInvocations())
