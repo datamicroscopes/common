@@ -14,8 +14,6 @@ debug:
 
 .PHONY: test
 test:
-	([ -d release ] && cd release && make test)
-	([ -d debug ] && cd debug && make test)
 	(cd test && nosetests --verbose)
 
 .PHONY: travis_before_install
