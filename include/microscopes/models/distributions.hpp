@@ -15,25 +15,42 @@
 #include <distributions/models/nich.hpp>
 #include <distributions/models/dd.hpp>
 
-// XXX: make sure to include the distribution above
-#define DISTRIB_BB_FIELDS(x) \
+#define DISTRIB_BB_SHARED_FIELDS(x) \
   x(alpha) \
   x(beta)
 
-#define DISTRIB_BNB_FIELDS(x) \
+#define DISTRIB_BB_GROUP_FIELDS(x) \
+  x(heads) \
+  x(tails)
+
+#define DISTRIB_BNB_SHARED_FIELDS(x) \
   x(alpha) \
   x(beta) \
   x(r)
 
-#define DISTRIB_GP_FIELDS(x) \
+#define DISTRIB_BNB_GROUP_FIELDS(x) \
+  x(count) \
+  x(sum)
+
+#define DISTRIB_GP_SHARED_FIELDS(x) \
   x(alpha) \
   x(inv_beta)
 
-#define DISTRIB_NICH_FIELDS(x) \
+#define DISTRIB_GP_GROUP_FIELDS(x) \
+  x(count) \
+  x(sum) \
+  x(log_prod)
+
+#define DISTRIB_NICH_SHARED_FIELDS(x) \
   x(mu) \
   x(kappa) \
   x(sigmasq) \
   x(nu)
+
+#define DISTRIB_NICH_GROUP_FIELDS(x) \
+  x(count) \
+  x(mean) \
+  x(count_times_variance)
 
 #define DISTRIB_FOR_EACH_DISTRIBUTION(x) \
   x(BetaBernoulli) \
@@ -43,11 +60,17 @@
   x(DirichletDiscrete128)
 
 // NOTE: DirichletDiscrete128 does not appear here since it is special
-#define DISTRIB_FOR_EACH_DISTRIBUTION_WITH_FIELDS(x) \
-  x(BetaBernoulli, DISTRIB_BB_FIELDS) \
-  x(BetaNegativeBinomial, DISTRIB_BNB_FIELDS) \
-  x(GammaPoisson, DISTRIB_GP_FIELDS) \
-  x(NormalInverseChiSq, DISTRIB_NICH_FIELDS)
+#define DISTRIB_FOR_EACH_DISTRIBUTION_WITH_SHARED_FIELDS(x) \
+  x(BetaBernoulli, DISTRIB_BB_SHARED_FIELDS) \
+  x(BetaNegativeBinomial, DISTRIB_BNB_SHARED_FIELDS) \
+  x(GammaPoisson, DISTRIB_GP_SHARED_FIELDS) \
+  x(NormalInverseChiSq, DISTRIB_NICH_SHARED_FIELDS)
+
+#define DISTRIB_FOR_EACH_DISTRIBUTION_WITH_GROUP_FIELDS(x) \
+  x(BetaBernoulli, DISTRIB_BB_GROUP_FIELDS) \
+  x(BetaNegativeBinomial, DISTRIB_BNB_GROUP_FIELDS) \
+  x(GammaPoisson, DISTRIB_GP_GROUP_FIELDS) \
+  x(NormalInverseChiSq, DISTRIB_NICH_GROUP_FIELDS)
 
 // somewhat of a hack
 namespace distributions {
@@ -76,31 +99,46 @@ DISTRIB_FOR_EACH_DISTRIBUTION(DISTRIB_SPECIALIZE_MODEL_TYPES)
 
 #undef DISTRIB_SPECIALIZE_MODEL_TYPES
 
-template <typename T> struct distributions_model_hp {};
+template <typename T> struct distributions_shared_hp {};
+template <typename T> struct distributions_group_ss {};
 
-#define DISTRIB_SPECIALIZE_HP_RAW_PTR(fname) \
+#define DISTRIB_SPECIALIZE_RAW_PTR(fname) \
   if (key == #fname) return common::value_mutator(&s.fname);
 
-#define DISTRIB_SPECIALIZE_HP(name, fields) \
+#define DISTRIB_SPECIALIZE_SHARED_HP(name, fields) \
   template <> \
-  struct distributions_model_hp< distributions::name > \
+  struct distributions_shared_hp< distributions::name > \
   { \
     static inline common::value_mutator \
     get(distributions::name::Shared &s, const std::string &key) \
     { \
-      fields(DISTRIB_SPECIALIZE_HP_RAW_PTR) \
-      throw std::runtime_error("Unknown HP param key: " + key); \
+      fields(DISTRIB_SPECIALIZE_RAW_PTR) \
+      throw std::runtime_error("Unknown shared HP param key: " + key); \
     } \
   };
 
-DISTRIB_FOR_EACH_DISTRIBUTION_WITH_FIELDS(DISTRIB_SPECIALIZE_HP)
+#define DISTRIB_SPECIALIZE_GROUP_SS(name, fields) \
+  template <> \
+  struct distributions_group_ss< distributions::name > \
+  { \
+    static inline common::value_mutator \
+    get(distributions::name::Group &s, const std::string &key) \
+    { \
+      fields(DISTRIB_SPECIALIZE_RAW_PTR) \
+      throw std::runtime_error("Unknown group SS param key: " + key); \
+    } \
+  };
 
-#undef DISTRIB_SPECIALIZE_HP_RAW_PTR
-#undef DISTRIB_SPECIALIZE_HP
+DISTRIB_FOR_EACH_DISTRIBUTION_WITH_SHARED_FIELDS(DISTRIB_SPECIALIZE_SHARED_HP)
+DISTRIB_FOR_EACH_DISTRIBUTION_WITH_GROUP_FIELDS(DISTRIB_SPECIALIZE_GROUP_SS)
+
+#undef DISTRIB_SPECIALIZE_RAW_PTR
+#undef DISTRIB_SPECIALIZE_SHARED_HP
+#undef DISTRIB_SPECIALIZE_GROUP_SS
 
 // NOTE: DirichletDiscrete128 is special
 template <>
-struct distributions_model_hp< distributions::DirichletDiscrete128 >
+struct distributions_shared_hp< distributions::DirichletDiscrete128 >
 {
   static inline common::value_mutator
   get(distributions::DirichletDiscrete128::Shared &s, const std::string &key)
@@ -113,7 +151,27 @@ struct distributions_model_hp< distributions::DirichletDiscrete128 >
               std::remove_reference<decltype(s.alphas[0])>::type
             >::value,
             s.dim));
-    throw std::runtime_error("Unknown HP param key: " + key);
+    throw std::runtime_error("Unknown shared HP param key: " + key);
+  }
+};
+
+template <>
+struct distributions_group_ss< distributions::DirichletDiscrete128 >
+{
+  static inline common::value_mutator
+  get(distributions::DirichletDiscrete128::Group &s, const std::string &key)
+  {
+    if (key == "count_sum")
+      return common::value_mutator(&s.count_sum);
+    else if (key == "counts")
+      return common::value_mutator(
+          reinterpret_cast<uint8_t *>(&s.counts[0]),
+          common::runtime_type(
+            common::static_type_to_primitive_type<
+              std::remove_reference<decltype(s.counts[0])>::type
+            >::value,
+            s.dim));
+    throw std::runtime_error("Unknown group SS param key: " + key);
   }
 };
 
@@ -190,8 +248,7 @@ public:
   common::value_mutator
   get_ss_mutator(const std::string &name) override
   {
-    // XXX: implement me
-    throw std::runtime_error("unsupported");
+    return distributions_group_ss<T>::get(repr_, name);
   }
 
   std::string
@@ -246,7 +303,7 @@ public:
   common::value_mutator
   get_hp_mutator(const std::string &name) override
   {
-    return distributions_model_hp<T>::get(repr_, name);
+    return distributions_shared_hp<T>::get(repr_, name);
   }
 
   std::string
