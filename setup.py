@@ -10,9 +10,9 @@ from cython import __version__ as cython_version
 import numpy
 import sys
 import os
+import json
 
 from subprocess import Popen, PIPE, check_call
-import json
 
 def find_dependency(soname, incname):
     def test(prefix):
@@ -110,9 +110,7 @@ extra_link_args = []
 if 'EXTRA_LINK_ARGS' in os.environ:
     extra_link_args.append(os.environ['EXTRA_LINK_ARGS'])
 
-# generate python protobuf file if not present
-if not os.path.isfile('microscopes/io/schema_pb2.py'):
-    check_call(['protoc', '--python_out=.', 'microscopes/io/schema.proto'])
+check_call(['protoc', '--python_out=.', 'microscopes/io/schema.proto'])
 
 def make_extension(module_name):
     sources = [module_name.replace('.', '/') + '.pyx']
