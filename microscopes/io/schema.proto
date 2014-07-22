@@ -55,3 +55,30 @@ message MixtureModelState {
     repeated bytes hypers = 1;
     required bytes groups = 2;
 }
+
+message IrmSuffstat {
+    repeated uint32 gids = 1;
+
+    // NOTE: while there is no requirement that state objects preserve their
+    // suffstat identifiers across serialization/deserialization, it certainly
+    // makes debugging easier.
+    required uint32 id = 2;
+
+    // NOTE: while the refcount is redundant given the domain assignments, it
+    // is annoying and slow to reconstruct, so we simply store the value.  note
+    // that upon deserialization, state objects will not bother to check
+    // integrity
+    required uint32 count = 3;
+
+    required bytes suffstat = 4;
+}
+
+message IrmRelation {
+    required bytes hypers = 1;
+    repeated IrmSuffstat suffstats = 2;
+}
+
+message IrmState {
+    repeated bytes domains = 1;
+    repeated IrmRelation relations = 2;
+}
