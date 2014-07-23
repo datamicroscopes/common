@@ -42,4 +42,6 @@ travis_install: travis_install_distributions
 	$(COMPILER) pip install .
 
 .PHONY: travis_script
-travis_script: test
+travis_script: 
+	(cd build && CTEST_OUTPUT_ON_FAILURE=true make test)
+	(cd test && nosetests --verbose)
