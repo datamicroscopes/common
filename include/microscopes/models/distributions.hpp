@@ -400,6 +400,12 @@ public:
     return std::make_shared<distributions_hypers<detail::DD128>>(dim_);
   }
 
+  common::runtime_type
+  get_runtime_type() const override
+  {
+    return common::runtime_type(TYPE_I32, dim_);
+  }
+
 private:
   unsigned dim_;
 };

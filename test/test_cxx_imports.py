@@ -3,8 +3,9 @@
 from nose.tools import assert_almost_equals
 
 def test_import_models():
-    from microscopes.models import bb, bnb, gp, nich, dd, bbnc, niw
-    assert bb and bnb and gp and nich and dd and bbnc and niw
+    from microscopes.models import \
+        bb, bnb, gp, nich, dd, bbnc, niw, dm
+    assert bb and bnb and gp and nich and dd and bbnc and niw and dm
 
 def test_import_recarray_dataview():
     from microscopes.cxx.common.recarray.dataview import numpy_dataview

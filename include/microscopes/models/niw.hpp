@@ -97,7 +97,7 @@ public:
   }
 
   std::shared_ptr<hypers>
-  create_hypers() const
+  create_hypers() const override
   {
     return std::make_shared<niw_hypers>(dim_);
   }

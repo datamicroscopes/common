@@ -26,3 +26,6 @@ cdef class _bbnc(_base):
 
 cdef class _niw(_base):
     pass
+
+cdef class _dm(_base):
+    pass
