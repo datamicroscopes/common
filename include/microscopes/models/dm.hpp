@@ -19,29 +19,10 @@ public:
   typedef distributions::protobuf::DirichletDiscrete_Group message_type;
 
   dm_group(unsigned categories)
-    : counts_(categories) {}
+    : counts_(categories), ratio_() {}
 
-  void
-  add_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) override
-  {
-    MICROSCOPES_ASSERT(value.shape() == categories());
-    for (size_t i = 0; i < categories(); i++) {
-      const unsigned ni = value.get<unsigned>(i);
-      counts_[i] += ni;
-    }
-  }
-
-  void
-  remove_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) override
-  {
-    MICROSCOPES_ASSERT(value.shape() == categories());
-    for (size_t i = 0; i < categories(); i++) {
-      const unsigned ni = value.get<unsigned>(i);
-      MICROSCOPES_ASSERT(counts_[i] >= ni);
-      counts_[i] -= ni;
-    }
-  }
-
+  void add_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) override;
+  void remove_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) override;
   float score_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) const override;
   float score_data(const hypers &m, common::rng_t &rng) const override;
   void sample_value(const hypers &m, common::value_mutator &value, common::rng_t &rng) const override;
@@ -49,6 +30,7 @@ public:
   common::suffstats_bag_t
   get_ss() const override
   {
+    // XXX: currently we don't capture ratio
     message_type m;
     for (auto c : counts_)
       m.add_counts(c);
@@ -58,13 +40,7 @@ public:
   void
   set_ss(const common::suffstats_bag_t &ss) override
   {
-    message_type m;
-    common::util::protobuf_from_string(m, ss);
-    MICROSCOPES_DCHECK(
-        (size_t)m.counts_size() == categories(),
-        "# categories mismatch");
-    for (size_t i = 0; i < categories(); i++)
-      counts_[i] = m.counts(i);
+    throw std::runtime_error("need actual message type");
   }
 
   void
@@ -79,13 +55,7 @@ public:
   common::value_mutator
   get_ss_mutator(const std::string &key) override
   {
-    if (key == "counts")
-      return common::value_mutator(
-          reinterpret_cast<uint8_t *>(&counts_[0]),
-          common::runtime_type(
-            common::static_type_to_primitive_type<unsigned>::value,
-            categories()));
-    throw std::runtime_error("unknown key: " + key);
+    throw std::runtime_error("no mutation allowed");
   }
 
   std::string
@@ -104,6 +74,7 @@ public:
 
 private:
   std::vector<unsigned> counts_;
+  float ratio_;
 };
 
 class dm_hypers : public hypers {

@@ -30,22 +30,30 @@ class Shared(SharedMixin, SharedIoMixin):
             message.alphas.append(alpha)
 
 class Group(GroupIoMixin):
-    def __init__(self):
-        self._counts = None
 
     def init(self, shared):
         self._counts = np.zeros(shared.dim, dtype=np.int)
+        self._ratio = 0.
 
     def add_value(self, shared, value):
+        count_sum = 0
         for i, xi in value:
+            count_sum += xi
             self._counts[i] += xi
+            self._ratio -= gammaln(xi + 1)
+        self._ratio += gammaln(count_sum + 1)
 
     def remove_value(self, shared, value):
+        count_sum = 0
         for i, xi in value:
+            count_sum += xi
             self._counts[i] -= xi
+            self._ratio += gammaln(xi + 1)
+        self._ratio -= gammaln(count_sum + 1)
 
     def merge(self, shared, source):
         self._counts += source._counts
+        self._ratio += source._ratio
 
     def score_value(self, shared, value):
         x_sum = sum(value)
@@ -62,7 +70,7 @@ class Group(GroupIoMixin):
     def score_data(self, shared):
         a_sum = sum(shared._alphas)
         n_sum = sum(self._counts)
-        score = 0.
+        score = self._ratio
         for ai, ni in zip(self._alphas, self._counts):
             score += gammaln(ni + ai) - gammaln(ai)
         score += gammaln(a_sum) - gammaln(a_sum + n_sum)
@@ -72,15 +80,21 @@ class Group(GroupIoMixin):
         raise RuntimeError("Unimplemented")
 
     def load(self, raw):
+        #return {'counts': self._counts.tolist(), 'ratio': self._ratio}
         self._counts = np.array(raw['counts'], dtype=np.int)
+        #self._ratio = float(raw['ratio'])
 
     def dump(self):
-        return {'counts': self.counts.tolist()}
+        # XXX: ratio
+        #return {'counts': self._counts.tolist(), 'ratio': self._ratio}
+        return {'counts': self._counts.tolist()}
 
     def load_protobuf(self, message):
-        self._counts = np.array(message._counts, dtype=np.int)
+        # XXX: ratio
+        self._counts = np.array(message.counts, dtype=np.int)
 
     def dump_protobuf(self, message):
+        # XXX: ratio
         message.Clear()
         for count in self._counts:
             message.counts.append(count)

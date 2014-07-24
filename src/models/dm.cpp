@@ -6,6 +6,35 @@ using namespace distributions;
 using namespace microscopes::common;
 using namespace microscopes::models;
 
+void
+dm_group::add_value(const hypers &m, const value_accessor &value, rng_t &rng)
+{
+  MICROSCOPES_ASSERT(value.shape() == categories());
+  unsigned count_sum = 0;
+  for (size_t i = 0; i < categories(); i++) {
+    const unsigned ni = value.get<unsigned>(i);
+    count_sum += ni;
+    counts_[i] += ni;
+    ratio_ -= fast_lgamma(ni + 1);
+  }
+  ratio_ += fast_lgamma(count_sum + 1);
+}
+
+void
+dm_group::remove_value(const hypers &m, const value_accessor &value, rng_t &rng)
+{
+  MICROSCOPES_ASSERT(value.shape() == categories());
+  unsigned count_sum = 0;
+  for (size_t i = 0; i < categories(); i++) {
+    const unsigned ni = value.get<unsigned>(i);
+    count_sum += ni;
+    MICROSCOPES_ASSERT(counts_[i] >= ni);
+    counts_[i] -= ni;
+    ratio_ += fast_lgamma(ni + 1);
+  }
+  ratio_ -= fast_lgamma(count_sum + 1);
+}
+
 float
 dm_group::score_value(const hypers &m, const value_accessor &value, rng_t &rng) const
 {
@@ -36,7 +65,7 @@ dm_group::score_data(const hypers &m, rng_t &rng) const
 {
   const dm_hypers &h = static_cast<const dm_hypers &>(m);
   MICROSCOPES_ASSERT(categories() == h.categories());
-  float score = 0.;
+  float score = ratio_;
   float alpha_sum = 0.;
   unsigned count_sum = 0;
   for (size_t i = 0; i < categories(); i++) {

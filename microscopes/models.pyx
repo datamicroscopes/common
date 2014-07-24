@@ -128,7 +128,7 @@ niw  = lambda dim: model_descriptor(
 dm   = lambda categories: model_descriptor(
         py_descriptor=py_model(py_dm, pb_dd, dim=categories),
         c_descriptor=_dm(categories),
-        default_params=dd._default_params)
+        default_params=dd(categories)._default_params)
 
 def bbnc_create_feature_group_invocations():
     return int(CreateFeatureGroupInvocations())
