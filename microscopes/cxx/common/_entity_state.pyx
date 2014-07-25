@@ -19,6 +19,9 @@ cdef class fixed_entity_based_state_object:
 
     def nentities(self):
         return self._thisptr.get().nentities()
+    
+    def ngroups(self):
+        return self._thisptr.get().ngroups()
 
     def add_value(self, int gid, int eid, rng r):
         self._thisptr.get().add_value(gid, eid, r._thisptr[0])

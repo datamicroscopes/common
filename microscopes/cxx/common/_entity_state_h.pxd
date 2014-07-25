@@ -10,6 +10,7 @@ cdef extern from "microscopes/common/entity_state.hpp" namespace "microscopes::c
     cdef cppclass fixed_entity_based_state_object:
         vector[ssize_t] assignments() except +
         size_t nentities()
+        size_t ngroups()
 
         void add_value(size_t, size_t, rng_t &) except +
         size_t remove_value(size_t, rng_t &) except +
