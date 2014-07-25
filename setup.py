@@ -21,7 +21,11 @@ def get_git_sha1():
         print >>sys.stderr, "could not import gitpython"
         return None
     repo = Repo(os.path.dirname(__file__))
-    return repo.commits()[0].id
+    sha1 = repo.commits()[0].id
+    if repo.is_dirty:
+        return sha1 + "dirty"
+    else:
+        return sha1
 
 def mkdirp(path):
     try:
@@ -177,7 +181,7 @@ extensions = cythonize([
 ])
 
 setup(
-    version='0.1',
+    version=version,
     name='microscopes-common',
     description='XYZ',
     long_description='XYZ long',
