@@ -88,6 +88,8 @@ if not 'OFFICIAL_BUILD' in os.environ:
     print pkgfile
     with open(pkgfile, 'w') as fp:
         print >>fp, "__version__ = '{}'".format(version)
+elif debug_build:
+    raise RuntimeError("OFFICIAL_BUILD and DEBUG both set")
 
 if distributions_inc is not None:
     print 'Using distributions_inc:', distributions_inc
