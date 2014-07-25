@@ -14,6 +14,23 @@ import json
 
 from subprocess import Popen, PIPE, check_call
 
+def get_git_sha1():
+    try:
+        from git import Repo
+    except ImportError:
+        print >>sys.stderr, "could not import gitpython"
+        return None
+    repo = Repo(os.path.dirname(__file__))
+    return repo.commits()[0].id
+
+def mkdirp(path):
+    try:
+        os.makedirs(path)
+    except OSError as ex:
+        import errno
+        if ex.errno != errno.EEXIST:
+            raise
+
 def find_dependency(soname, incname):
     def test(prefix):
         sofile = os.path.join(prefix, 'lib/{}'.format(soname))
@@ -55,6 +72,22 @@ distributions_lib, distributions_inc = find_dependency(
     'libdistributions_shared.{}'.format(so_ext), 'distributions')
 microscopes_common_lib, microscopes_common_inc = find_dependency(
     'libmicroscopes_common.{}'.format(so_ext), 'microscopes')
+
+version = "0.1.0"
+if not 'OFFICIAL_BUILD' in os.environ:
+    sha1 = get_git_sha1()
+    if sha1 is None:
+        sha1 = 'unknown'
+    version = version + '.{}-{}'.format(sha1, 'debug' if debug_build else 'release')
+    print 'writing package version:', version
+    join = os.path.join
+    dirname = os.path.dirname
+    basedir = join(join(dirname(__file__), 'microscopes'), 'common')
+    mkdirp(basedir)
+    pkgfile = join(basedir, '__init__.py')
+    print pkgfile
+    with open(pkgfile, 'w') as fp:
+        print >>fp, "__version__ = '{}'".format(version)
 
 if distributions_inc is not None:
     print 'Using distributions_inc:', distributions_inc
@@ -157,5 +190,6 @@ setup(
         'microscopes.py.models',
         'microscopes.py.common',
         'microscopes.py.common.recarray',
+        'microscopes.common',
     ),
     ext_modules=extensions)
