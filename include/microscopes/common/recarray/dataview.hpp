@@ -63,7 +63,7 @@ public:
   bump()
   {
     MICROSCOPES_ASSERT(pos_ <= nfeatures());
-    cursor_ += runtime_type_traits::RuntimeTypeSize(curtype());
+    cursor_ += curtype().size();
     if (mask_)
       mask_cursor_ += curtype().n();
     pos_++;
@@ -129,8 +129,8 @@ public:
     MICROSCOPES_DCHECK(curshape() == acc.curshape(), "shapes do not match");
     MICROSCOPES_ASSERT(cursor_);
     MICROSCOPES_ASSERT(acc.cursor());
-    const size_t s0 = runtime_type_traits::PrimitiveTypeSize(curtype().t());
-    const size_t s1 = runtime_type_traits::PrimitiveTypeSize(acc.curtype().t());
+    const size_t s0 = curtype().psize();
+    const size_t s1 = acc.curtype().psize();
     for (unsigned i = 0; i < curshape(); i++)
       runtime_cast::copy(
           cursor_ + i * s0, curtype().t(),
@@ -141,7 +141,7 @@ public:
   bump()
   {
     MICROSCOPES_ASSERT(pos_ <= nfeatures());
-    cursor_ += runtime_type_traits::RuntimeTypeSize(curtype());
+    cursor_ += curtype().size();
     pos_++;
   }
 

@@ -14,9 +14,9 @@ cdef extern from "microscopes/common/runtime_type.hpp" namespace "microscopes::c
         primitive_type t()
         unsigned n()
         cbool vec()
+        string str() except +   
 
-cdef extern from "microscopes/common/runtime_type.hpp" namespace "microscopes::common::runtime_type_traits":
-
+cdef extern from "microscopes/common/runtime_type.hpp" namespace "microscopes::common::runtime_type":
     cdef cppclass offsets_ret_t:
         offsets_ret_t()
         vector[size_t] offsets_
@@ -24,4 +24,3 @@ cdef extern from "microscopes/common/runtime_type.hpp" namespace "microscopes::c
         size_t maskrowsize_
 
     offsets_ret_t GetOffsetsAndSize(vector[runtime_type] &) except +
-    string RuntimeTypeStr(runtime_type &) except +

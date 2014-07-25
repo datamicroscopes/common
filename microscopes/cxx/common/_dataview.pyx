@@ -46,4 +46,4 @@ cdef np.dtype get_np_type(const runtime_type & tpe):
         if tpe.vec():
             name = '({},){}'.format(tpe.n(), name)
         return np.dtype(name)
-    raise Exception("unknown type: " + RuntimeTypeStr(tpe))
+    raise Exception("unknown type: " + tpe.str())

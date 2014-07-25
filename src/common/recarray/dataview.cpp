@@ -15,14 +15,14 @@ runtime_type_strings(const vector<runtime_type> &types)
   vector<string> ret;
   ret.reserve(types.size());
   for (const auto &t : types)
-    ret.push_back(runtime_type_traits::RuntimeTypeStr(t));
+    ret.push_back(t.str());
   return ret;
 }
 
 string
 row_accessor::debug_str() const
 {
-  const auto ret = runtime_type_traits::GetOffsetsAndSize(*types_);
+  const auto ret = runtime_type::GetOffsetsAndSize(*types_);
   vector<string> values_repr;
   values_repr.reserve(types_->size());
   for (size_t i = 0; i < types_->size(); i++) {
@@ -30,14 +30,14 @@ row_accessor::debug_str() const
       const auto &type = (*types_)[i];
       if (!type.vec()) {
         values_repr.push_back(
-            runtime_type_traits::ToString(type.t(), data_ + ret.offsets_[i]));
+            primitive_type_traits::ToString(type.t(), data_ + ret.offsets_[i]));
       } else {
-        const size_t s = runtime_type_traits::PrimitiveTypeSize(type.t());
+        const size_t s = type.psize();
         vector<string> strs;
         strs.reserve(type.n());
         for (size_t j = 0; j < type.n(); j++)
           strs.push_back(
-              runtime_type_traits::ToString(type.t(), data_ + ret.offsets_[i] + j * s));
+              primitive_type_traits::ToString(type.t(), data_ + ret.offsets_[i] + j * s));
         values_repr.push_back(util::to_string(strs));
       }
     } else {
@@ -72,7 +72,7 @@ row_mutator::debug_str() const
 dataview::dataview(size_t n, const vector<runtime_type> &types)
   : n_(n), types_(types), rowsize_(), maskrowsize_()
 {
-  const auto ret = runtime_type_traits::GetOffsetsAndSize(types);
+  const auto ret = runtime_type::GetOffsetsAndSize(types);
   offsets_ = ret.offsets_;
   rowsize_ = ret.rowsize_;
   maskrowsize_ = ret.maskrowsize_;

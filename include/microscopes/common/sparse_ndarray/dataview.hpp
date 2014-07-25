@@ -245,7 +245,7 @@ public:
                            const std::vector<size_t> &shape,
                            const runtime_type &type)
     : dataview(shape, type), data_(data), mask_(mask),
-      stepsize_(runtime_type_traits::RuntimeTypeSize(type))
+      stepsize_(type.size())
   {
     MICROSCOPES_DCHECK(data, "data cannot be null");
     multipliers_.push_back(1);

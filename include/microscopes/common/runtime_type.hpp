@@ -20,43 +20,7 @@ struct static_type_to_primitive_type {};
 PRIMITIVE_TYPE_MAPPINGS(SPECIALIZE_STATIC_TYPE_TO_RUNTIME_ID)
 #undef SPECIALIZE_STATIC_TYPE_TO_RUNTIME_ID
 
-class runtime_type {
-public:
-  // default ctor
-  runtime_type() : t_(), n_(), vec_() {}
-
-  // scalar constructor
-  runtime_type(primitive_type t) : t_(t), n_(1), vec_(false) {}
-
-  // vector constructor
-  runtime_type(primitive_type t, unsigned n)
-    : t_(t), n_(n), vec_(true)
-  {
-  }
-
-  inline bool
-  operator==(const runtime_type &that) const
-  {
-    return t_ == that.t_ && n_ == that.n_ && vec_ == that.vec_;
-  }
-
-  inline bool
-  operator!=(const runtime_type &that) const
-  {
-    return !operator==(that);
-  }
-
-  inline primitive_type t() const { return t_; }
-  inline unsigned n() const { return n_; }
-  inline bool vec() const { return vec_; }
-
-private:
-  primitive_type t_;
-  unsigned n_;
-  bool vec_;
-};
-
-class runtime_type_traits {
+class primitive_type_traits {
 public:
 
   static inline size_t
@@ -64,32 +28,6 @@ public:
   {
     MICROSCOPES_ASSERT(t < TYPE_NELEMS);
     return PrimitiveTypeSizes_[t];
-  }
-
-  static inline size_t
-  RuntimeTypeSize(const runtime_type &t)
-  {
-    return t.n() * PrimitiveTypeSize(t.t());
-  }
-
-  struct offsets_ret_t {
-    offsets_ret_t() : offsets_(), rowsize_(), maskrowsize_() {}
-    std::vector<size_t> offsets_;
-    size_t rowsize_;
-    size_t maskrowsize_;
-  };
-
-  static inline offsets_ret_t
-  GetOffsetsAndSize(const std::vector<runtime_type> &types)
-  {
-    offsets_ret_t ret;
-    ret.offsets_.reserve(types.size());
-    for (const auto &t : types) {
-      ret.offsets_.push_back(ret.rowsize_);
-      ret.rowsize_ += RuntimeTypeSize(t);
-      ret.maskrowsize_ += t.n();
-    }
-    return ret;
   }
 
   static const char *
@@ -100,16 +38,6 @@ public:
 #undef _STRING_CASE
     MICROSCOPES_NOT_REACHABLE();
     return nullptr;
-  }
-
-  static std::string
-  RuntimeTypeStr(const runtime_type &t)
-  {
-    std::ostringstream oss;
-    oss << PrimitiveTypeStr(t.t());
-    if (t.vec())
-      oss << "[" << t.n() << "]";
-    return oss.str();
   }
 
   static std::string
@@ -134,12 +62,94 @@ private:
   static const size_t PrimitiveTypeSizes_[TYPE_NELEMS];
 };
 
+class runtime_type {
+public:
+  // default ctor
+  runtime_type() : t_(), psize_(), n_(), vec_() {}
+
+  // scalar constructor
+  runtime_type(primitive_type t)
+    : t_(t),
+      psize_(primitive_type_traits::PrimitiveTypeSize(t)),
+      n_(1),
+      vec_(false)
+  {
+  }
+
+  // vector constructor
+  runtime_type(primitive_type t, unsigned n)
+    : t_(t),
+      psize_(primitive_type_traits::PrimitiveTypeSize(t)),
+      n_(n),
+      vec_(true)
+  {
+  }
+
+  inline bool
+  operator==(const runtime_type &that) const
+  {
+    return t_ == that.t_ && n_ == that.n_ && vec_ == that.vec_;
+  }
+
+  inline bool
+  operator!=(const runtime_type &that) const
+  {
+    return !operator==(that);
+  }
+
+  inline primitive_type t() const { return t_; }
+  inline unsigned psize() const { return psize_; }
+  inline unsigned size() const { return n_ * psize_; }
+  inline unsigned n() const { return n_; }
+  inline bool vec() const { return vec_; }
+
+  inline std::string
+  str() const
+  {
+    std::ostringstream oss;
+    oss << primitive_type_traits::PrimitiveTypeStr(t());
+    if (vec())
+      oss << "[" << n() << "]";
+    return oss.str();
+  }
+
+  struct offsets_ret_t {
+    offsets_ret_t() : offsets_(), rowsize_(), maskrowsize_() {}
+    std::vector<size_t> offsets_;
+    size_t rowsize_;
+    size_t maskrowsize_;
+  };
+
+  static inline offsets_ret_t
+  GetOffsetsAndSize(const std::vector<runtime_type> &types)
+  {
+    offsets_ret_t ret;
+    ret.offsets_.reserve(types.size());
+    for (const auto &t : types) {
+      ret.offsets_.push_back(ret.rowsize_);
+      ret.rowsize_ += t.size();
+      ret.maskrowsize_ += t.n();
+    }
+    return ret;
+  }
+
+private:
+  primitive_type t_;
+  unsigned psize_;
+  unsigned n_;
+  bool vec_;
+};
+
 struct runtime_cast {
 
   template <typename T>
   static inline ALWAYS_INLINE T
   cast(const uint8_t *px, primitive_type t)
   {
+    // fastpath: assume the cast type and the primitive type
+    // match up
+    if (likely(static_type_to_primitive_type<T>::value == t))
+      return *reinterpret_cast<const T *>(px);
     switch (t) {
 #define _CASE_STMT(ctype, rtype) \
       case rtype: \
@@ -157,6 +167,12 @@ struct runtime_cast {
   static inline ALWAYS_INLINE void
   uncast(uint8_t *px, primitive_type t, T value)
   {
+    // fastpath: assume the cast type and the primitive type
+    // match up
+    if (likely(static_type_to_primitive_type<T>::value == t)) {
+      *reinterpret_cast<T *>(px) = value;
+      return;
+    }
     switch (t) {
 #define _CASE_STMT(ctype, rtype) \
       case rtype: \

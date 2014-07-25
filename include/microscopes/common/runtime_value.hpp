@@ -49,7 +49,7 @@ public:
   {
     MICROSCOPES_ASSERT(data_);
     MICROSCOPES_ASSERT(idx < shape());
-    const size_t s = runtime_type_traits::PrimitiveTypeSize(type_.t());
+    const size_t s = type_.psize();
     return runtime_cast::cast<T>(data_ + idx * s, type_.t());
   }
 
@@ -82,7 +82,7 @@ public:
   {
     MICROSCOPES_ASSERT(data_);
     MICROSCOPES_ASSERT(idx < shape());
-    const size_t s = runtime_type_traits::PrimitiveTypeSize(type_.t());
+    const size_t s = type_.psize();
     runtime_cast::uncast<T>(data_ + idx * s, type_.t(), t);
   }
 
