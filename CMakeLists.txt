@@ -71,10 +71,15 @@ set(MICROSCOPES_COMMON_SOURCE_FILES
     src/models/bbnc.cpp
     src/models/distributions.cpp
     src/models/dm.cpp
-    src/models/niw.cpp)
+    src/models/niw.cpp
+    src/models/noop.cpp)
 add_library(microscopes_common SHARED ${MICROSCOPES_COMMON_SOURCE_FILES})
 target_link_libraries(microscopes_common ${PROTOBUF_LIBRARIES} distributions_shared)
 install(TARGETS microscopes_common LIBRARY DESTINATION lib)
+
+# bin executables
+add_executable(perf_group bin/perf_group.cpp)
+target_link_libraries(perf_group ${PROTOBUF_LIBRARIES} distributions_shared microscopes_common)
 
 # test executables
 enable_testing()
