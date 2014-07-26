@@ -38,8 +38,11 @@ main(void)
 
   // pointers
   vector<shared_ptr<models::hypers>> shares;
-  for (size_t i = 0; i < D; i++)
+  for (size_t i = 0; i < D; i++) {
     shares.emplace_back(models::distributions_model<BetaBernoulli>().create_hypers());
+    shares.back()->get_hp_mutator("alpha").set<float>(2.0);
+    shares.back()->get_hp_mutator("beta").set<float>(2.0);
+  }
 
   vector<shared_ptr<models::group>> groups;
   for (const auto &px : shares)
@@ -48,6 +51,11 @@ main(void)
   // all in 1
   unique_ptr< models::distributions_hypers<BetaBernoulli> [] > combined_shares(
       new models::distributions_hypers<BetaBernoulli> [ D ]);
+
+  for (size_t i = 0; i < D; i++) {
+    combined_shares[i].get_hp_mutator("alpha").set<float>(2.0);
+    combined_shares[i].get_hp_mutator("beta").set<float>(2.0);
+  }
 
   unique_ptr< models::distributions_group<BetaBernoulli> []> combined_groups(
       new models::distributions_group<BetaBernoulli> [D]);
@@ -64,6 +72,7 @@ main(void)
 
   const size_t niters = 100000;
 
+  float score = 0.;
   {
     timer tt;
     for (size_t n = 0; n < niters; n++) {
@@ -73,8 +82,12 @@ main(void)
       acc.reset();
       for (size_t i = 0; i < acc.nfeatures(); i++, acc.bump())
         noop_groups[i]->remove_value(*noop_shares[i], acc.get(), r);
+      acc.reset();
+      for (size_t i = 0; i < acc.nfeatures(); i++, acc.bump())
+        score += noop_groups[i]->score_value(*noop_shares[i], acc.get(), r);
     }
     cout << "sec/iter: " << (tt.lap_ms() / float(niters)) << endl;
+    cout << "ignore: " << score << endl;
   }
 
   {
@@ -86,8 +99,12 @@ main(void)
       acc.reset();
       for (size_t i = 0; i < acc.nfeatures(); i++, acc.bump())
         groups[i]->remove_value(*shares[i], acc.get(), r);
+      acc.reset();
+      for (size_t i = 0; i < acc.nfeatures(); i++, acc.bump())
+        score += groups[i]->score_value(*shares[i], acc.get(), r);
     }
     cout << "sec/iter: " << (tt.lap_ms() / float(niters)) << endl;
+    cout << "ignore: " << score << endl;
   }
 
   {
@@ -99,8 +116,12 @@ main(void)
       acc.reset();
       for (size_t i = 0; i < acc.nfeatures(); i++, acc.bump())
         px_groups[i]->remove_value(*px_shares[i], acc.get(), r);
+      acc.reset();
+      for (size_t i = 0; i < acc.nfeatures(); i++, acc.bump())
+        score += px_groups[i]->score_value(*px_shares[i], acc.get(), r);
     }
     cout << "sec/iter: " << (tt.lap_ms() / float(niters)) << endl;
+    cout << "ignore: " << score << endl;
   }
   return 0;
 }
