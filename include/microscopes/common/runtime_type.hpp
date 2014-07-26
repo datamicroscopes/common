@@ -159,7 +159,9 @@ struct runtime_cast {
     default:
       break;
     }
+#ifdef DEBUG_MODE
     MICROSCOPES_NOT_REACHABLE();
+#endif
     return T();
   }
 
@@ -183,7 +185,9 @@ struct runtime_cast {
     default:
       break;
     }
+#ifdef DEBUG_MODE
     MICROSCOPES_NOT_REACHABLE();
+#endif
   }
 
   static inline void
@@ -198,7 +202,9 @@ struct runtime_cast {
     PRIMITIVE_TYPE_MAPPINGS(_SRC_CASE_STMT)
 #undef _SRC_CASE_STMT
     default:
+#ifdef DEBUG_MODE
       MICROSCOPES_NOT_REACHABLE();
+#endif
       break;
     }
   }
