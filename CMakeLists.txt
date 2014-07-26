@@ -79,7 +79,7 @@ install(TARGETS microscopes_common LIBRARY DESTINATION lib)
 
 # bin executables
 add_executable(perf_group bin/perf_group.cpp)
-target_link_libraries(perf_group ${PROTOBUF_LIBRARIES} distributions_shared microscopes_common)
+target_link_libraries(perf_group ${PROTOBUF_LIBRARIES} distributions_shared microscopes_common rt)
 
 # test executables
 enable_testing()
