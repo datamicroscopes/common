@@ -15,6 +15,10 @@ if(APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.7")
   # clang complains about register
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
+  # OS X doesn't have librt
+  set(RT_LIBRARY_NAME "")
+else()
+  set(RT_LIBRARY_NAME "rt")
 endif()
 
 # taken from distributions
@@ -79,7 +83,7 @@ install(TARGETS microscopes_common LIBRARY DESTINATION lib)
 
 # bin executables
 add_executable(perf_group bin/perf_group.cpp)
-target_link_libraries(perf_group ${PROTOBUF_LIBRARIES} distributions_shared microscopes_common rt)
+target_link_libraries(perf_group ${PROTOBUF_LIBRARIES} distributions_shared microscopes_common ${RT_LIBRARY_NAME})
 
 # test executables
 enable_testing()
