@@ -70,12 +70,12 @@ public:
     MICROSCOPES_DCHECK(m.alphas_size() > 0, "no alphas given");
     MICROSCOPES_DCHECK(m.assignments_size() > 0, "no entities given");
     MICROSCOPES_DCHECK(m.alphas_size() == m.groups_size(), "size discrepancy");
-    for (size_t i = 0; i < m.alphas_size(); i++) {
+    for (size_t i = 0; i < (size_t)m.alphas_size(); i++) {
       MICROSCOPES_DCHECK(m.alphas(i) > 0., "alphas can only be positive");
       alphas_.push_back(m.alphas(i));
     }
     std::vector<size_t> counts(alphas_.size());
-    for (size_t i = 0; i < m.assignments_size(); i++) {
+    for (size_t i = 0; i < (size_t)m.assignments_size(); i++) {
       MICROSCOPES_DCHECK(
           m.assignments(i) == -1 ||
           m.assignments(i) < alphas_.size(), "invalid group id");
@@ -83,7 +83,7 @@ public:
       if (assignments_.back() != -1)
         counts[assignments_.back()]++;
     }
-    for (size_t i = 0; i < m.groups_size(); i++) {
+    for (size_t i = 0; i < (size_t)m.groups_size(); i++) {
       gd<T> g(counts[i], std::move(group_deserializer_fn(m.groups(i))));
       groups_.emplace_back(i, std::move(g));
     }
@@ -104,7 +104,7 @@ public:
     message_type m;
     util::protobuf_from_string(m, hp);
     MICROSCOPES_DCHECK(m.alphas_size() == alphas_.size(), "size doesn't match");
-    for (size_t i = 0; i < alphas_.size(); i++) {
+    for (size_t i = 0; i < (size_t)m.alphas_size(); i++) {
       MICROSCOPES_DCHECK(m.alphas(i) > 0., "alphas need to be positive");
       alphas_[i] = m.alphas(i);
     }
@@ -267,7 +267,7 @@ public:
 
     alpha_ = m.alpha();
     std::map<size_t, size_t> counts;
-    for (size_t i = 0; i < m.assignments_size(); i++) {
+    for (size_t i = 0; i < (size_t)m.assignments_size(); i++) {
       MICROSCOPES_DCHECK(
           m.assignments(i) == -1 || m.assignments(i) >= 0,
           "invalid group id");
@@ -276,7 +276,7 @@ public:
         counts[assignments_.back()]++;
     }
 
-    for (size_t i = 0; i < m.groups_size(); i++) {
+    for (size_t i = 0; i < (size_t)m.groups_size(); i++) {
       const auto &g = m.groups(i);
       const auto it = counts.find(g.id());
       const size_t count = (it == counts.end()) ? 0 : it->second;
