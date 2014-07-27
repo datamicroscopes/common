@@ -19,24 +19,24 @@ CheckDataview2DArray(
     size_t m,
     const dataview &d)
 {
-  MICROSCOPES_DCHECK(d.shape().size() == 2, "not a 2D array");
+  MICROSCOPES_CHECK(d.shape().size() == 2, "not a 2D array");
   // check each slice
   for (size_t i = 0; i < n; i++) {
     vector<bool> seen(m, false);
     for (auto &p : d.slice(0, i)) {
-      MICROSCOPES_DCHECK(p.first[0] == i, "not a valid slice");
-      MICROSCOPES_DCHECK(p.first[1] < m, "out of bounds");
+      MICROSCOPES_CHECK(p.first[0] == i, "not a valid slice");
+      MICROSCOPES_CHECK(p.first[1] < m, "out of bounds");
       const size_t idx = i*m + p.first[1];
       const bool value = p.second.get<bool>(0);
-      MICROSCOPES_DCHECK(data[idx] == value, "values don't match");
-      MICROSCOPES_DCHECK(!mask[idx], "data is masked");
+      MICROSCOPES_CHECK(data[idx] == value, "values don't match");
+      MICROSCOPES_CHECK(!mask[idx], "data is masked");
       seen[p.first[1]] = true;
     }
     for (size_t j = 0; j < seen.size(); j++) {
       if (seen[j])
         continue;
       const size_t idx = i*m + j;
-      MICROSCOPES_DCHECK(mask[idx], "data is not masked");
+      MICROSCOPES_CHECK(mask[idx], "data is not masked");
     }
   }
 }

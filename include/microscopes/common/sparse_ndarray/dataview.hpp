@@ -113,8 +113,10 @@ public:
   {
     // assume no zero-dimesional things
     MICROSCOPES_DCHECK(shape_.size(), "zero-d array not allowed");
+#ifdef DEBUG_MODE
     for (auto s : shape)
       MICROSCOPES_DCHECK(s, "empty-dimesion not allowed");
+#endif
   }
 
   virtual ~dataview() {}

@@ -15,9 +15,9 @@ almost_eq(float a, float b)
 template <typename T>
 static void assert_vectors_equal(const vector<T> &as, const vector<T> &bs)
 {
-  MICROSCOPES_DCHECK(as.size() == bs.size(), "size");
+  MICROSCOPES_CHECK(as.size() == bs.size(), "size");
   for (size_t i = 0; i < as.size(); i++)
-    MICROSCOPES_DCHECK(as[i] == bs[i], "element");
+    MICROSCOPES_CHECK(as[i] == bs[i], "element");
 }
 
 static void
@@ -47,16 +47,16 @@ test_fixed_serialization()
   });
 
   for (size_t i = 0; i < k; i++)
-    MICROSCOPES_DCHECK(
+    MICROSCOPES_CHECK(
         almost_eq(
           fg.get_hp_mutator("alphas").accessor().get<float>(i),
           fg1.get_hp_mutator("alphas").accessor().get<float>(i)),
       "did not save alphas properly");
 
   assert_vectors_equal(fg.assignments(), fg1.assignments());
-  MICROSCOPES_DCHECK(fg.ngroups() == fg1.ngroups(), "ngroups");
+  MICROSCOPES_CHECK(fg.ngroups() == fg1.ngroups(), "ngroups");
   for (size_t i = 0; i < fg.ngroups(); i++)
-    MICROSCOPES_DCHECK(fg.group(i) == fg1.group(i), "group count/data");
+    MICROSCOPES_CHECK(fg.group(i) == fg1.group(i), "group count/data");
 }
 
 static void
@@ -86,16 +86,16 @@ test_serialization()
       return strtoul(s.c_str(), nullptr, 10);
   });
 
-  MICROSCOPES_DCHECK(
+  MICROSCOPES_CHECK(
       almost_eq(
         g.get_hp_mutator("alpha").accessor().get<float>(0),
         g1.get_hp_mutator("alpha").accessor().get<float>(0)),
     "did not save alpha properly");
 
   assert_vectors_equal(g.assignments(), g1.assignments());
-  MICROSCOPES_DCHECK(g.ngroups() == g1.ngroups(), "ngroups");
+  MICROSCOPES_CHECK(g.ngroups() == g1.ngroups(), "ngroups");
   for (auto gid : g.groups())
-    MICROSCOPES_DCHECK(g.group(gid) == g1.group(gid), "group count/data");
+    MICROSCOPES_CHECK(g.group(gid) == g1.group(gid), "group count/data");
 }
 
 int

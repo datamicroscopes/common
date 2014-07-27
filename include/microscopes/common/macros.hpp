@@ -13,12 +13,14 @@
 
 #define compiler_barrier() asm volatile("" ::: "memory")
 
+#define MICROSCOPES_CHECK(expr, msg) \
+  do { \
+    if (unlikely(!(expr))) \
+      throw ::std::runtime_error(msg); \
+  } while (0)
+
 #ifdef DEBUG_MODE
-  #define MICROSCOPES_DCHECK(expr, msg) \
-    do { \
-      if (unlikely(!(expr))) \
-        throw ::std::runtime_error(msg); \
-    } while (0)
+  #define MICROSCOPES_DCHECK(expr, msg) MICROSCOPES_CHECK(expr, msg)
 #else
   #define MICROSCOPES_DCHECK(expr, msg) ((void)0)
 #endif
