@@ -403,7 +403,7 @@ public:
   common::runtime_type
   get_runtime_type() const override
   {
-    return common::runtime_type(TYPE_I32, dim_);
+    return common::runtime_type(TYPE_I32);
   }
 
 private:
