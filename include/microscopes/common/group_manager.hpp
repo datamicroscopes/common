@@ -129,18 +129,6 @@ public:
   inline size_t nentities() const { return assignments_.size(); }
   inline size_t ngroups() const { return groups_.size(); }
 
-  inline bool
-  is_valid_group(size_t gid) const
-  {
-    return gid < ngroups();
-  }
-
-  inline bool
-  is_valid_unassigned_entity(size_t eid) const
-  {
-    return eid < nentities() && assignments_[eid] == -1;
-  }
-
   inline size_t
   groupsize(size_t gid) const
   {
@@ -185,15 +173,6 @@ public:
     MICROSCOPES_DCHECK(gid < ngroups(), "invalid gid");
     MICROSCOPES_DCHECK(eid < nentities(), "invalid eid");
     MICROSCOPES_DCHECK(assignments_[eid] == -1, "entity already assigned");
-    return add_value_unchecked(gid, eid);
-  }
-
-  inline T &
-  add_value_unchecked(size_t gid, size_t eid)
-  {
-    MICROSCOPES_ASSERT(gid < ngroups());
-    MICROSCOPES_ASSERT(eid < nentities());
-    MICROSCOPES_ASSERT(assignments_[eid] == -1);
     assignments_[eid] = gid;
     auto &g = groups_[gid].second;
     g.count_++;
@@ -205,14 +184,6 @@ public:
   {
     MICROSCOPES_DCHECK(eid < nentities(), "invalid eid");
     MICROSCOPES_DCHECK(assignments_[eid] != -1, "entity not assigned");
-    return remove_value_unchecked(eid);
-  }
-
-  inline std::pair<size_t, T&>
-  remove_value_unchecked(size_t eid)
-  {
-    MICROSCOPES_ASSERT(eid < nentities());
-    MICROSCOPES_ASSERT(assignments_[eid] != -1);
     const size_t gid = assignments_[eid];
     MICROSCOPES_ASSERT(gid < ngroups());
     assignments_[eid] = -1;
@@ -225,7 +196,6 @@ public:
   inline float
   score_assignment() const
   {
-    // XXX: should this warn when not all entities are assigned?
     using distributions::fast_lgamma;
 
     float score = 0.;
@@ -249,13 +219,6 @@ public:
   pseudocount(size_t gid, const gd<T> &g) const
   {
     MICROSCOPES_DCHECK(gid < ngroups(), "invalid gid");
-    return pseudocount_unchecked(gid, g);
-  }
-
-  inline float
-  pseudocount_unchecked(size_t gid, const gd<T> &g) const
-  {
-    MICROSCOPES_ASSERT(gid < ngroups());
     return alphas_[gid] + g.count_;
   }
 
@@ -369,15 +332,9 @@ public:
   inline size_t ngroups() const { return groups_.size(); }
 
   inline bool
-  is_valid_group(size_t gid) const
+  isactivegroup(size_t gid) const
   {
     return groups_.find(gid) != groups_.end();
-  }
-
-  inline bool
-  is_valid_unassigned_entity(size_t eid) const
-  {
-    return eid < nentities() && assignments_[eid] == -1;
   }
 
   inline size_t
@@ -440,15 +397,6 @@ public:
     auto it = groups_.find(gid);
     MICROSCOPES_DCHECK(it != groups_.end(), "invalid gid");
     MICROSCOPES_DCHECK(!it->second.count_, "group not empty");
-    delete_group_unchecked(gid);
-  }
-
-  inline void
-  delete_group_unchecked(size_t gid)
-  {
-    auto it = groups_.find(gid);
-    MICROSCOPES_ASSERT(it != groups_.end());
-    MICROSCOPES_ASSERT(!it->second.count_);
     MICROSCOPES_ASSERT(gempty_.count(gid));
     groups_.erase(it);
     gempty_.erase(gid);
@@ -458,16 +406,8 @@ public:
   add_value(size_t gid, size_t eid)
   {
     MICROSCOPES_DCHECK(assignments_.at(eid) == -1, "entity already assigned");
-    MICROSCOPES_DCHECK(groups_.find(gid) != groups_.end(), "invalid gid");
-    return add_value_unchecked(gid, eid);
-  }
-
-  inline T &
-  add_value_unchecked(size_t gid, size_t eid)
-  {
-    MICROSCOPES_ASSERT(assignments_.at(eid) == -1);
     auto it = groups_.find(gid);
-    MICROSCOPES_ASSERT(it != groups_.end());
+    MICROSCOPES_DCHECK(it != groups_.end(), "invalid gid");
     if (!it->second.count_++) {
       MICROSCOPES_ASSERT(gempty_.count(gid));
       gempty_.erase(gid);
@@ -483,13 +423,6 @@ public:
   remove_value(size_t eid)
   {
     MICROSCOPES_DCHECK(assignments_.at(eid) != -1, "entity not assigned");
-    return remove_value_unchecked(eid);
-  }
-
-  inline std::pair<size_t, T&>
-  remove_value_unchecked(size_t eid)
-  {
-    MICROSCOPES_ASSERT(assignments_.at(eid) != -1);
     const size_t gid = assignments_[eid];
     auto it = groups_.find(gid);
     MICROSCOPES_ASSERT(it != groups_.end());
@@ -527,13 +460,6 @@ public:
 
   inline float
   pseudocount(size_t gid, const gd<T> &g) const
-  {
-    MICROSCOPES_DCHECK(gempty_.size(), "no empty groups");
-    return pseudocount_unchecked(gid, g);
-  }
-
-  inline float
-  pseudocount_unchecked(size_t gid, const gd<T> &g) const
   {
     if (g.count_)
       return g.count_;
