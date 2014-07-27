@@ -13,11 +13,15 @@
 
 #define compiler_barrier() asm volatile("" ::: "memory")
 
-#define MICROSCOPES_DCHECK(expr, msg) \
-  do { \
-    if (unlikely(!(expr))) \
-      throw ::std::runtime_error(msg); \
-  } while (0)
+#ifdef DEBUG_MODE
+  #define MICROSCOPES_DCHECK(expr, msg) \
+    do { \
+      if (unlikely(!(expr))) \
+        throw ::std::runtime_error(msg); \
+    } while (0)
+#else
+  #define MICROSCOPES_DCHECK(expr, msg) ((void)0)
+#endif
 
 // from https://code.google.com/p/protobuf/source/browse/trunk/src/google/protobuf/stubs/common.h
 #define MICROSCOPES_ARRAYSIZE(a) \
