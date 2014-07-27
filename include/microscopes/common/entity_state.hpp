@@ -44,7 +44,18 @@ public:
   virtual size_t remove_value(size_t eid, rng_t &rng) = 0;
 
   virtual std::pair<std::vector<size_t>, std::vector<float>>
-  score_value(size_t eid, rng_t &rng) const = 0;
+  score_value(size_t eid, rng_t &rng) const
+  {
+    // delegates to inplace_score_value by default
+    std::pair<std::vector<size_t>, std::vector<float>> ret;
+    inplace_score_value(ret, eid, rng);
+    return ret;
+  }
+
+  virtual void
+  inplace_score_value(std::pair<std::vector<size_t>, std::vector<float>> &scores,
+                      size_t eid,
+                      rng_t &rng) const = 0;
 
   virtual float score_assignment() const = 0;
 
