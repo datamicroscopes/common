@@ -109,7 +109,6 @@ if debug_build:
 
 extra_compile_args = [
     '-std=c++0x',
-    '-Wno-deprecated-register',
     '-Wno-unused-function',
 ]
 # taken from distributions
@@ -125,6 +124,7 @@ if clang:
     extra_compile_args.extend([
         '-mmacosx-version-min=10.7',  # for anaconda
         '-stdlib=libc++',
+        '-Wno-deprecated-register',
     ])
 if debug_build:
     extra_compile_args.append('-DDEBUG_MODE')
