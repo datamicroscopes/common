@@ -24,14 +24,6 @@ def get_git_sha1():
     sha1 = repo.commits()[0].id
     return sha1
 
-def mkdirp(path):
-    try:
-        os.makedirs(path)
-    except OSError as ex:
-        import errno
-        if ex.errno != errno.EEXIST:
-            raise
-
 def find_dependency(soname, incname):
     def test(prefix):
         sofile = os.path.join(prefix, 'lib/{}'.format(soname))
@@ -84,7 +76,6 @@ if not 'OFFICIAL_BUILD' in os.environ:
     join = os.path.join
     dirname = os.path.dirname
     basedir = join(join(dirname(__file__), 'microscopes'), 'common')
-    mkdirp(basedir)
     pkgfile = join(basedir, '__init__.py')
     print pkgfile
     with open(pkgfile, 'w') as fp:

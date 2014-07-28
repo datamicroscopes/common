@@ -3,6 +3,7 @@ util.py - common utility functions
 """
 
 import numpy as np
+import os
 
 def almost_eq(a, b, tol=1e-5):
     return (np.fabs(a - b) <= tol).all()
@@ -113,3 +114,11 @@ def random_assignment_vector(n):
     # see include/microscopes/common/util.hpp
     ngroups = min(100, n) + 1
     return [np.random.randint(low=0,  high=ngroups) for _ in xrange(n)]
+
+def mkdirp(path):
+    try:
+        os.makedirs(path)
+    except OSError as ex:
+        import errno
+        if ex.errno != errno.EEXIST:
+            raise
