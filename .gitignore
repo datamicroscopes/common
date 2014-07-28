@@ -4,6 +4,7 @@
 /config.mk
 /build
 /release
+/relwithdebinfo
 /debug
 *.d
 *.prog

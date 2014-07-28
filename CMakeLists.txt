@@ -3,9 +3,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 project(microscopes_common)
 
-# default mode is Release
+# default mode is RelWithDebInfo
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
-   set(CMAKE_BUILD_TYPE Release)
+  set(CMAKE_BUILD_TYPE RelWithDebInfo)
 endif()
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -MD -std=c++0x")
@@ -32,7 +32,9 @@ endif()
 # taken from distributions
 #set(CMAKE_CXX_FLAGS_MATHOPT "-mfpmath=sse -msse4.1 -ffast-math -funsafe-math-optimizations")
 set(CMAKE_CXX_FLAGS_MATHOPT "-mfpmath=sse -msse4.1")
+
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG ${CMAKE_CXX_FLAGS_MATHOPT}")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELEASE} -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG_MODE")
 
 # give our include dirs the most precedent
