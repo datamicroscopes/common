@@ -27,7 +27,7 @@ typedef NormalInverseWishart_Group group_message_type;
 static inline void
 extractVec(VectorXf &v, const value_accessor &value)
 {
-  for (size_t i = 0; i < v.size(); i++)
+  for (size_t i = 0; i < (size_t)v.size(); i++)
     v(i) = value.get<float>(i);
 }
 
@@ -167,7 +167,7 @@ niw_group::get_ss() const
 {
   group_message_type m;
   m.set_count(count_);
-  for (size_t i = 0; i < sum_x_.size(); i++)
+  for (size_t i = 0; i < (size_t)sum_x_.size(); i++)
     m.add_sum_x(sum_x_(i));
   for (size_t i = 0; i < dim(); i++)
     for (size_t j = 0; j < dim(); j++)
@@ -229,11 +229,11 @@ hyperparam_bag_t
 niw_hypers::get_hp() const
 {
   shared_message_type m;
-  for (size_t i = 0; i < mu0_.size(); i++)
+  for (size_t i = 0; i < (size_t)mu0_.size(); i++)
     m.add_mu0(mu0_(i));
   m.set_lambda(lambda_);
-  for (size_t i = 0; i < psi_.rows(); i++)
-    for (size_t j = 0; j < psi_.cols(); j++)
+  for (size_t i = 0; i < (size_t)psi_.rows(); i++)
+    for (size_t j = 0; j < (size_t)psi_.cols(); j++)
       m.add_psi(psi_(i, j));
   m.set_nu(nu_);
   return util::protobuf_to_string(m);
