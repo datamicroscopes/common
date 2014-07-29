@@ -60,12 +60,15 @@ log_normal(float mu, float sigma2)
 static inline scalar_fn
 log_noninformative_beta_prior()
 {
+  // a non-informative (proper) prior for the beta distribution
+  // http://iacs-courses.seas.harvard.edu/courses/am207/blog/lecture-9.html
   return scalar_fn(
       [](const std::vector<float> &args) {
-        MICROSCOPES_DCHECK(args.size() == 2, "expecting two args");
         const float alpha = args[0];
         const float beta = args[1];
-        return -2.5*distributions::fast_log(alpha + beta);
+        if (alpha <= 0.0 || beta <= 0.0)
+          return -std::numeric_limits<float>::infinity();
+        return -2.5f*distributions::fast_log(alpha + beta);
       }, 2);
 }
 

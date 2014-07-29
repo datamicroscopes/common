@@ -42,5 +42,6 @@ def test_log_normal():
 def test_log_noninformative_beta_prior():
     from microscopes.cxx.common.scalar_functions import log_noninformative_beta_prior
     alpha, beta = 0.8, 0.2
+    assert log_noninformative_beta_prior.input_dim() == 2
     val = log_noninformative_beta_prior(alpha, beta)
     assert_almost_equals(val, -2.5*np.log(alpha + beta), places=5)

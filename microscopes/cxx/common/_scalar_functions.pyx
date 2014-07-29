@@ -4,3 +4,5 @@ cdef class scalar_function:
         for arg in args:
             c_args.push_back(float(arg))
         return self._func(c_args)
+    def input_dim(self):
+        return self._func.input_dim()
