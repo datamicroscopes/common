@@ -82,6 +82,7 @@ set(MICROSCOPES_COMMON_SOURCE_FILES
     src/common/runtime_value.cpp
     src/common/sparse_ndarray/dataview.cpp
     src/common/util.cpp
+    src/common/scalar_functions.cpp
     src/models/bbnc.cpp
     src/models/distributions.cpp
     src/models/dm.cpp
