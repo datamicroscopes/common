@@ -78,7 +78,7 @@ public:
     for (size_t i = 0; i < (size_t)m.assignments_size(); i++) {
       MICROSCOPES_DCHECK(
           m.assignments(i) == -1 ||
-          m.assignments(i) < alphas_.size(), "invalid group id");
+          size_t(m.assignments(i)) < alphas_.size(), "invalid group id");
       assignments_.push_back(m.assignments(i));
       if (assignments_.back() != -1)
         counts[assignments_.back()]++;
@@ -103,7 +103,7 @@ public:
   {
     message_type m;
     util::protobuf_from_string(m, hp);
-    MICROSCOPES_DCHECK(m.alphas_size() == alphas_.size(), "size doesn't match");
+    MICROSCOPES_DCHECK((size_t)m.alphas_size() == alphas_.size(), "size doesn't match");
     for (size_t i = 0; i < (size_t)m.alphas_size(); i++) {
       MICROSCOPES_DCHECK(m.alphas(i) > 0., "alphas need to be positive");
       alphas_[i] = m.alphas(i);
