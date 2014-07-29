@@ -184,7 +184,7 @@ niw_group::set_ss(const suffstats_bag_t &ss)
   count_ = m.count();
 
   const size_t dim = m.sum_x_size();
-  MICROSCOPES_DCHECK(sum_x_.size() == dim, "size mismatch");
+  MICROSCOPES_DCHECK((size_t)sum_x_.size() == dim, "size mismatch");
   for (size_t i = 0; i < dim; i++)
     sum_x_(i) = m.sum_x(i);
 
@@ -246,7 +246,7 @@ niw_hypers::set_hp(const hyperparam_bag_t &hp)
   util::protobuf_from_string(m, hp);
 
   const size_t dim = m.mu0_size();
-  MICROSCOPES_DCHECK(mu0_.rows() == dim, "size mismatch");
+  MICROSCOPES_DCHECK((size_t)mu0_.rows() == dim, "size mismatch");
   for (size_t i = 0; i < dim; i++)
     mu0_(i) = m.mu0(i);
 
