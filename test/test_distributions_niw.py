@@ -24,7 +24,7 @@ def _test_iw_sampler(sample_iw_fn):
 
     true_mean = 1./(nu-S.shape[0]-1)*S
 
-    ntries = 5
+    ntries = 100
     py_samples = []
     while ntries:
         py_samples.extend([sample_iw_fn(nu, S) for _ in xrange(10000)])
