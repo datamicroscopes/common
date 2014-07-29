@@ -1,5 +1,4 @@
 from microscopes.cxx.common._scalar_functions cimport scalar_function
-from microscopes.cxx.common._typedefs_h cimport scalar_fn
 from microscopes.cxx.common._scalar_functions_h cimport \
         log_exponential as c_log_exponential, \
         log_normal as c_log_normal, \
