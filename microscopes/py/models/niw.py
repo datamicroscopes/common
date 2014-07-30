@@ -65,7 +65,7 @@ class Shared(SharedMixin, SharedIoMixin):
             'nu' : self._nu0,
         }
 
-    def load_protobuf(self, message):
+    def protobuf_load(self, message):
         self._mu0 = np.array(message.mu0, dtype=np.float)
         self._lam0 = getattr(message, 'lambda')
         self._D = self._mu0.shape[0]
@@ -75,7 +75,7 @@ class Shared(SharedMixin, SharedIoMixin):
         self._nu0 = message.nu
         assert self._nu0 > float(self._D) - 1.
 
-    def dump_protobuf(self, message):
+    def protobuf_dump(self, message):
         message.Clear()
         for x in self._mu0:
             message.mu0.append(x)
@@ -193,14 +193,14 @@ class Group(GroupIoMixin):
             'sum_xxT' : self._sum_xxT,
         }
 
-    def load_protobuf(self, message):
+    def protobuf_load(self, message):
         self._cnts = message.count
         self._sum_x = np.array(message.sum_x, dtype=np.float)
         self._sum_xxT = np.array(message.sum_xxT, dtype=np.float)
         D = self._sum_x.shape[0]
         self._sum_xxT = self._sum_xxT.reshape((D, D))
 
-    def dump_protobuf(self, message):
+    def protobuf_dump(self, message):
         message.Clear()
         message.count = self._cnts
         for x in self._sum_x:

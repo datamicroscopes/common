@@ -1,5 +1,5 @@
 # XXX: we use the dbg versions for now, since the lp versions
-# don't have load_protobuf()/dump_protobuf() defined for the groups
+# don't have protobuf_load()/protobuf_dump() defined for the groups
 
 from distributions.dbg.models import bb as dbg_bb, \
                                      bnb as dbg_bnb, \
@@ -44,28 +44,28 @@ class py_model(object):
         s = self._model_module.Shared()
         s.load(raw)
         m = self._pb_type.Shared()
-        s.dump_protobuf(m)
+        s.protobuf_dump(m)
         return m.SerializeToString()
 
     def shared_bytes_to_dict(self, raw):
         m = self._pb_type.Shared()
         m.ParseFromString(raw)
         s = self._model_module.Shared()
-        s.load_protobuf(m)
+        s.protobuf_load(m)
         return s.dump()
 
     def group_dict_to_bytes(self, raw):
         s = self._model_module.Group()
         s.load(raw)
         m = self._pb_type.Group()
-        s.dump_protobuf(m)
+        s.protobuf_dump(m)
         return m.SerializeToString()
 
     def group_bytes_to_dict(self, raw):
         m = self._pb_type.Group()
         m.ParseFromString(raw)
         s = self._model_module.Group()
-        s.load_protobuf(m)
+        s.protobuf_load(m)
         return s.dump()
 
 class model_descriptor(object):

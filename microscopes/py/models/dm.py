@@ -21,10 +21,10 @@ class Shared(SharedMixin, SharedIoMixin):
     def load(self, raw):
         self._alphas = np.array(raw['alphas'], dtype=np.float)
 
-    def load_protobuf(self, message):
+    def protobuf_load(self, message):
         self._alphas = np.array(message.alphas, dtype=np.float)
 
-    def dump_protobuf(self, message):
+    def protobuf_dump(self, message):
         message.Clear()
         for alpha in self._alphas:
             message.alphas.append(alpha)
@@ -89,11 +89,11 @@ class Group(GroupIoMixin):
         #return {'counts': self._counts.tolist(), 'ratio': self._ratio}
         return {'counts': self._counts.tolist()}
 
-    def load_protobuf(self, message):
+    def protobuf_load(self, message):
         # XXX: ratio
         self._counts = np.array(message.counts, dtype=np.int)
 
-    def dump_protobuf(self, message):
+    def protobuf_dump(self, message):
         # XXX: ratio
         message.Clear()
         for count in self._counts:
