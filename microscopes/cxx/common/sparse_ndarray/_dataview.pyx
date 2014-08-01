@@ -12,6 +12,7 @@ cdef class numpy_dataview(abstract_dataview):
             raise ValueError("dim must be >= 2")
         if len([x for x in npd.shape if not x]):
             raise ValueError("empty dims not allowed")
+        self._shape = npd.shape
         cdef vector[size_t] cshape
         for d in npd.shape:
             cshape.push_back(d)
@@ -26,3 +27,6 @@ cdef class numpy_dataview(abstract_dataview):
             <cbool *> self._mask.data if self._mask is not None else NULL,
             cshape,
             ctype))
+
+    def shape(self):
+        return self._shape

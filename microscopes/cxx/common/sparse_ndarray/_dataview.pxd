@@ -15,3 +15,4 @@ cdef class abstract_dataview:
 cdef class numpy_dataview(abstract_dataview):
     cdef np.ndarray _data
     cdef np.ndarray _mask
+    cdef tuple _shape

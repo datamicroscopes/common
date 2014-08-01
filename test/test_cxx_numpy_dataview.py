@@ -52,9 +52,11 @@ def test_sparse_ndarray_numpy_dataview():
     x = np.zeros((2, 3, 4), dtype=np.bool)
     view = sparse_ndarray_numpy_dataview(x)
     assert view
+    assert view.shape() == (2, 3, 4)
 
 def test_sparse_ndarray_numpy_dataview_masked():
     x = np.zeros((2, 3, 4), dtype=np.bool)
     x = ma.masked_array(x, mask=np.ones(x.shape))
     view = sparse_ndarray_numpy_dataview(x)
     assert view
+    assert view.shape() == (2, 3, 4)
