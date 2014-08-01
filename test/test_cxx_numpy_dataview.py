@@ -11,6 +11,7 @@ def test_recarray_numpy_dataview():
     x = np.array([(False, 32.), (True, 943.), (False, -32.)], dtype=[('', bool), ('', float)])
     view = recarray_numpy_dataview(x)
     assert view and view.size() == x.shape[0]
+    assert len(view) == x.shape[0]
 
     for a, b in zip(x, view):
         assert a[0] == b[0]

@@ -30,3 +30,6 @@ class numpy_dataview(object):
 
     def size(self):
         return self._Y.shape[0]
+
+    def __len__(self):
+        return self.size()
