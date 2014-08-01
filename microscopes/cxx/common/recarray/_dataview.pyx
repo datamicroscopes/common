@@ -1,5 +1,6 @@
 import numpy as np
 import numpy.ma as ma
+from microscopes.common import validator
 
 cdef class abstract_dataview:
     def __iter__(self):
@@ -38,6 +39,7 @@ cdef class abstract_dataview:
 
 cdef class numpy_dataview(abstract_dataview):
     def __cinit__(self, npd):
+        validator.validate_not_none(npd, "npd")
         n = npd.shape[0]
         if len(npd.shape) != 1:
             raise ValueError("1D arrays only")

@@ -129,6 +129,12 @@ public:
   inline size_t nentities() const { return assignments_.size(); }
   inline size_t ngroups() const { return groups_.size(); }
 
+  inline bool
+  isactivegroup(size_t gid) const
+  {
+    return gid < ngroups();
+  }
+
   inline size_t
   groupsize(size_t gid) const
   {

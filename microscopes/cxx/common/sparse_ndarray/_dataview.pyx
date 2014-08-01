@@ -1,11 +1,13 @@
 import numpy as np
 #import numpy.ma as ma
+from microscopes.common import validator
 
 cdef class abstract_dataview:
     pass
 
 cdef class numpy_dataview(abstract_dataview):
     def __cinit__(self, npd):
+        validator.validate_not_none(npd, "npd")
         if len(npd.shape) <= 1:
             raise ValueError("dim must be >= 2")
         if len([x for x in npd.shape if not x]):
