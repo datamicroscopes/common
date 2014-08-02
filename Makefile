@@ -22,13 +22,11 @@ debug:
 test:
 	(cd test && nosetests --verbose)
 
-COMPILER := CC=gcc-4.8 CXX=g++-4.8
-
 .PHONY: travis_install
 travis_install: 
 	make relwithdebinfo
 	(cd relwithdebinfo && make && make install)
-	$(COMPILER) pip install .
+	pip install .
 
 .PHONY: travis_script
 travis_script: 

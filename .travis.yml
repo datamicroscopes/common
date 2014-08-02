@@ -17,6 +17,9 @@ before_install:
   - conda create -n build --yes python=$TRAVIS_PYTHON_VERSION numpy scipy nose cython pip
   - source activate build
   #- export LD_LIBRARY_PATH=/home/travis/miniconda/envs/build/lib
+  - export CC=gcc-4.8
+  - export CXX=g++-4.8
+  - printenv
 
 install: 
   - conda install --yes -c distributions distributions
