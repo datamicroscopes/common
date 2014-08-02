@@ -168,11 +168,18 @@ extensions = cythonize([
     make_extension('microscopes.cxx.common._scalar_functions'),
 ])
 
+with open('README.md') as f:
+    long_description = f.read()
+
 setup(
     version=version,
     name='microscopes-common',
-    description='XYZ',
-    long_description='XYZ long',
+    description='Non-parametric bayesian inference',
+    long_description=long_description,
+    url='https://github.com/datamicroscopes/common',
+    author='Stephen Tu, Eric Jonas',
+    maintainer='Stephen Tu',
+    maintainer_email='tu.stephenl@gmail.com',
     packages=(
         'microscopes',
         'microscopes.io',
