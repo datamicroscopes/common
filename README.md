@@ -22,6 +22,9 @@ If you simply want to use datamicroscopes, then see the above instructions on in
 ### Requirements
 Note that a compiler with support for C++11 is required for building. On Linux, this means `g++ >= 4.8` (4.6 supports C++11, but its headers are somewhat broken for `<random>` which we rely on). On OS X, this means the latest version of XCode. Currently, we only support OS X 10.7 or greater. 
 
+#### Conflict with system libprotobuf
+Currently, our `CMakeLists.txt` does not give precedence to Anaconda's version of libprotobuf but instead prefers the system one if present. The easiest workaround for the time being is to uninstall the system versions. This will be fixed soon.
+
 ### Setting up the anaconda environment
 We recommend you to not work in the default (root) environment
 
