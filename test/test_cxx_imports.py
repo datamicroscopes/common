@@ -12,8 +12,8 @@ def test_import_recarray_dataview():
     from microscopes.cxx.common.recarray.dataview import numpy_dataview
     assert numpy_dataview
 
-def test_import_sparse_ndarray_dataview():
-    from microscopes.cxx.common.sparse_ndarray.dataview import numpy_dataview
+def test_import_relation_dataview():
+    from microscopes.cxx.common.relation.dataview import numpy_dataview
     assert numpy_dataview
 
 def test_import_rng():

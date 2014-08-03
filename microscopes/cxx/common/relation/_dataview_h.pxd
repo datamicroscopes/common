@@ -5,7 +5,7 @@ from libc.stddef cimport size_t
 
 from microscopes.cxx.common._runtime_type_h cimport runtime_type
 
-cdef extern from "microscopes/common/sparse_ndarray/dataview.hpp" namespace "microscopes::common::sparse_ndarray":
+cdef extern from "microscopes/common/relation/dataview.hpp" namespace "microscopes::common::relation":
     cdef cppclass dataview:
         pass
 

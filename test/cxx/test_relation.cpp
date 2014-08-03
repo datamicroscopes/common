@@ -1,4 +1,4 @@
-#include <microscopes/common/sparse_ndarray/dataview.hpp>
+#include <microscopes/common/relation/dataview.hpp>
 #include <microscopes/common/macros.hpp>
 #include <microscopes/common/random_fwd.hpp>
 
@@ -9,7 +9,7 @@
 
 using namespace std;
 using namespace microscopes::common;
-using namespace microscopes::common::sparse_ndarray;
+using namespace microscopes::common::relation;
 
 static void
 CheckDataview2DArray(

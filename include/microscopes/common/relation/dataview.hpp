@@ -10,13 +10,23 @@
 
 namespace microscopes {
 namespace common {
-namespace sparse_ndarray {
+namespace relation {
 
+/**
+ * A relation dataview only supports two operations:
+ *   (A) retrieving a value at a given position: get(indices)
+ *   (B) slice along one particular dimension: slice(dim)
+ *
+ * Implementations should do their best to ensure that (B) is as fast as
+ * possible.  (A) should be correct, but is not intended to be in the critical
+ * path
+ */
 class dataview {
 public:
 
   typedef std::pair<std::vector<size_t>, value_accessor> value_with_position_t;
 
+  // subclasses need to provide an implementation of a slice iterator
   class slice_iterator_impl {
   public:
     virtual ~slice_iterator_impl() {}
@@ -125,10 +135,10 @@ public:
   inline const std::vector<size_t> & shape() const { return shape_; }
   inline const runtime_type & type() const { return type_; }
 
+  // the API which subclasses need to provide
+
   virtual value_accessor get(const std::vector<size_t> &indices) const = 0;
-
   virtual slice_iterable slice(size_t dim, size_t idx) const = 0;
-
   virtual slice_iterator begin() const = 0;
   virtual slice_iterator end() const = 0;
 
@@ -238,7 +248,8 @@ private:
 } // namespace detail
 
 /**
- * useful for testing, but horrible in performance
+ * This implementation is used when a dense numpy.ndarray is used to represent
+ * the data.
  */
 class row_major_dense_dataview : public dataview {
 public:
@@ -423,6 +434,6 @@ private:
   std::vector<size_t> multipliers_;
 };
 
-} // namespace sparse_ndarray
+} // namespace relation
 } // namespace common
 } // namespace microscopes

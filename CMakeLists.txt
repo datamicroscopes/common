@@ -80,7 +80,7 @@ set(MICROSCOPES_COMMON_SOURCE_FILES
     src/common/recarray/dataview.cpp
     src/common/runtime_type.cpp
     src/common/runtime_value.cpp
-    src/common/sparse_ndarray/dataview.cpp
+    src/common/relation/dataview.cpp
     src/common/util.cpp
     src/common/scalar_functions.cpp
     src/models/bbnc.cpp
@@ -98,9 +98,9 @@ target_link_libraries(perf_group ${PROTOBUF_LIBRARIES} distributions_shared micr
 
 # test executables
 enable_testing()
-add_executable(test_sparse_ndarray test/cxx/test_sparse_ndarray.cpp)
+add_executable(test_relation test/cxx/test_relation.cpp)
 add_executable(test_group_manager test/cxx/test_group_manager.cpp)
-add_test(test_sparse_ndarray test_sparse_ndarray)
+add_test(test_relation test_relation)
 add_test(test_group_manager test_group_manager)
-target_link_libraries(test_sparse_ndarray ${PROTOBUF_LIBRARIES} distributions_shared microscopes_common)
+target_link_libraries(test_relation ${PROTOBUF_LIBRARIES} distributions_shared microscopes_common)
 target_link_libraries(test_group_manager ${PROTOBUF_LIBRARIES} distributions_shared microscopes_common)

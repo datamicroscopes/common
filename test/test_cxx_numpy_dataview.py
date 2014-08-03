@@ -1,5 +1,5 @@
 from microscopes.cxx.common.recarray.dataview import numpy_dataview as recarray_numpy_dataview
-from microscopes.cxx.common.sparse_ndarray.dataview import numpy_dataview as sparse_ndarray_numpy_dataview
+from microscopes.cxx.common.relation.dataview import numpy_dataview as relation_numpy_dataview
 from microscopes.cxx.common.rng import rng
 
 import numpy as np
@@ -48,15 +48,15 @@ def test_recarray_numpy_dataview_masked():
                 continue
             assert aval == bval
 
-def test_sparse_ndarray_numpy_dataview():
+def test_relation_numpy_dataview():
     x = np.zeros((2, 3, 4), dtype=np.bool)
-    view = sparse_ndarray_numpy_dataview(x)
+    view = relation_numpy_dataview(x)
     assert view
     assert view.shape() == (2, 3, 4)
 
-def test_sparse_ndarray_numpy_dataview_masked():
+def test_relation_numpy_dataview_masked():
     x = np.zeros((2, 3, 4), dtype=np.bool)
     x = ma.masked_array(x, mask=np.ones(x.shape))
-    view = sparse_ndarray_numpy_dataview(x)
+    view = relation_numpy_dataview(x)
     assert view
     assert view.shape() == (2, 3, 4)
