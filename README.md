@@ -19,6 +19,9 @@ This is probably the closest to "one-click" install that we can achieve in the f
 ## Building
 If you simply want to use datamicroscopes, then see the above instructions on installation. If you want to actively contribute, then follow these steps for building. Our build process relies on anaconda to take care of the dependencies, and then `pip` to install our modified libraries. 
 
+### Requirements
+Note that a compiler with support for C++11 is required for building. On Linux, this means `g++ >= 4.8` (4.6 supports C++11, but its headers are somewhat broken for `<random>` which we rely on). On OS X, this means the latest version of XCode. Currently, we only support OS X 10.7 or greater. 
+
 ### Setting up the anaconda environment
 We recommend you to not work in the default (root) environment
 
@@ -29,14 +32,14 @@ We recommend you to not work in the default (root) environment
     $ conda install distributions pymc eigen3 cython
     $ export DYLD_LIBRARY_PATH=/path/to/anaconda/envs/myenv/lib # or LD_LIBRARY_PATH on linux
     
-Now if you want nice git sha1 hashes for package versions (useful for dev), install `gitpython`. Note this step is optional. 
+Now if you want nice git SHA1 hashes for package versions (useful for dev), install `gitpython`. Note this step is optional. 
     
     $ pip install gitpython
     
 ### Building/testing the C++ library
-Now that the conda environment is set up, use `cmake` to build the C++ library. Replace `debug` with either `relwithdebinfo` or `release` depending on the type of build.
+Now that the conda environment is set up, use `cmake` to build the C++ library. Enter the commands below, replacing `debug` with either `relwithdebinfo` or `release` depending on the type of build. Note the first invocation to `make` simply invokes `cmake` with the right prefixes set up.
 
-    $ make debug 
+    $ make debug # calls cmake
     $ cd debug
     $ make 
     $ make test 
