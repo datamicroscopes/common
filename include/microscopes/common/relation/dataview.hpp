@@ -27,12 +27,15 @@ public:
   typedef std::pair<std::vector<size_t>, value_accessor> value_with_position_t;
 
   // subclasses need to provide an implementation of a slice iterator
+  //
+  // XXX(stephentu): this interface sucks
+  //   (A) causes implementations to be needlessly inefficient, and
+  //   (B) it feels too java like
   class slice_iterator_impl {
   public:
     virtual ~slice_iterator_impl() {}
     virtual std::unique_ptr<slice_iterator_impl> clone() const = 0;
     virtual bool equals(const slice_iterator_impl &) const = 0;
-    virtual bool end() const = 0;
     virtual void next() = 0;
     virtual const value_with_position_t & value() const = 0;
   };
@@ -52,14 +55,22 @@ public:
     inline slice_iterator &
     operator=(const slice_iterator &that)
     {
-      impl_ = std::move(that.impl_->clone());
+      if (!that.impl_)
+        impl_.reset();
+      else
+        impl_ = std::move(that.impl_->clone());
       return *this;
     }
 
     inline bool
     operator==(const slice_iterator &that) const
     {
-      return impl_->equals(*that.impl_);
+      if (!impl_)
+        return !that.impl_;
+      else if (!that.impl_)
+        return !impl_;
+      else
+        return impl_->equals(*that.impl_);
     }
 
     inline bool
@@ -71,7 +82,8 @@ public:
     inline slice_iterator &
     operator++()
     {
-      impl_->next(); return *this;
+      impl_->next();
+      return *this;
     }
 
     inline slice_iterator
@@ -139,8 +151,6 @@ public:
 
   virtual value_accessor get(const std::vector<size_t> &indices) const = 0;
   virtual slice_iterable slice(size_t dim, size_t idx) const = 0;
-  virtual slice_iterator begin() const = 0;
-  virtual slice_iterator end() const = 0;
 
 protected:
   std::vector<size_t> shape_;
@@ -280,12 +290,9 @@ public:
   class slice_iterator_impl : public dataview::slice_iterator_impl {
     friend class row_major_dense_dataview;
   protected:
-    slice_iterator_impl(
-      const row_major_dense_dataview *px,
-      ssize_t dim,
-      ssize_t idx,
-      const detail::product &iter)
-      : px_(px), dim_(dim), idx_(idx), iter_(iter)
+    slice_iterator_impl(const row_major_dense_dataview *px,
+                        const detail::product &iter)
+      : px_(px), iter_(iter)
     {
       for (;;) {
         if (iter_.end() || !px->accessor(iter_.value()).anymasked())
@@ -298,20 +305,18 @@ public:
     std::unique_ptr<dataview::slice_iterator_impl>
     clone() const override
     {
-      return std::unique_ptr<slice_iterator_impl>(new slice_iterator_impl(*this));
+      return std::unique_ptr<slice_iterator_impl>(
+          new slice_iterator_impl(*this));
     }
 
+    // XXX: false positives possible if not iterators over
+    // the same view or the same slice (within the same view)
     bool
     equals(const dataview::slice_iterator_impl &that) const override
     {
       const auto &o = static_cast<const slice_iterator_impl &>(that);
-      return px_ == o.px_ &&
-             dim_ == o.dim_ &&
-             idx_ == o.idx_ &&
-             iter_.pos() == o.iter_.pos();
+      return iter_.pos() == o.iter_.pos();
     }
-
-    bool end() const override { return iter_.end(); }
 
     void
     next() override
@@ -327,15 +332,15 @@ public:
     value() const override
     {
       // XXX: const_cast so we can mutate the storage
-      const_cast<slice_iterator_impl *>(this)->storage_.first = iter_.value();
-      const_cast<slice_iterator_impl *>(this)->storage_.second = px_->accessor(iter_.value());
+      const_cast<slice_iterator_impl *>(this)->storage_.first =
+        iter_.value();
+      const_cast<slice_iterator_impl *>(this)->storage_.second =
+        px_->accessor(iter_.value());
       return storage_;
     }
 
   private:
     const row_major_dense_dataview *px_;
-    ssize_t dim_;
-    ssize_t idx_;
     detail::product iter_;
     value_with_position_t storage_;
   };
@@ -358,52 +363,13 @@ public:
 
     std::unique_ptr<dataview::slice_iterator_impl> begin(
         new slice_iterator_impl(
-          this,
-          dim,
-          idx,
-          begin_iter));
+          this, begin_iter));
 
     std::unique_ptr<dataview::slice_iterator_impl> end(
         new slice_iterator_impl(
-          this,
-          dim,
-          idx,
-          end_iter));
+          this, end_iter));
 
-    return std::move(slice_iterable(std::move(begin), std::move(end)));
-  }
-
-  slice_iterator
-  begin() const override
-  {
-    std::vector<detail::product::indices> is(dims());
-    for (size_t i = 0; i < dims(); i++)
-      is[i] = detail::product::indices(detail::product::RANGE, shape_[i]);
-    detail::product begin_iter(is);
-    std::unique_ptr<dataview::slice_iterator_impl> begin(
-        new slice_iterator_impl(
-          this,
-          -1,
-          -1,
-          begin_iter));
-    return slice_iterator(std::move(begin));
-  }
-
-  slice_iterator
-  end() const override
-  {
-    std::vector<detail::product::indices> is(dims());
-    for (size_t i = 0; i < dims(); i++)
-      is[i] = detail::product::indices(detail::product::RANGE, shape_[i]);
-    detail::product end_iter(is);
-    end_iter.setEnd();
-    std::unique_ptr<dataview::slice_iterator_impl> end(
-        new slice_iterator_impl(
-          this,
-          -1,
-          -1,
-          end_iter));
-    return slice_iterator(std::move(end));
+    return slice_iterable(std::move(begin), std::move(end));
   }
 
 private:
@@ -433,6 +399,181 @@ private:
   size_t stepsize_;
   std::vector<size_t> multipliers_;
 };
+
+/**
+ * both scipy.sparse.csc_matrix and scipy.sparse.csr_matrix are represented
+ * with this implementation
+ *
+ * the storage cost is 2X the storage cost for an individual cs{c,r}_matrix,
+ * but a slice operation is exactly linear in the number of non-zero entries
+ * along the slice (row/col in the 2D case)
+ *
+ * we trade off this space for time; otherwise, a slice along the non-dominant
+ * dimension would be linear in the number of **total** non-zero entries
+ *
+ * XXX(stephentu): Implementation limitation:
+ * Note that currently, the zero (sparse) elements are treated as **missing**
+ * data, rather than 0-valued data. that is, the data is equivalent to the
+ * dense represetation **plus** masking all the zero (sparse) entries.
+ */
+class compressed_2darray : public dataview {
+public:
+
+  // we assume the inputs are consistent with each other
+  // without making any effort to validate
+  compressed_2darray(const uint8_t *csr_data,
+                     const uint32_t *csr_indices,
+                     const uint32_t *csr_indptr,
+                     const uint8_t *csc_data,
+                     const uint32_t *csc_indices,
+                     const uint32_t *csc_indptr,
+                     size_t rows,
+                     size_t cols,
+                     const runtime_type &type)
+    : dataview({rows, cols}, type),
+      csr_data_(csr_data),
+      csr_indices_(csr_indices),
+      csr_indptr_(csr_indptr),
+      csc_data_(csc_data),
+      csc_indices_(csc_indices),
+      csc_indptr_(csc_indptr)
+  {
+  }
+
+  template <bool IsRowFixed>
+  class slice_iterator_impl : public dataview::slice_iterator_impl {
+    friend class compressed_2darray;
+  protected:
+    slice_iterator_impl(unsigned fixed_idx,
+                        const uint32_t *indices,
+                        const uint8_t *data,
+                        const runtime_type *type)
+      : fixed_idx_(fixed_idx),
+        indices_(indices),
+        data_(data),
+        type_(type)
+    {
+    }
+
+  public:
+    std::unique_ptr<dataview::slice_iterator_impl>
+    clone() const override
+    {
+      return std::unique_ptr<slice_iterator_impl<IsRowFixed>>(
+          new slice_iterator_impl<IsRowFixed>(*this));
+    }
+
+    // false positives possible if not same view or
+    // not same slice
+    bool
+    equals(const dataview::slice_iterator_impl &that) const override
+    {
+      const auto &o =
+        static_cast<const slice_iterator_impl<IsRowFixed> &>(that);
+      return indices_ == o.indices_;
+    }
+
+    void
+    next() override
+    {
+      indices_++;
+      data_ += type_->size();
+    }
+
+    const value_with_position_t &
+    value() const override
+    {
+      const_cast<slice_iterator_impl *>(this)->load();
+      return storage_;
+    }
+
+  private:
+
+    inline void
+    load()
+    {
+      storage_.first.resize(2);
+      if (IsRowFixed) {
+        storage_.first[0] = fixed_idx_;
+        storage_.first[1] = *indices_;
+      } else {
+        storage_.first[0] = *indices_;
+        storage_.first[1] = fixed_idx_;
+      }
+      storage_.second = value_accessor(data_, nullptr, *type_);
+    }
+
+    unsigned fixed_idx_;
+    const uint32_t *indices_;
+    const uint8_t *data_;
+    const runtime_type *type_;
+    value_with_position_t storage_;
+  };
+
+  value_accessor
+  get(const std::vector<size_t> &indices) const override
+  {
+    MICROSCOPES_DCHECK(indices.size() == 2, "bad size given");
+    // XXX(stephentu): don't be lazy
+    MICROSCOPES_UNIMPLEMENTED();
+  }
+
+  template <bool IsRowFixed>
+  inline std::unique_ptr<dataview::slice_iterator_impl>
+  construct(size_t idx,
+            const uint32_t *indices,
+            const uint8_t *data) const
+  {
+    std::unique_ptr<dataview::slice_iterator_impl> ptr(
+        new slice_iterator_impl<IsRowFixed>(
+          idx, indices, data, &type()));
+    return std::move(ptr);
+  }
+
+  slice_iterable
+  slice(size_t dim, size_t idx) const override
+  {
+    //std::cout << "slice(" << dim << ", " << idx << ")" << std::endl;
+    MICROSCOPES_DCHECK(dim < dims(), "invalid dimension");
+    MICROSCOPES_DCHECK(idx < shape_[dim], "invalid index");
+
+    const bool row_fixed = (dim == 0);
+    const uint32_t *indptr = row_fixed ? csr_indptr_ : csc_indptr_;
+    const uint32_t *indices = row_fixed ? csr_indices_ : csc_indices_;
+    const uint8_t *data = row_fixed ? csr_data_ : csc_data_;
+    const size_t sz = type().size();
+
+    const uint32_t *begin_indices = &indices[indptr[idx]];
+    const uint32_t *end_indices = &indices[indptr[idx+1]];
+    const uint8_t *begin_data = &data[sz*indptr[idx]];
+    const uint8_t *end_data = &data[sz*indptr[idx+1]];
+
+    if (row_fixed) {
+      auto begin = construct<true>(idx, begin_indices, begin_data);
+      auto end = construct<true>(idx, end_indices, end_data);
+      return slice_iterable(std::move(begin), std::move(end));
+    } else {
+      auto begin = construct<false>(idx, begin_indices, begin_data);
+      auto end = construct<false>(idx, end_indices, end_data);
+      return slice_iterable(std::move(begin), std::move(end));
+    }
+  }
+
+  inline size_t rows() const { return shape()[0]; }
+  inline size_t cols() const { return shape()[1]; }
+
+private:
+  const uint8_t *csr_data_;
+  const uint32_t *csr_indices_;
+  const uint32_t *csr_indptr_;
+  const uint8_t *csc_data_;
+  const uint32_t *csc_indices_;
+  const uint32_t *csc_indptr_;
+};
+
+// XXX(stephentu): we need a good implementation for sparse n-ary relations
+// (when n > 2). we'll most likely use something like an (indices, data)
+// representation
 
 } // namespace relation
 } // namespace common

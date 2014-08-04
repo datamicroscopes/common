@@ -50,6 +50,13 @@
       ::std::string(_SOURCE_INFO)); \
   } while (0)
 
+#define MICROSCOPES_UNIMPLEMENTED() \
+  do { \
+    throw ::std::runtime_error( \
+      ::std::string("Not implemented: ") + \
+      ::std::string(_SOURCE_INFO)); \
+  } while (0)
+
 #ifdef NDEBUG
   #define ALWAYS_ASSERT(expr) (likely((expr)) ? (void)0 : abort())
 #else
