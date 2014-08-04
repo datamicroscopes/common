@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.sparse import csc_matrix, csr_matrix
 from microscopes.common import validator
 
 cdef class abstract_dataview:
@@ -40,20 +39,8 @@ cdef class sparse_2d_dataview(abstract_dataview):
         validator.validate_positive(self._rows)
         validator.validate_positive(self._cols)
 
-        if isinstance(rep, csr_matrix):
-            row_major = True
-        elif isinstance(rep, csc_matrix):
-            row_major = False
-        else:
-            raise ValueError(
-                "rep is not a supported sparse matrix: {}".format(type(rep)))
-
-        if row_major:
-            csr_rep = rep
-            csc_rep = rep.tocsc()
-        else:
-            csr_rep = rep.tocsr()
-            csc_rep = rep
+        csr_rep = rep.tocsr()
+        csc_rep = rep.tocsc()
 
         if csr_rep.data.dtype != csc_rep.data.dtype:
             raise RuntimeError("dtypes don't match")
