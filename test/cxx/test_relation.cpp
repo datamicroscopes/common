@@ -202,7 +202,7 @@ typedef SparseMatrix<int32_t, ColMajor, int32_t> CSCI32Matrix;
 template <int Order>
 static void
 FillSparseMatrix(SparseMatrix<int32_t, Order, int32_t> &sparse,
-                 ArrayXXi &dense)
+                 const ArrayXXi &dense)
 {
   const size_t rows = dense.rows();
   const size_t cols = dense.cols();
@@ -236,6 +236,48 @@ array_to_string(const T *px, size_t n)
   return oss.str();
 }
 
+struct container {
+  CSRI32Matrix csr_;
+  CSCI32Matrix csc_;
+};
+
+static inline unique_ptr<dataview>
+sparse_dataview_from_eigen(container &c, const ArrayXXi &data)
+{
+  static_assert(sizeof(ArrayXXi::Scalar) == sizeof(int32_t), "");
+  auto &csr = c.csr_;
+  auto &csc = c.csc_;
+  FillSparseMatrix(csr, data);
+  FillSparseMatrix(csc, data);
+
+  //cout << "values:" << endl;
+  //cout << "  " << array_to_string(csr.valuePtr(), csr.nonZeros()) << endl;
+  //cout << "indices:" << endl;
+  //cout << "  " << array_to_string(csr.innerIndexPtr(), csr.nonZeros()) << endl;
+  //cout << "indptr:" << endl;
+  //cout << "  " << array_to_string(csr.outerIndexPtr(), csr.rows() + 1) << endl;
+
+  unique_ptr<dataview> sparseview(
+    new compressed_2darray(reinterpret_cast<const uint8_t *>(csr.valuePtr()),
+                           reinterpret_cast<const uint32_t *>(csr.innerIndexPtr()),
+                           reinterpret_cast<const uint32_t *>(csr.outerIndexPtr()),
+                           reinterpret_cast<const uint8_t *>(csc.valuePtr()),
+                           reinterpret_cast<const uint32_t *>(csc.innerIndexPtr()),
+                           reinterpret_cast<const uint32_t *>(csc.outerIndexPtr()),
+                           data.rows(),
+                           data.cols(),
+                           runtime_type(TYPE_I32)));
+  return move(sparseview);
+}
+
+static void
+Check2D_Sparse(const ArrayXXi &data)
+{
+  container c;
+  auto sparseview = sparse_dataview_from_eigen(c, data);
+  Check2D_I32RelationsEqual(data, *sparseview, true);
+}
+
 static void
 test2()
 {
@@ -265,30 +307,17 @@ test2()
 
   Check2D_I32RelationsEqual(truth, *view, false);
 
-  CSRI32Matrix csr;
-  CSCI32Matrix csc;
-  FillSparseMatrix(csr, truth);
-  FillSparseMatrix(csc, truth);
+  Check2D_Sparse(truth);
 
-  //cout << "values:" << endl;
-  //cout << "  " << array_to_string(csr.valuePtr(), csr.nonZeros()) << endl;
-  //cout << "indices:" << endl;
-  //cout << "  " << array_to_string(csr.innerIndexPtr(), csr.nonZeros()) << endl;
-  //cout << "indptr:" << endl;
-  //cout << "  " << array_to_string(csr.outerIndexPtr(), csr.rows() + 1) << endl;
+  ArrayXXi truth1(3, 4);
+  truth1.setZero();
+  truth1(1, 0) = 10;
+  Check2D_Sparse(truth1);
 
-  unique_ptr<dataview> sparseview(
-    new compressed_2darray(reinterpret_cast<const uint8_t *>(csr.valuePtr()),
-                           reinterpret_cast<const uint32_t *>(csr.innerIndexPtr()),
-                           reinterpret_cast<const uint32_t *>(csr.outerIndexPtr()),
-                           reinterpret_cast<const uint8_t *>(csc.valuePtr()),
-                           reinterpret_cast<const uint32_t *>(csc.innerIndexPtr()),
-                           reinterpret_cast<const uint32_t *>(csc.outerIndexPtr()),
-                           A,
-                           B,
-                           runtime_type(TYPE_I32)));
-
-  Check2D_I32RelationsEqual(truth, *sparseview, true);
+  ArrayXXi truth2(3, 4);
+  truth2.setZero();
+  truth2(2, 3) = 10;
+  Check2D_Sparse(truth2);
 
   cout << "test2 completed" << endl;
 }
