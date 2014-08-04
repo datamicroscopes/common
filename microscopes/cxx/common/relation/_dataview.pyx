@@ -1,5 +1,5 @@
 import numpy as np
-#import numpy.ma as ma
+from scipy.sparse import csc_matrix, csr_matrix
 from microscopes.common import validator
 
 cdef class abstract_dataview:
@@ -30,3 +30,61 @@ cdef class numpy_dataview(abstract_dataview):
 
     def shape(self):
         return self._shape
+
+cdef class sparse_2d_dataview(abstract_dataview):
+    def __cinit__(self, rep):
+        """
+        only takes scipy.sparse arrays
+        """
+        self._rows, self._cols = rep.shape
+        validator.validate_positive(self._rows)
+        validator.validate_positive(self._cols)
+
+        if isinstance(rep, csr_matrix):
+            row_major = True
+        elif isinstance(rep, csc_matrix):
+            row_major = False
+        else:
+            raise ValueError(
+                "rep is not a supported sparse matrix: {}".format(type(rep)))
+
+        if row_major:
+            csr_rep = rep
+            csc_rep = rep.tocsc()
+        else:
+            csr_rep = rep.tocsr()
+            csc_rep = rep
+
+        if csr_rep.data.dtype != csc_rep.data.dtype:
+            raise RuntimeError("dtypes don't match")
+        cdef runtime_type ctype = get_c_type(csr_rep.data.dtype)
+
+        def validate_sparse_rep(rep):
+            if rep.indices.dtype != np.dtype('int32'):
+                raise RuntimeError("expected i32 indices")
+            if rep.indptr.dtype != np.dtype('int32'):
+                raise RuntimeError("expected i32 indptr")
+
+        validate_sparse_rep(csr_rep)
+        validate_sparse_rep(csc_rep)
+
+        # keep the refcounts live
+        self._csr_data, self._csr_indices, self._csr_indptr = \
+            csr_rep.data, csr_rep.indices, csr_rep.indptr
+        self._csc_data, self._csc_indices, self._csc_indptr = \
+            csc_rep.data, csc_rep.indices, csc_rep.indptr
+
+        self._thisptr.reset(
+            new compressed_2darray(
+                <const uint8_t *> self._csr_data.data,
+                <const uint32_t *> self._csr_indices.data,
+                <const uint32_t *> self._csr_indptr.data,
+                <const uint8_t *> self._csc_data.data,
+                <const uint32_t *> self._csc_indices.data,
+                <const uint32_t *> self._csc_indptr.data,
+                self._rows,
+                self._cols,
+                ctype))
+
+    def shape(self):
+        return (self._rows, self._cols)
