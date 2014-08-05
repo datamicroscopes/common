@@ -21,7 +21,8 @@ from microscopes.py.models import bbnc as py_bbnc, \
                                   dm as py_dm
 
 from microscopes.io.schema_pb2 import BetaBernoulliNonConj as pb_bbnc, \
-                                      NormalInverseWishart as pb_niw
+                                      NormalInverseWishart as pb_niw, \
+                                      DirichletMultinomial as pb_dm
 
 from microscopes.cxx._bbnc_h cimport CreateFeatureGroupInvocations
 
@@ -126,7 +127,7 @@ niw  = lambda dim: model_descriptor(
         })
 
 dm   = lambda categories: model_descriptor(
-        py_descriptor=py_model(py_dm, pb_dd, dim=categories),
+        py_descriptor=py_model(py_dm, pb_dm, dim=categories),
         c_descriptor=_dm(categories),
         default_params=dd(categories)._default_params)
 

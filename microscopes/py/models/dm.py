@@ -56,16 +56,17 @@ class Group(GroupIoMixin):
         self._ratio += source._ratio
 
     def score_value(self, shared, value):
-        x_sum = sum(value)
-        a_sum = sum(shared._alphas)
-        n_sum = sum(self._counts)
-        score = 0.
-        for xi, (ai, ni) in zip(value, zip(shared._alphas, self._counts)):
-            score -= gammaln(xi + 1)
-            score += xi * log(ai + ni)
-        score += gammaln(x_sum + 1)
-        score -= x_sum * log(a_sum + n_sum)
-        return score
+        #x_sum = sum(value)
+        #a_sum = sum(shared._alphas)
+        #n_sum = sum(self._counts)
+        #score = 0.
+        #for xi, (ai, ni) in zip(value, zip(shared._alphas, self._counts)):
+        #    score -= gammaln(xi + 1)
+        #    score += xi * log(ai + ni)
+        #score += gammaln(x_sum + 1)
+        #score -= x_sum * log(a_sum + n_sum)
+        #return score
+        raise RuntimeError("need to fix")
 
     def score_data(self, shared):
         a_sum = sum(shared._alphas)
@@ -80,21 +81,18 @@ class Group(GroupIoMixin):
         raise RuntimeError("Unimplemented")
 
     def load(self, raw):
-        #return {'counts': self._counts.tolist(), 'ratio': self._ratio}
         self._counts = np.array(raw['counts'], dtype=np.int)
-        #self._ratio = float(raw['ratio'])
+        self._ratio = float(raw['ratio'])
 
     def dump(self):
-        # XXX: ratio
-        #return {'counts': self._counts.tolist(), 'ratio': self._ratio}
-        return {'counts': self._counts.tolist()}
+        return {'counts': self._counts.tolist(), 'ratio': self._ratio}
 
     def protobuf_load(self, message):
-        # XXX: ratio
         self._counts = np.array(message.counts, dtype=np.int)
+        self._ratio = message.ratio
 
     def protobuf_dump(self, message):
-        # XXX: ratio
         message.Clear()
         for count in self._counts:
             message.counts.append(count)
+        message.ratio = self._ratio

@@ -30,6 +30,17 @@ message NormalInverseWishart {
     }
 }
 
+message DirichletMultinomial {
+    message Shared {
+        repeated float alphas = 1;
+    }
+
+    message Group {
+        repeated uint32 counts = 1; 
+        required float ratio = 2;
+    }
+}
+
 message GroupData {
     required uint32 id = 1;
     required bytes data = 2;

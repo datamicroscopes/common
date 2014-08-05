@@ -4,6 +4,7 @@
 #include <microscopes/common/macros.hpp>
 #include <microscopes/common/util.hpp>
 #include <microscopes/models/base.hpp>
+#include <microscopes/io/schema.pb.h>
 
 #include <distributions/io/protobuf.hpp>
 #include <vector>
@@ -16,7 +17,7 @@ namespace models {
 
 class dm_group : public group {
 public:
-  typedef distributions::protobuf::DirichletDiscrete_Group message_type;
+  typedef microscopes::io::DirichletMultinomial_Group message_type;
 
   dm_group(unsigned categories)
     : counts_(categories), ratio_() {}
@@ -30,17 +31,26 @@ public:
   common::suffstats_bag_t
   get_ss() const override
   {
-    // XXX: currently we don't capture ratio
     message_type m;
     for (auto c : counts_)
       m.add_counts(c);
+    m.set_ratio(ratio_);
     return common::util::protobuf_to_string(m);
   }
 
   void
   set_ss(const common::suffstats_bag_t &ss) override
   {
-    throw std::runtime_error("need actual message type");
+    message_type m;
+    common::util::protobuf_from_string(m, ss);
+    MICROSCOPES_DCHECK(
+        (size_t)m.counts_size() == categories(),
+        "# categories mismatch");
+    MICROSCOPES_DCHECK(m.ratio() >= 0., "negative partition");
+    for (size_t i = 0; i < categories(); i++) {
+      counts_[i] = m.counts(i);
+    }
+    ratio_ = m.ratio();
   }
 
   void
@@ -62,7 +72,7 @@ public:
   debug_str() const override
   {
     std::ostringstream oss;
-    oss << counts_;
+    oss << "{counts:" << counts_ << ", ratio:" << ratio_ << "}";
     return oss.str();
   }
 
@@ -79,7 +89,7 @@ private:
 
 class dm_hypers : public hypers {
 public:
-  typedef distributions::protobuf::DirichletDiscrete_Shared message_type;
+  typedef microscopes::io::DirichletMultinomial_Shared message_type;
 
   dm_hypers(unsigned categories)
     : alphas_(categories) {}
