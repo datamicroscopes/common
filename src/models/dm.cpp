@@ -41,10 +41,14 @@ dm_group::score_value(const hypers &m, const value_accessor &value, rng_t &rng) 
   const dm_hypers &h = static_cast<const dm_hypers &>(m);
   MICROSCOPES_ASSERT(categories() == h.categories());
   MICROSCOPES_ASSERT(value.shape() == categories());
+  // Sec. 3.2:
+  // http://www2.math.su.se/matstat/reports/seriec/2014/rep6/report.pdf
+
   float score = 0.;
   unsigned x_sum = 0;
   float a_sum = 0.;
   unsigned n_sum = 0;
+
   for (size_t i = 0; i < categories(); i++) {
     const unsigned xi = value.get<unsigned>(i);
     const float ai = h.alphas()[i];
@@ -52,11 +56,22 @@ dm_group::score_value(const hypers &m, const value_accessor &value, rng_t &rng) 
     x_sum += xi;
     a_sum += ai;
     n_sum += ni;
+
+    const float effective_ai = ai + ni;
+    score += fast_lgamma(effective_ai + xi)
+           - fast_lgamma(effective_ai);
+
+    // partition denominator
     score -= fast_lgamma(xi + 1);
-    score += xi * fast_log(ai + ni);
   }
+
+  // partition numerator
   score += fast_lgamma(x_sum + 1);
-  score -= x_sum * fast_log(a_sum + n_sum);
+
+  // effective alpha sum
+  score += fast_lgamma(a_sum + n_sum)
+         - fast_lgamma(a_sum + n_sum + x_sum);
+
   return score;
 }
 
