@@ -164,7 +164,7 @@ public:
   dm_model(unsigned categories)
     : categories_(categories)
   {
-    MICROSCOPES_DCHECK(categories > 0, "empty categories");
+    MICROSCOPES_DCHECK(categories >= 2, "need at least two outcomes");
   }
 
   std::shared_ptr<hypers>
