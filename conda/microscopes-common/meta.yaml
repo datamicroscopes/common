@@ -26,8 +26,7 @@ requirements:
 test:
   imports:
     - microscopes
-    - microscopes.py.common
-    - microscopes.cxx.common
+    - microscopes.common
     - microscopes.io
 
 about:
