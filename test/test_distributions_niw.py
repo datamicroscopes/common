@@ -1,8 +1,8 @@
-from microscopes.py.common.util import random_orthonormal_matrix, almost_eq
-from microscopes.py.models import niw
-from microscopes.py.models.niw import sample_iw as py_sample_iw
-from microscopes.cxx.common.random import sample_inverse_wishart as cxx_sample_iw
-from microscopes.cxx.common.rng import rng
+from microscopes.common.util import random_orthonormal_matrix, almost_eq
+from microscopes.dbg.models import niw
+from microscopes.dbg.models.niw import sample_iw as py_sample_iw
+from microscopes.common.random import sample_inverse_wishart as cxx_sample_iw
+from microscopes.common.rng import rng
 from distributions.dbg.models import nich
 
 import numpy as np

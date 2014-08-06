@@ -2,7 +2,7 @@ from libcpp.vector cimport vector
 from libcpp.utility cimport pair
 from libc.stddef cimport size_t
 
-from microscopes.cxx.common._random_fwd_h cimport rng_t
+from microscopes.common._random_fwd_h cimport rng_t
 
 cdef extern from "microscopes/common/entity_state.hpp" namespace "microscopes::common":
     # expose enough of the API here

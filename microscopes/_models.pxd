@@ -1,4 +1,4 @@
-from microscopes.cxx._models_h cimport model, hypers
+from microscopes._models_h cimport model, hypers
 from microscopes._shared_ptr_h cimport shared_ptr
 
 cdef class _base:

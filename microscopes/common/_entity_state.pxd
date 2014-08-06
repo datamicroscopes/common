@@ -2,10 +2,10 @@ from libcpp.vector cimport vector
 from libcpp.utility cimport pair
 
 from microscopes._shared_ptr_h cimport shared_ptr, static_pointer_cast
-from microscopes.cxx.common._entity_state_h cimport \
+from microscopes.common._entity_state_h cimport \
         fixed_entity_based_state_object as c_fixed_entity_based_state_object, \
         entity_based_state_object as c_entity_based_state_object
-from microscopes.cxx.common._rng cimport rng
+from microscopes.common._rng cimport rng
 
 cdef class fixed_entity_based_state_object:
     cdef shared_ptr[c_fixed_entity_based_state_object] _thisptr

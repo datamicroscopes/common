@@ -1,5 +1,5 @@
-from microscopes.cxx.common._scalar_functions cimport scalar_function
-from microscopes.cxx.common._scalar_functions_h cimport \
+from microscopes.common._scalar_functions cimport scalar_function
+from microscopes.common._scalar_functions_h cimport \
         log_exponential as c_log_exponential, \
         log_normal as c_log_normal, \
         log_noninformative_beta_prior as c_log_noninformative_beta_prior

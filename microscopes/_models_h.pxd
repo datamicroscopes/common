@@ -1,7 +1,8 @@
 from libcpp.vector cimport vector
+from libc.stddef import size_t
 
-from microscopes.cxx.common._runtime_type_h cimport runtime_type
-from microscopes.cxx.common._typedefs_h cimport hyperparam_bag_t, suffstats_bag_t
+from microscopes.common._runtime_type_h cimport runtime_type
+from microscopes.common._typedefs_h cimport hyperparam_bag_t, suffstats_bag_t
 from microscopes._shared_ptr_h cimport shared_ptr
 
 cdef extern from "microscopes/models/base.hpp" namespace "microscopes::models":
@@ -51,4 +52,16 @@ cdef extern from "distributions/models/nich.hpp" namespace "distributions":
 
 cdef extern from "microscopes/models/distributions.hpp" namespace "distributions":
     cdef cppclass DirichletDiscrete128:
+        pass
+
+cdef extern from "microscopes/models/niw.hpp" namespace "microscopes::models":
+    cdef cppclass niw_model:
+        niw_model(unsigned) except +
+
+cdef extern from "microscopes/models/dm.hpp" namespace "microscopes::models":
+    cdef cppclass dm_model:
+        dm_model(unsigned) except +
+
+cdef extern from "microscopes/models/bbnc.hpp" namespace "microscopes::models":
+    cdef cppclass bbnc_model:
         pass

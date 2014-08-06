@@ -3,8 +3,8 @@ from libcpp cimport bool as cbool
 from libc.stdint cimport uint8_t
 from libc.stddef cimport size_t
 
-from microscopes.cxx.common._random_fwd_h cimport rng_t
-from microscopes.cxx.common._runtime_type_h cimport runtime_type
+from microscopes.common._random_fwd_h cimport rng_t
+from microscopes.common._runtime_type_h cimport runtime_type
 
 cdef extern from "microscopes/common/recarray/dataview.hpp" namespace "microscopes::common::recarray":
     cdef cppclass row_accessor:

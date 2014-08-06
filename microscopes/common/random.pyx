@@ -1,16 +1,17 @@
 from libcpp.utility cimport pair
-from microscopes.cxx.common._random_h cimport \
+from microscopes.common._random_h cimport \
         sample_multivariate_normal as c_sample_multivariate_normal, \
         sample_wishart as c_sample_wishart, \
         sample_inverse_wishart as c_sample_inverse_wishart, \
         sample_normal_inverse_wishart as c_sample_normal_inverse_wishart
-from microscopes.cxx.common._rng cimport rng
-from microscopes.cxx.common._util_h cimport \
+from microscopes.common._rng cimport rng
+from microscopes.common._util_h cimport \
         set as c_eigen_matf_set, \
         get as c_eigen_matf_get
 from microscopes._eigen_h cimport VectorXf, MatrixXf
 
 cimport numpy as np
+
 import numpy as np
 
 cdef VectorXf to_eigen_vecf(x):
@@ -25,7 +26,7 @@ cdef MatrixXf to_eigen_matf(x):
     cdef MatrixXf m = MatrixXf(x.shape[0], x.shape[1])
     for i, a in enumerate(x):
         for j, b in enumerate(a):
-            c_eigen_matf_set(m, i, j, b) 
+            c_eigen_matf_set(m, i, j, b)
     return m
 
 cdef np.ndarray to_np_1darray(const VectorXf &x):

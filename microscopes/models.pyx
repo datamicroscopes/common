@@ -1,6 +1,14 @@
 # XXX: we use the dbg versions for now, since the lp versions
 # don't have protobuf_load()/protobuf_dump() defined for the groups
 
+# Cython includes
+from microscopes._models cimport \
+  _bb, _bnb, _gp, _nich, _dd, _bbnc, _niw, _dm
+
+# Python includes
+
+import numpy as np
+
 from distributions.dbg.models import bb as dbg_bb, \
                                      bnb as dbg_bnb, \
                                      gp as dbg_gp, \
@@ -13,20 +21,13 @@ from distributions.io.schema_pb2 import BetaBernoulli as pb_bb, \
                                         NormalInverseChiSq as pb_nich, \
                                         DirichletDiscrete as pb_dd
 
-from microscopes.cxx._models cimport \
-  _bb, _bnb, _gp, _nich, _dd, _bbnc, _niw, _dm
-
-from microscopes.py.models import bbnc as py_bbnc, \
-                                  niw as py_niw, \
-                                  dm as py_dm
+from microscopes.dbg.models import bbnc as py_bbnc, \
+                                   niw as py_niw, \
+                                   dm as py_dm
 
 from microscopes.io.schema_pb2 import BetaBernoulliNonConj as pb_bbnc, \
                                       NormalInverseWishart as pb_niw, \
                                       DirichletMultinomial as pb_dm
-
-from microscopes.cxx._bbnc_h cimport CreateFeatureGroupInvocations
-
-import numpy as np
 
 class py_model(object):
     def __init__(self, model_module, pb_type, dim):
@@ -130,6 +131,3 @@ dm   = lambda categories: model_descriptor(
         py_descriptor=py_model(py_dm, pb_dm, dim=categories),
         c_descriptor=_dm(categories),
         default_params=dd(categories)._default_params)
-
-def bbnc_create_feature_group_invocations():
-    return int(CreateFeatureGroupInvocations())

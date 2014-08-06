@@ -1,8 +1,8 @@
 from libcpp.vector cimport vector
 from libc.stdint cimport uint8_t
 
-cimport microscopes.cxx.common._type_info_h as ti
-from microscopes.cxx.common._runtime_type_h cimport runtime_type 
+from microscopes.common._runtime_type_h cimport runtime_type
+cimport microscopes.common._type_info_h as ti
 
 cimport numpy as np
 

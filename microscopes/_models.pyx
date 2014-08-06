@@ -1,14 +1,14 @@
-from microscopes.cxx._models_h cimport \
+from microscopes._models_h cimport \
     BetaBernoulli as c_bb, \
     BetaNegativeBinomial as c_bnb, \
     GammaPoisson as c_gp, \
     NormalInverseChiSq as c_nich, \
     DirichletDiscrete128 as c_dd, \
     distributions_model as c_distributions_model, \
-    distributions_model_dd128 as c_distributions_model_dd128
-from microscopes.cxx._bbnc_h cimport bbnc_model as c_bbnc
-from microscopes.cxx._niw_h cimport niw_model as c_niw
-from microscopes.cxx._dm_h cimport dm_model as c_dm
+    distributions_model_dd128 as c_distributions_model_dd128, \
+    bbnc_model as c_bbnc, \
+    niw_model as c_niw, \
+    dm_model as c_dm
 
 cdef class _base:
     cdef shared_ptr[model] get(self):

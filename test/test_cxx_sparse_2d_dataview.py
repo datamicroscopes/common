@@ -1,4 +1,4 @@
-from microscopes.cxx.common.relation.dataview import \
+from microscopes.common.relation.dataview import \
     sparse_2d_dataview
 
 import numpy as np

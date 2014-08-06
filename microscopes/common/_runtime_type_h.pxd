@@ -4,7 +4,7 @@ from libcpp.string cimport string
 from libcpp cimport bool as cbool
 from libc.stddef cimport size_t
 
-from microscopes.cxx.common._type_info_h cimport primitive_type
+from microscopes.common._type_info_h cimport primitive_type
 
 cdef extern from "microscopes/common/runtime_type.hpp" namespace "microscopes::common":
     cdef cppclass runtime_type:
@@ -14,7 +14,7 @@ cdef extern from "microscopes/common/runtime_type.hpp" namespace "microscopes::c
         primitive_type t()
         unsigned n()
         cbool vec()
-        string str() except +   
+        string str() except +
 
 cdef extern from "microscopes/common/runtime_type.hpp" namespace "microscopes::common::runtime_type":
     cdef cppclass offsets_ret_t:

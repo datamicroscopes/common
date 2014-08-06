@@ -1,6 +1,6 @@
-from microscopes.cxx.common.recarray.dataview import numpy_dataview as recarray_numpy_dataview
-from microscopes.cxx.common.relation.dataview import numpy_dataview as relation_numpy_dataview
-from microscopes.cxx.common.rng import rng
+from microscopes.common.recarray.dataview import numpy_dataview as recarray_numpy_dataview
+from microscopes.common.relation.dataview import numpy_dataview as relation_numpy_dataview
+from microscopes.common.rng import rng
 
 import numpy as np
 import numpy.ma as ma
