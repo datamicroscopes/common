@@ -12,7 +12,9 @@ from microscopes._eigen_h cimport VectorXf, MatrixXf
 
 cimport numpy as np
 
+from distributions.dbg.random import sample_discrete, sample_discrete_log
 import numpy as np
+
 
 cdef VectorXf to_eigen_vecf(x):
     assert len(x.shape) == 1
