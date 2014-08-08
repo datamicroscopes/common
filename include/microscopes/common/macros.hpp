@@ -6,7 +6,7 @@
 
 #define NEVER_INLINE  __attribute__((noinline))
 #define ALWAYS_INLINE __attribute__((always_inline))
-#define UNUSED __attribute__((unused))
+#define UNUSED        __attribute__((unused))
 
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
@@ -20,9 +20,9 @@
   } while (0)
 
 #ifdef DEBUG_MODE
-  #define MICROSCOPES_DCHECK(expr, msg) MICROSCOPES_CHECK(expr, msg)
+#  define MICROSCOPES_DCHECK(expr, msg) MICROSCOPES_CHECK(expr, msg)
 #else
-  #define MICROSCOPES_DCHECK(expr, msg) ((void)0)
+#  define MICROSCOPES_DCHECK(expr, msg) ((void)0)
 #endif
 
 // from https://code.google.com/p/protobuf/source/browse/trunk/src/google/protobuf/stubs/common.h
@@ -58,18 +58,26 @@
   } while (0)
 
 #ifdef NDEBUG
-  #define ALWAYS_ASSERT(expr) (likely((expr)) ? (void)0 : abort())
+#  define ALWAYS_ASSERT(expr) (likely((expr)) ? (void)0 : abort())
 #else
-  #define ALWAYS_ASSERT(expr) assert((expr))
+#  define ALWAYS_ASSERT(expr) assert((expr))
 #endif
 
 #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7)
-  #define GCC_AT_LEAST_47 1
+#  define GCC_AT_LEAST_47 1
 #else
-  #define GCC_AT_LEAST_47 0
+#  define GCC_AT_LEAST_47 0
 #endif
 
 // g++-4.6 does not support override, so we define it to be a no-op
 #if !defined(__clang__) && !GCC_AT_LEAST_47
-  #define override
+#  define override
 #endif
+
+#ifdef __GNUG__
+#  define MICROSCOPES_MEMCPY __builtin_memcpy
+#  define MICROSCOPES_MEMSET __builtin_memset
+#else
+#  define MICROSCOPES_MEMCPY memcpy
+#  define MICROSCOPES_MEMSET memset
+#endif /* __GNUG__ */
