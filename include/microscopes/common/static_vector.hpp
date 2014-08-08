@@ -425,3 +425,55 @@ private:
 
 } // namespace common
 } // namespace microscopes
+
+// operators
+
+template <typename T, size_t M>
+inline bool
+operator==(const microscopes::common::static_vector<T, M> &x,
+           const microscopes::common::static_vector<T, M> &y)
+{
+  return (x.size() == y.size()) && std::equal(x.begin(), x.end(), y.begin());
+}
+
+template <typename T, size_t M>
+inline bool
+operator!=(const microscopes::common::static_vector<T, M> &x,
+           const microscopes::common::static_vector<T, M> &y)
+{
+  return !(x == y);
+}
+
+template <typename T, size_t M>
+inline bool
+operator<(const microscopes::common::static_vector<T, M> &x,
+          const microscopes::common::static_vector<T, M> &y)
+{
+  return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+}
+
+template <typename T, size_t M>
+inline bool
+operator>(const microscopes::common::static_vector<T, M> &x,
+          const microscopes::common::static_vector<T, M> &y)
+{
+  return y < x;
+}
+
+template <typename T, size_t M>
+inline bool
+operator<=(const microscopes::common::static_vector<T, M> &x,
+           const microscopes::common::static_vector<T, M> &y)
+{
+  return !(y < x);
+}
+
+template <typename T, size_t M>
+inline bool
+operator>=(const microscopes::common::static_vector<T, M> &x,
+           const microscopes::common::static_vector<T, M> &y)
+{
+  return !(x < y);
+}
+
+// XXX: std::hash specialization
