@@ -42,7 +42,16 @@ public:
     assignFrom(that);
   }
 
-  // not efficient, don't use in performance critical parts
+  // the next two constructors are not efficient
+
+  template <typename ForwardIterator>
+  inline static_vector(ForwardIterator begin, ForwardIterator end)
+    : n(0)
+  {
+    while (begin != end)
+      push_back(*begin++);
+  }
+
   static_vector(std::initializer_list<T> l)
     : n(0)
   {
