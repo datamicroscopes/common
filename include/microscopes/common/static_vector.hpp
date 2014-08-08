@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <type_traits>
 #include <microscopes/common/macros.hpp>
+#include <microscopes/common/assert.hpp>
 
 template <typename T, size_t MaxSize>
 class static_vector {
