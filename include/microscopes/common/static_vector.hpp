@@ -19,8 +19,12 @@ class static_vector {
   static const bool is_trivially_destructible =
     std::is_trivially_destructible<T>::value;
 
+  // not supported on g++-4.8
+  //static const bool is_trivially_copyable =
+  //  std::is_trivially_copyable<T>::value;
+
   static const bool is_trivially_copyable =
-    std::is_trivially_copyable<T>::value;
+    std::is_scalar<T>::value;
 
 public:
 
