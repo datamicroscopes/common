@@ -10,6 +10,9 @@
 #include <microscopes/common/macros.hpp>
 #include <microscopes/common/assert.hpp>
 
+namespace microscopes {
+namespace common {
+
 template <typename T, size_t MaxSize>
 class static_vector {
 
@@ -406,3 +409,6 @@ private:
   size_t n;
   char elems_buf[sizeof(T) * MaxSize];
 };
+
+} // namespace common
+} // namespace microscopes
