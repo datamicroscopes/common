@@ -18,7 +18,6 @@ requirements:
     - python
     - numpy
     - scipy
-    - pymc
     - distributions
     - libprotobuf
     - protobuf

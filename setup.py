@@ -186,6 +186,7 @@ setup(
         'microscopes.common',
         'microscopes.common.recarray',
         'microscopes.common.relation',
+        'microscopes.common.vendor',
         'microscopes.dbg',
         'microscopes.dbg.models',
     ),

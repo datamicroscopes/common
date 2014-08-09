@@ -32,7 +32,7 @@ We recommend you to not work in the default (root) environment
     $ source activate myenv
     $ conda config --add channels distributions 
     $ conda config --add channels datamicroscopes
-    $ conda install distributions pymc eigen3 cython
+    $ conda install distributions eigen3 cython
     $ export DYLD_LIBRARY_PATH=/path/to/anaconda/envs/myenv/lib # or LD_LIBRARY_PATH on linux
     
 Now if you want nice git SHA1 hashes for package versions (useful for dev), install `gitpython`. Note this step is optional. 

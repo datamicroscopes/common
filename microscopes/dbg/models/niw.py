@@ -3,10 +3,13 @@
 import numpy as np
 import math
 
+from microscopes.common.vendor.stats import (
+    sample_niw as _sample_niw,
+    sample_invwishart as _sample_iw,
+)
 from scipy.special import multigammaln
 from distributions.dbg.special import gammaln
 from distributions.mixins import SharedMixin, GroupIoMixin, SharedIoMixin
-from pymc.distributions import rwishart # XXX: currently we depend on pymc for wishart
 
 NAME = 'NormalInverseWishart'
 Value = float
@@ -24,19 +27,11 @@ def score_student_t(x, nu, mu, sigma):
     return term1 + term2 + term3
 
 def sample_iw(nu0, psi0):
-    # sample Sigma^{-1} from Wishart(nu0, psi0^{-1})
-    covinv = rwishart(nu0, psi0) # parameter is inverse covariance matrix
-    cov = np.linalg.inv(covinv)
-    return cov
+    return _sample_iw(psi0, nu0)
 
-def sample_niw(mu0, lambda0, psi0, nu0):
-    D, = mu0.shape
-    assert psi0.shape == (D,D)
-    assert lambda0 > 0.0
-    assert nu0 > D - 1
-    cov = sample_iw(nu0, psi0)
-    mu = np.random.multivariate_normal(mean=mu0, cov=1./lambda0*cov)
-    return mu, cov
+def sample_niw(mu0, kappa0, psi0, nu0):
+    # matt calls the scale matrix "lmbda", we call it "psi"
+    return _sample_niw(mu0, psi0, kappa0, nu0)
 
 class Shared(SharedMixin, SharedIoMixin):
     def __init__(self):
