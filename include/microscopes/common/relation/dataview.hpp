@@ -3,6 +3,7 @@
 #include <microscopes/common/runtime_type.hpp>
 #include <microscopes/common/runtime_value.hpp>
 #include <microscopes/common/macros.hpp>
+#include <microscopes/common/util.hpp>
 
 #include <algorithm>
 #include <iterator>
@@ -267,8 +268,8 @@ public:
                            const bool *mask,
                            const std::vector<size_t> &shape,
                            const runtime_type &type)
-    : dataview(shape, type), data_(data), mask_(mask),
-      stepsize_(type.size())
+    : dataview(shape, type), data_(data), dataend_(),
+      mask_(mask), stepsize_(type.size())
   {
     MICROSCOPES_DCHECK(data, "data cannot be null");
     multipliers_.push_back(1);
@@ -276,6 +277,10 @@ public:
     for (size_t i = 0; i < shape.size() - 1; ++i, ++rit)
       multipliers_.push_back(multipliers_.back() * (*rit));
     std::reverse(multipliers_.begin(), multipliers_.end());
+    size_t nelems = 1;
+    for (auto s : shape)
+      nelems *= s;
+    dataend_ = data + nelems * stepsize_;
   }
 
   value_accessor
@@ -378,10 +383,10 @@ private:
   accessor(const std::vector<size_t> &indices) const
   {
     const size_t off = offset(indices);
+    const uint8_t *px = data_ + stepsize_ * off;
+    MICROSCOPES_ASSERT(px < dataend_);
     return value_accessor(
-        data_ + stepsize_ * off,
-        mask_ ? (mask_ + off) : nullptr,
-        type());
+        px, mask_ ? (mask_ + off) : nullptr, type());
   }
 
   inline size_t
@@ -395,6 +400,7 @@ private:
   }
 
   const uint8_t *data_;
+  const uint8_t *dataend_;
   const bool *mask_;
   size_t stepsize_;
   std::vector<size_t> multipliers_;
