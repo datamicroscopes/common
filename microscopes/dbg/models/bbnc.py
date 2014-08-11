@@ -24,6 +24,7 @@ Value = bool
 
 
 class Shared(SharedMixin, SharedIoMixin):
+
     def __init__(self):
         self.alpha = None
         self.beta = None
@@ -48,6 +49,7 @@ class Shared(SharedMixin, SharedIoMixin):
 
 
 class Group(GroupIoMixin):
+
     def __init__(self):
         self.heads = None
         self.tails = None
@@ -76,13 +78,14 @@ class Group(GroupIoMixin):
 
     def score_value(self, shared, value):
         """samples a value using the explicit p"""
-        return log(self.p) if value else log(1.-self.p)
+        return log(self.p) if value else log(1. - self.p)
 
     def score_data(self, shared):
         """computes the joint p(q, Y)"""
         prior = sp.stats.beta.logpdf(self.p, shared.alpha, shared.beta)
         if self.p >= 0. and self.p <= 1.:
-            likelihood = self.heads * log(self.p) + self.tails * log(1.-self.p)
+            likelihood = self.heads * \
+                log(self.p) + self.tails * log(1. - self.p)
         else:
             likelihood = -np.inf
         return prior + likelihood
@@ -104,7 +107,9 @@ class Group(GroupIoMixin):
     def protobuf_dump(self, message):
         message.p = self.p
 
+
 class Sampler(object):
+
     def init(self, shared, group=None):
         if group is None:
             self.p = sample_beta(shared.alpha, shared.beta)
@@ -113,6 +118,7 @@ class Sampler(object):
 
     def eval(self, shared):
         return sample_bernoulli(self.p)
+
 
 def sample_group(shared, size):
     group = Group()

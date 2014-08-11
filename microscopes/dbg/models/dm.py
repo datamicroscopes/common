@@ -9,7 +9,9 @@ from distributions.mixins import SharedMixin, GroupIoMixin, SharedIoMixin
 NAME = 'DirichletMultinomial'
 Value = int
 
+
 class Shared(SharedMixin, SharedIoMixin):
+
     def __init__(self):
         self._alphas = None
 
@@ -27,6 +29,7 @@ class Shared(SharedMixin, SharedIoMixin):
         message.Clear()
         for alpha in self._alphas:
             message.alphas.append(alpha)
+
 
 class Group(GroupIoMixin):
 
