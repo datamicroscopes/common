@@ -2,10 +2,12 @@ import numpy as np
 import numpy.ma as ma
 from microscopes.common import validator
 
+
 cdef class abstract_dataview:
     def __iter__(self):
         self._thisptr.get().reset()
         return self
+
     def next(self):
         if self._thisptr.get().end():
             raise StopIteration
@@ -19,10 +21,12 @@ cdef class abstract_dataview:
         cdef row_mutator mut = row_mutator(<uint8_t *> array.data, types)
         masks = []
         has_any_masks = [False]
+
         def mark(b):
             if b:
                 has_any_masks[0] = True
             return b
+
         for i in xrange(types.size()):
             mut.set(acc)
             m = [mark(acc.ismasked(j)) for j in xrange(acc.curshape())]
@@ -34,8 +38,9 @@ cdef class abstract_dataview:
             acc.bump()
         if not has_any_masks[0]:
             return array[0]
-        masks = tuple(masks) # this seems to matter
+        masks = tuple(masks)  # this seems to matter
         return ma.array(array, mask=[masks])[0]
+
 
 cdef class numpy_dataview(abstract_dataview):
     def __cinit__(self, npd):

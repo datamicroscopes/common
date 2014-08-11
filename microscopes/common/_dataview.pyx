@@ -1,18 +1,19 @@
 import numpy as np
 
 TYPES = (
-    ('bool'   , ti.TYPE_B)   ,
-    ('int8'   , ti.TYPE_I8)  ,
-    ('uint8'  , ti.TYPE_U8)  ,
-    ('int16'  , ti.TYPE_I16) ,
-    ('uint16' , ti.TYPE_U16) ,
-    ('int32'  , ti.TYPE_I32) ,
-    ('uint32' , ti.TYPE_U32) ,
-    ('int64'  , ti.TYPE_I64) ,
-    ('uint64' , ti.TYPE_U64) ,
-    ('f4'     , ti.TYPE_F32) ,
-    ('f8'     , ti.TYPE_F64) ,
+    ('bool', ti.TYPE_B),
+    ('int8', ti.TYPE_I8),
+    ('uint8', ti.TYPE_U8),
+    ('int16', ti.TYPE_I16),
+    ('uint16', ti.TYPE_U16),
+    ('int32', ti.TYPE_I32),
+    ('uint32', ti.TYPE_U32),
+    ('int64', ti.TYPE_I64),
+    ('uint64', ti.TYPE_U64),
+    ('f4', ti.TYPE_F32),
+    ('f8', ti.TYPE_F64),
 )
+
 
 def get_c_type_primitive(tpe):
     for name, ctype in TYPES:
