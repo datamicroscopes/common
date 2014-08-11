@@ -6,7 +6,7 @@ from microscopes.common.rng import rng
 from distributions.dbg.models import nich
 
 import numpy as np
-from nose.plugins.attrib import attr
+#from nose.plugins.attrib import attr
 
 #import rpy2.robjects as ro
 #from rpy2.robjects.numpy2ri import activate
@@ -18,7 +18,6 @@ def _test_iw_sampler(sample_iw_fn):
     Q = random_orthonormal_matrix(2)
     nu = 4
     S = np.dot(Q, np.dot(np.diag([1.0, 0.5]), Q.T))
-    invS = np.linalg.inv(S)
     #def r_sample_iw(nu, scale):
     #    return ro.r.riwish(nu, scale)
     #r_samples = [r_sample_iw(nu, S) for _ in xrange(10000)]
