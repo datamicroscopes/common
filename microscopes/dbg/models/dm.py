@@ -2,9 +2,8 @@
 # distributions
 
 import numpy as np
-import math
 
-from distributions.dbg.special import log, gammaln
+from distributions.dbg.special import gammaln
 from distributions.mixins import SharedMixin, GroupIoMixin, SharedIoMixin
 
 NAME = 'DirichletMultinomial'

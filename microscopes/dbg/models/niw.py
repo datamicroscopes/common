@@ -105,7 +105,7 @@ class Group(GroupIoMixin):
     def merge(self, shared, source):
         self._cnts += source._cnts
         self._sum_x += source._sum_x
-        self._sum_xxT += seource._sum_xxT
+        self._sum_xxT += source._sum_xxT
 
     def _post_params(self, shared):
         mu0, lam0, psi0, nu0 = shared._mu0, shared._lam0, shared._psi0, shared._nu0
@@ -142,7 +142,7 @@ class Group(GroupIoMixin):
         """
         Eq. 266
         """
-        mu0, lam0, psi0, nu0 = shared._mu0, shared._lam0, shared._psi0, shared._nu0
+        lam0, psi0, nu0 = shared._lam0, shared._psi0, shared._nu0
         mu_n, lam_n, psi_n, nu_n = self._post_params(shared)
         n = self._cnts
         D = shared.dimension()

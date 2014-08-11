@@ -8,10 +8,8 @@
 
 import numpy as np
 import scipy as sp
-import scipy.stats
-import math
 
-from distributions.dbg.special import log, gammaln
+from distributions.dbg.special import log
 from distributions.dbg.random import sample_bernoulli, sample_beta
 from distributions.mixins import SharedMixin, GroupIoMixin, SharedIoMixin
 
