@@ -1,5 +1,9 @@
-from microscopes.common.recarray.dataview import numpy_dataview as recarray_numpy_dataview
-from microscopes.common.relation.dataview import numpy_dataview as relation_numpy_dataview
+from microscopes.common.recarray.dataview import (
+    numpy_dataview as recarray_numpy_dataview,
+)
+from microscopes.common.relation.dataview import (
+    numpy_dataview as relation_numpy_dataview,
+)
 from microscopes.common.rng import rng
 
 import numpy as np
@@ -7,8 +11,10 @@ import numpy.ma as ma
 
 from nose.tools import assert_almost_equals
 
+
 def test_recarray_numpy_dataview():
-    x = np.array([(False, 32.), (True, 943.), (False, -32.)], dtype=[('', bool), ('', float)])
+    x = np.array([(False, 32.), (True, 943.), (False, -32.)],
+                 dtype=[('', bool), ('', float)])
     view = recarray_numpy_dataview(x)
     assert view and view.size() == x.shape[0]
     assert len(view) == x.shape[0]
@@ -23,8 +29,10 @@ def test_recarray_numpy_dataview():
         acc += a[0]
     assert acc == sum(e[0] for e in x)
 
+
 def test_recarray_numpy_dataview_subarray():
-    x = np.array([(1, (2., 3.)), (-1, (-3., 54.))], dtype=[('', np.int32), ('', np.float32, (2,))])
+    x = np.array([(1, (2., 3.)), (-1, (-3., 54.))],
+                 dtype=[('', np.int32), ('', np.float32, (2,))])
     view = recarray_numpy_dataview(x)
     assert view and view.size() == x.shape[0]
 
@@ -34,9 +42,10 @@ def test_recarray_numpy_dataview_subarray():
         for f, g in zip(a[1], b[1]):
             assert_almost_equals(f, g)
 
+
 def test_recarray_numpy_dataview_masked():
     x = ma.masked_array(
-        np.array([(True, False, True, True, True)], dtype=[('', np.bool)]*5),
+        np.array([(True, False, True, True, True)], dtype=[('', np.bool)] * 5),
         mask=[(False, False, True, True, True)])
     view = recarray_numpy_dataview(x)
     assert view and view.size() == x.shape[0]
@@ -48,11 +57,13 @@ def test_recarray_numpy_dataview_masked():
                 continue
             assert aval == bval
 
+
 def test_relation_numpy_dataview():
     x = np.zeros((2, 3, 4), dtype=np.bool)
     view = relation_numpy_dataview(x)
     assert view
     assert view.shape() == (2, 3, 4)
+
 
 def test_relation_numpy_dataview_masked():
     x = np.zeros((2, 3, 4), dtype=np.bool)

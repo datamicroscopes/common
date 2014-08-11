@@ -13,6 +13,7 @@ from nose.plugins.attrib import attr
 #activate()
 #ro.r('library(MCMCpack)')
 
+
 def _test_iw_sampler(sample_iw_fn):
     Q = random_orthonormal_matrix(2)
     nu = 4
@@ -22,7 +23,7 @@ def _test_iw_sampler(sample_iw_fn):
     #    return ro.r.riwish(nu, scale)
     #r_samples = [r_sample_iw(nu, S) for _ in xrange(10000)]
 
-    true_mean = 1./(nu-S.shape[0]-1)*S
+    true_mean = 1. / (nu - S.shape[0] - 1) * S
 
     ntries = 100
     py_samples = []
@@ -43,12 +44,15 @@ def _test_iw_sampler(sample_iw_fn):
 
     assert False, "mean did not converge"
 
+
 def test_iw_sampler_py():
     _test_iw_sampler(py_sample_iw)
+
 
 def test_iw_sampler_cxx():
     r = rng()
     _test_iw_sampler(lambda nu, S: cxx_sample_iw(nu, S, r))
+
 
 def test_niw_dist():
     # test by comparing to the 1D NIX model
@@ -60,7 +64,7 @@ def test_niw_dist():
 
     # make the NIW case
     niw_shared = niw.Shared()
-    niw_shared.load({'mu0':mu0,'lambda':lam0,'psi':psi0,'nu':nu0})
+    niw_shared.load({'mu0': mu0, 'lambda': lam0, 'psi': psi0, 'nu': nu0})
     niw_group = niw.Group()
     niw_group.init(niw_shared)
 
@@ -68,7 +72,8 @@ def test_niw_dist():
 
     # make the NIX case
     nix_shared = nich.Shared()
-    nix_shared.load({'mu':mu0[0],'kappa':lam0,'sigmasq':psi0[0,0]/nu0,'nu':nu0})
+    nix_shared.load(
+        {'mu': mu0[0], 'kappa': lam0, 'sigmasq': psi0[0, 0] / nu0, 'nu': nu0})
     nix_group = nich.Group()
     nix_group.init(nix_shared)
 
@@ -95,6 +100,7 @@ def test_niw_dist():
         assert almost_eq(niw_group.score_value(niw_shared, np.array([value])),
                          nix_group.score_value(nix_shared, value))
 
+
 def test_niw_mv_dist():
     # XXX: not really a true test, we just run it with D > 1 to make
     # sure it doesn't crash
@@ -105,7 +111,8 @@ def test_niw_mv_dist():
     lam0 = 0.3
 
     niw_shared = niw.Shared()
-    niw_shared.load({'mu0':np.ones(3),'lambda':lam0,'psi':psi0,'nu':nu0})
+    niw_shared.load(
+        {'mu0': np.ones(3), 'lambda': lam0, 'psi': psi0, 'nu': nu0})
     niw_group = niw.Group()
     niw_group.init(niw_shared)
 
