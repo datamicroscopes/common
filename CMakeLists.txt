@@ -86,7 +86,6 @@ set(MICROSCOPES_COMMON_SOURCE_FILES
     src/models/bbnc.cpp
     src/models/distributions.cpp
     src/models/dm.cpp
-    src/models/niw.cpp
     src/models/noop.cpp)
 add_library(microscopes_common SHARED ${MICROSCOPES_COMMON_SOURCE_FILES})
 target_link_libraries(microscopes_common ${PROTOBUF_LIBRARIES} distributions_shared)

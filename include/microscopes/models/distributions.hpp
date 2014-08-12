@@ -13,7 +13,10 @@
 #include <distributions/models/bnb.hpp>
 #include <distributions/models/gp.hpp>
 #include <distributions/models/nich.hpp>
+#include <distributions/models/niw.hpp>
 #include <distributions/models/dd.hpp>
+
+#include <eigen3/Eigen/Dense>
 
 #define DISTRIB_BB_SHARED_FIELDS(x) \
   x(alpha) \
@@ -57,16 +60,16 @@
   x(BetaNegativeBinomial) \
   x(GammaPoisson) \
   x(NormalInverseChiSq) \
-  x(DirichletDiscrete128)
+  x(DirichletDiscrete128) \
+  x(NormalInverseWishartV)
 
-// NOTE: DirichletDiscrete128 does not appear here since it is special
-#define DISTRIB_FOR_EACH_DISTRIBUTION_WITH_SHARED_FIELDS(x) \
+#define DISTRIB_FOR_EACH_DISTRIBUTION_WITH_SCALAR_SHARED_FIELDS(x) \
   x(BetaBernoulli, DISTRIB_BB_SHARED_FIELDS) \
   x(BetaNegativeBinomial, DISTRIB_BNB_SHARED_FIELDS) \
   x(GammaPoisson, DISTRIB_GP_SHARED_FIELDS) \
   x(NormalInverseChiSq, DISTRIB_NICH_SHARED_FIELDS)
 
-#define DISTRIB_FOR_EACH_DISTRIBUTION_WITH_GROUP_FIELDS(x) \
+#define DISTRIB_FOR_EACH_DISTRIBUTION_WITH_SCALAR_GROUP_FIELDS(x) \
   x(BetaBernoulli, DISTRIB_BB_GROUP_FIELDS) \
   x(BetaNegativeBinomial, DISTRIB_BNB_GROUP_FIELDS) \
   x(GammaPoisson, DISTRIB_GP_GROUP_FIELDS) \
@@ -79,6 +82,12 @@ namespace distributions {
   namespace protobuf {
     typedef DirichletDiscrete_Shared DirichletDiscrete128_Shared;
     typedef DirichletDiscrete_Group DirichletDiscrete128_Group;
+  } // namespace protobuf
+
+  typedef NormalInverseWishart<-1> NormalInverseWishartV;
+  namespace protobuf {
+    typedef NormalInverseWishart_Shared NormalInverseWishartV_Shared;
+    typedef NormalInverseWishart_Group NormalInverseWishartV_Group;
   } // namespace protobuf
 } // namespace distributions
 
@@ -99,8 +108,23 @@ DISTRIB_FOR_EACH_DISTRIBUTION(DISTRIB_SPECIALIZE_MODEL_TYPES)
 
 #undef DISTRIB_SPECIALIZE_MODEL_TYPES
 
-template <typename T> struct distributions_shared_hp {};
-template <typename T> struct distributions_group_ss {};
+template <typename T>
+struct distributions_shared_hp {
+  static inline common::value_mutator
+  get(typename T::Shared &s, const std::string &key)
+  {
+    throw std::runtime_error("not supported");
+  }
+};
+
+template <typename T>
+struct distributions_group_ss {
+  static inline common::value_mutator
+  get(typename T::Group &s, const std::string &key)
+  {
+    throw std::runtime_error("not supported");
+  }
+};
 
 #define DISTRIB_SPECIALIZE_RAW_PTR(fname) \
   if (key == #fname) return common::value_mutator(&s.fname);
@@ -129,8 +153,8 @@ template <typename T> struct distributions_group_ss {};
     } \
   };
 
-DISTRIB_FOR_EACH_DISTRIBUTION_WITH_SHARED_FIELDS(DISTRIB_SPECIALIZE_SHARED_HP)
-DISTRIB_FOR_EACH_DISTRIBUTION_WITH_GROUP_FIELDS(DISTRIB_SPECIALIZE_GROUP_SS)
+DISTRIB_FOR_EACH_DISTRIBUTION_WITH_SCALAR_SHARED_FIELDS(DISTRIB_SPECIALIZE_SHARED_HP)
+DISTRIB_FOR_EACH_DISTRIBUTION_WITH_SCALAR_GROUP_FIELDS(DISTRIB_SPECIALIZE_GROUP_SS)
 
 #undef DISTRIB_SPECIALIZE_RAW_PTR
 #undef DISTRIB_SPECIALIZE_SHARED_HP
@@ -175,6 +199,60 @@ struct distributions_group_ss< distributions::DirichletDiscrete128 >
   }
 };
 
+namespace detail {
+
+template <typename T>
+struct value_getter {
+  static inline ALWAYS_INLINE T
+  get(const common::value_accessor &value)
+  {
+    // scalars
+    MICROSCOPES_ASSERT(value.shape() == 1);
+    return value.get<T>(0);
+  }
+};
+
+template <typename T, int Rows>
+struct value_getter<Eigen::Matrix<T, Rows, 1>> {
+  static inline ALWAYS_INLINE Eigen::Matrix<T, Rows, 1>
+  get(const common::value_accessor &value)
+  {
+    MICROSCOPES_ASSERT((Rows == -1) || (size_t(Rows) == value.shape()));
+    // XXX(stephentu): if the types match, this should just be a memcpy! we
+    // only need this expensive loop if runtime casting is actually required
+    Eigen::Matrix<T, Rows, 1> ret(value.shape());
+    for (size_t i = 0; i < value.shape(); i++)
+      ret(i) = value.get<T>(i);
+    return ret;
+  }
+};
+
+template <typename T>
+struct value_setter {
+  static inline ALWAYS_INLINE void
+  set(common::value_mutator &mut, const T &value)
+  {
+    MICROSCOPES_ASSERT(mut.shape() == 1);
+    mut.set<T>(value, 0);
+  }
+};
+
+
+template <typename T, int Rows>
+struct value_setter<Eigen::Matrix<T, Rows, 1>> {
+  static inline ALWAYS_INLINE void
+  set(common::value_mutator &mut, const Eigen::Matrix<T, Rows, 1> &value)
+  {
+    MICROSCOPES_ASSERT(mut.shape() == size_t(value.size()));
+    // XXX(stephentu): if the types match, this should just be a memcpy! we
+    // only need this expensive loop if runtime casting is actually required
+    for (size_t i = 0; i < size_t(value.size()); i++)
+      mut.set<T>(value(i), i);
+  }
+};
+
+} // namespace detail
+
 template <typename T>
 class distributions_group : public group {
 private:
@@ -188,25 +266,22 @@ public:
   void
   add_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) override
   {
-    MICROSCOPES_ASSERT(value.shape() == 1);
-    MICROSCOPES_ASSERT(!value.ismasked(0));
-    repr_.add_value(shared_repr(m), value.get< typename T::Value >(0), rng);
+    MICROSCOPES_ASSERT(!value.anymasked());
+    repr_.add_value(shared_repr(m), detail::value_getter<typename T::Value>::get(value), rng);
   }
 
   void
   remove_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) override
   {
-    MICROSCOPES_ASSERT(value.shape() == 1);
-    MICROSCOPES_ASSERT(!value.ismasked(0));
-    repr_.remove_value(shared_repr(m), value.get< typename T::Value >(0), rng);
+    MICROSCOPES_ASSERT(!value.anymasked());
+    repr_.remove_value(shared_repr(m), detail::value_getter<typename T::Value>::get(value), rng);
   }
 
   float
   score_value(const hypers &m, const common::value_accessor &value, common::rng_t &rng) const override
   {
-    MICROSCOPES_ASSERT(value.shape() == 1);
-    MICROSCOPES_ASSERT(!value.ismasked(0));
-    return repr_.score_value(shared_repr(m), value.get< typename T::Value >(0), rng);
+    MICROSCOPES_ASSERT(!value.anymasked());
+    return repr_.score_value(shared_repr(m), detail::value_getter<typename T::Value>::get(value), rng);
   }
 
   float
@@ -218,9 +293,8 @@ public:
   void
   sample_value(const hypers &m, common::value_mutator &value, common::rng_t &rng) const override
   {
-    MICROSCOPES_ASSERT(value.shape() == 1);
     typename T::Value sampled = repr_.sample_value(shared_repr(m), rng);
-    value.set< typename T::Value >(sampled, 0);
+    detail::value_setter<typename T::Value>::set(value, sampled);
   }
 
   common::suffstats_bag_t
@@ -400,18 +474,43 @@ public:
     return std::make_shared<distributions_hypers<detail::DD128>>(dim_);
   }
 
+private:
+  unsigned dim_;
+};
+
+template <>
+class distributions_model<distributions::NormalInverseWishartV> : public model {
+public:
+  distributions_model(unsigned dim)
+    : dim_(dim)
+  {
+    MICROSCOPES_DCHECK(dim > 0, "no elements");
+  }
+
+  std::shared_ptr<hypers>
+  create_hypers() const override
+  {
+    return std::make_shared<
+      distributions_hypers<distributions::NormalInverseWishartV>>();
+  }
+
   common::runtime_type
   get_runtime_type() const override
   {
-    return common::runtime_type(TYPE_I32);
+    return common::runtime_type(
+        common::static_type_to_primitive_type<
+          typename distributions::NormalInverseWishartV::Value::Scalar
+        >::value,
+        dim_);
   }
 
 private:
   unsigned dim_;
 };
 
-// for cython
+// for cython, since cython doesn't understand template specialization
 typedef distributions_model<detail::DD128> distributions_model_dd128;
+typedef distributions_model<distributions::NormalInverseWishartV> distributions_model_niwv;
 
 // explicitly instantiate C++ templates
 #define DISTRIB_EXPLICIT_INSTANTIATE(name) \

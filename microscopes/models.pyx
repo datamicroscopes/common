@@ -16,6 +16,7 @@ from distributions.dbg.models import (
     gp as dbg_gp,
     nich as dbg_nich,
     dd as dbg_dd,
+    niw as dbg_niw,
 )
 
 from distributions.io.schema_pb2 import (
@@ -24,17 +25,16 @@ from distributions.io.schema_pb2 import (
     GammaPoisson as pb_gp,
     NormalInverseChiSq as pb_nich,
     DirichletDiscrete as pb_dd,
+    NormalInverseWishart as pb_niw,
 )
 
 from microscopes.dbg.models import (
-    bbnc as py_bbnc,
-    niw as py_niw,
-    dm as py_dm,
+    bbnc as dbg_bbnc,
+    dm as dbg_dm,
 )
 
 from microscopes.io.schema_pb2 import (
     BetaBernoulliNonConj as pb_bbnc,
-    NormalInverseWishart as pb_niw,
     DirichletMultinomial as pb_dm,
 )
 
@@ -126,21 +126,21 @@ dd = lambda size: model_descriptor(
     default_params={'alphas': [1.] * size})
 
 bbnc = model_descriptor(
-    py_descriptor=py_model(py_bbnc, pb_bbnc, dim=_scalar),
+    py_descriptor=py_model(dbg_bbnc, pb_bbnc, dim=_scalar),
     c_descriptor=_bbnc(),
     default_params=bb._default_params)
 
 niw = lambda dim: model_descriptor(
-    py_descriptor=py_model(py_niw, pb_niw, dim=dim),
+    py_descriptor=py_model(dbg_niw, pb_niw, dim=dim),
     c_descriptor=_niw(dim),
     default_params={
-        'mu0': np.array([0.] * dim),
-        'lambda': 1.0,
+        'mu': np.array([0.] * dim),
+        'kappa': 1.0,
         'psi': np.eye(dim),
         'nu': float(dim),
     })
 
 dm = lambda categories: model_descriptor(
-    py_descriptor=py_model(py_dm, pb_dm, dim=categories),
+    py_descriptor=py_model(dbg_dm, pb_dm, dim=categories),
     c_descriptor=_dm(categories),
     default_params=dd(categories)._default_params)

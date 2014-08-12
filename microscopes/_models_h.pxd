@@ -34,6 +34,9 @@ cdef extern from "microscopes/models/distributions.hpp" namespace "microscopes::
     cdef cppclass distributions_model_dd128:
         distributions_model_dd128(unsigned) except +
 
+    cdef cppclass distributions_model_niwv:
+        distributions_model_niwv(unsigned) except +
+
 cdef extern from "distributions/models/bb.hpp" namespace "distributions":
     cdef cppclass BetaBernoulli:
         pass
@@ -54,14 +57,14 @@ cdef extern from "microscopes/models/distributions.hpp" namespace "distributions
     cdef cppclass DirichletDiscrete128:
         pass
 
-cdef extern from "microscopes/models/niw.hpp" namespace "microscopes::models":
-    cdef cppclass niw_model:
-        niw_model(unsigned) except +
-
-cdef extern from "microscopes/models/dm.hpp" namespace "microscopes::models":
-    cdef cppclass dm_model:
-        dm_model(unsigned) except +
+cdef extern from "distributions/models/niw.hpp" namespace "distributions":
+    cdef cppclass NormalInverseWishartV:
+        pass
 
 cdef extern from "microscopes/models/bbnc.hpp" namespace "microscopes::models":
     cdef cppclass bbnc_model:
         pass
+
+cdef extern from "microscopes/models/dm.hpp" namespace "microscopes::models":
+    cdef cppclass dm_model:
+        dm_model(unsigned) except +

@@ -1,14 +1,14 @@
-from microscopes._models_h cimport \
-    BetaBernoulli as c_bb, \
-    BetaNegativeBinomial as c_bnb, \
-    GammaPoisson as c_gp, \
-    NormalInverseChiSq as c_nich, \
-    DirichletDiscrete128 as c_dd, \
-    distributions_model as c_distributions_model, \
-    distributions_model_dd128 as c_distributions_model_dd128, \
-    bbnc_model as c_bbnc, \
-    niw_model as c_niw, \
-    dm_model as c_dm
+from microscopes._models_h cimport (
+    BetaBernoulli as c_bb,
+    BetaNegativeBinomial as c_bnb,
+    GammaPoisson as c_gp,
+    NormalInverseChiSq as c_nich,
+    distributions_model as c_distributions_model,
+    distributions_model_dd128 as c_distributions_model_dd128,
+    distributions_model_niwv as c_distributions_model_niwv,
+    bbnc_model as c_bbnc,
+    dm_model as c_dm,
+)
 
 cdef class _base:
     cdef shared_ptr[model] get(self):
@@ -36,13 +36,13 @@ cdef class _dd(_base):
     def __cinit__(self, int size):
         self._thisptr.reset(new c_distributions_model_dd128(size))
 
+cdef class _niw(_base):
+    def __cinit__(self, int dim):
+        self._thisptr.reset(new c_distributions_model_niwv(dim))
+
 cdef class _bbnc(_base):
     def __cinit__(self):
         self._thisptr.reset(new c_bbnc())
-
-cdef class _niw(_base):
-    def __cinit__(self, int dim):
-        self._thisptr.reset(new c_niw(dim))
 
 cdef class _dm(_base):
     def __cinit__(self, int categories):
