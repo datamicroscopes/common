@@ -10,15 +10,15 @@ requirements:
     - cmake
     - python
     - numpy
-    - cython 0.20.2
-    - distributions
+    - cython >=0.20.2
+    - distributions >=2.0.22
     - libprotobuf
     - eigen3
   run:
     - python
     - numpy
     - scipy
-    - distributions
+    - distributions >=2.0.22
     - libprotobuf
     - protobuf
 
