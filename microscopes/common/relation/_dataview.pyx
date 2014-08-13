@@ -35,9 +35,6 @@ cdef class numpy_dataview(abstract_dataview):
 
 cdef class sparse_2d_dataview(abstract_dataview):
     def __cinit__(self, rep):
-        """
-        only takes scipy.sparse arrays
-        """
         self._rows, self._cols = rep.shape
         validator.validate_positive(self._rows)
         validator.validate_positive(self._cols)
