@@ -1,5 +1,8 @@
-# cython: embedsignature=True
+# cython: embedsignature=False
 
+# XXX: lambda functions at module level with embedsignature is
+# currently broken in Cython. see
+# https://groups.google.com/forum/#!topic/cython-users/8vdxsXdxgC0
 
 # XXX: we use the dbg versions for now, since the lp versions
 # don't have protobuf_load()/protobuf_dump() defined for the groups
