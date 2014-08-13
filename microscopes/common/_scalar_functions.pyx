@@ -1,3 +1,6 @@
+# cython: embedsignature=True
+
+
 cdef class scalar_function:
     def __call__(self, *args):
         cdef vector[float] c_args

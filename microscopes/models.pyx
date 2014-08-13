@@ -1,3 +1,6 @@
+# cython: embedsignature=True
+
+
 # XXX: we use the dbg versions for now, since the lp versions
 # don't have protobuf_load()/protobuf_dump() defined for the groups
 

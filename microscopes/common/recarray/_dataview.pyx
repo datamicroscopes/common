@@ -1,3 +1,6 @@
+# cython: embedsignature=True
+
+
 import numpy as np
 import numpy.ma as ma
 from microscopes.common import validator

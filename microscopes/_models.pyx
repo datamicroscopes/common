@@ -1,3 +1,6 @@
+# cython: embedsignature=True
+
+
 from microscopes._models_h cimport (
     BetaBernoulli as c_bb,
     BetaNegativeBinomial as c_bnb,

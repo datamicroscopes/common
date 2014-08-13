@@ -1,3 +1,6 @@
+# cython: embedsignature=True
+
+
 from microscopes.common._scalar_functions cimport scalar_function
 from microscopes.common._scalar_functions_h cimport \
     log_exponential as c_log_exponential, \

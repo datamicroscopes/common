@@ -1,3 +1,6 @@
+# cython: embedsignature=True
+
+
 from libcpp.utility cimport pair
 from microscopes.common._random_h cimport \
     sample_multivariate_normal as c_sample_multivariate_normal, \
