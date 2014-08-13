@@ -1,5 +1,4 @@
-"""
-util.py - common utility functions
+"""common utility functions
 """
 
 import numpy as np
