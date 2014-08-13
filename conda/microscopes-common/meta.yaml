@@ -11,14 +11,14 @@ requirements:
     - python
     - numpy
     - cython >=0.20.2
-    - distributions >=2.0.22
+    - distributions >=2.0.23
     - libprotobuf
     - eigen3
   run:
     - python
     - numpy
     - scipy
-    - distributions >=2.0.22
+    - distributions >=2.0.23
     - libprotobuf
     - protobuf
 
