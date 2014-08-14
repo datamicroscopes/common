@@ -26,10 +26,14 @@ class numpy_dataview(_numpy_dataview):
     --------
     >>> Y = np.array([[1, 2], [3, 4]])
     >>> view = numpy_dataview(Y)
-    >>> print view.shape
+    >>> print view.shape()
     (2, 2)
 
     """
+
+    def __reduce__(self):
+        return (_reconstruct_numpy_dataview, (self.toarray(),))
+
 
 class sparse_2d_dataview(_sparse_2d_dataview):
     """sparse_2d_dataview(rep)
@@ -44,7 +48,18 @@ class sparse_2d_dataview(_sparse_2d_dataview):
     --------
     >>> Y = scipy.sparse.coo_matrix((3, 4))
     >>> view = sparse_2d_dataview(Y)
-    >>> print view.shape
+    >>> print view.shape()
     (3, 4)
 
     """
+
+    def __reduce__(self):
+        return (_reconstruct_sparse_2d_dataview, (self.tocsr(),))
+
+
+def _reconstruct_numpy_dataview(npd):
+    return numpy_dataview(npd)
+
+
+def _reconstruct_sparse_2d_dataview(rep):
+    return sparse_2d_dataview(rep)

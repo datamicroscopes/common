@@ -3,8 +3,11 @@ from libcpp cimport bool as cbool
 from libc.stdint cimport uint8_t, uint32_t
 
 from microscopes._shared_ptr_h cimport shared_ptr
-from microscopes.common.relation._dataview_h cimport \
-    dataview, row_major_dense_dataview, compressed_2darray
+from microscopes.common.relation._dataview_h cimport (
+    dataview,
+    row_major_dense_dataview,
+    compressed_2darray,
+)
 from microscopes.common._dataview cimport get_c_type
 from microscopes.common._runtime_type_h cimport runtime_type
 

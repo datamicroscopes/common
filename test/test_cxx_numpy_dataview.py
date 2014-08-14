@@ -3,17 +3,23 @@ from microscopes.common.recarray.dataview import (
 )
 from microscopes.common.relation.dataview import (
     numpy_dataview as relation_numpy_dataview,
+    sparse_2d_dataview,
 )
 from microscopes.common.rng import rng
 
 import numpy as np
 import numpy.ma as ma
+import pickle
+import itertools as it
+import operator as op
+from scipy.sparse import coo_matrix
 
 from nose.tools import (
     assert_equals,
     assert_almost_equals,
     assert_list_equal,
     assert_is_not_none,
+    assert_true,
 )
 
 
@@ -78,8 +84,6 @@ def test_recarray_numpy_dataview_masked():
 
 
 def test_recarray_numpy_dataview_pickle():
-    import pickle
-
     # not masked, int32
     y = np.array([(1, 2, 3, 4, 5), (5, 4, 3, 2, 1),],
                  dtype=[('', np.int32)] * 5)
@@ -138,3 +142,44 @@ def test_relation_numpy_dataview_masked():
     view = relation_numpy_dataview(x)
     assert_is_not_none(view)
     assert_equals(view.shape(), (2, 3, 4))
+
+
+def test_relation_numpy_dataview_pickle():
+    # not masked, int32
+    y = np.random.randint(-10, 10, size=(10, 10))
+    view = relation_numpy_dataview(y)
+    bstr = pickle.dumps(view)
+    view1 = pickle.loads(bstr)
+    assert_true((y == view1.toarray()).all())
+
+    # masked, int32
+    y = ma.array(y, mask=(np.random.uniform(size=(10, 10)) < 0.5))
+    view = relation_numpy_dataview(y)
+    bstr = pickle.dumps(view)
+    view1 = pickle.loads(bstr)
+    assert_true((y == view1.toarray()).all())
+
+
+def test_relation_sparse_2d_dataview_pickle():
+
+    def sparsify(y, fn=lambda x: x):
+        inds = it.product(range(y.shape[0]), range(y.shape[1]))
+        ijv = [(i, j, y[i, j]) for i, j in inds if fn(y[i, j])]
+        args = (
+            map(op.itemgetter(2), ijv),
+            (map(op.itemgetter(0), ijv), map(op.itemgetter(1), ijv))
+        )
+        return coo_matrix(args, shape=y.shape)
+
+    y = np.random.randint(-2, 2, size=(10, 10))
+    view = sparse_2d_dataview(sparsify(y))
+    bstr = pickle.dumps(view)
+    view1 = pickle.loads(bstr)
+    assert_equals((view.tocsr() != view1.tocsr()).nnz, 0)
+
+    y = np.random.uniform(size=(4, 3))
+    view = sparse_2d_dataview(sparsify(y, fn=lambda x: x >= 0.4 and x <= 0.6))
+    bstr = pickle.dumps(view)
+    view1 = pickle.loads(bstr)
+    assert_almost_equals(
+        np.abs((view.tocsr() - view1.tocsr()).todense()).max(), 0., places=3)

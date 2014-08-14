@@ -2,12 +2,20 @@
 
 
 import numpy as np
+import numpy.ma as ma
+from scipy.sparse import (
+    csr_matrix,
+    csc_matrix,
+)
 from microscopes.common import validator
+
 
 cdef class abstract_dataview:
     pass
 
+
 cdef class numpy_dataview(abstract_dataview):
+
     def __cinit__(self, npd):
         validator.validate_not_none(npd, "npd")
         if len(npd.shape) <= 1:
@@ -19,10 +27,11 @@ cdef class numpy_dataview(abstract_dataview):
         for d in npd.shape:
             cshape.push_back(d)
         cdef runtime_type ctype = get_c_type(npd.dtype)
-        self._data = np.ascontiguousarray(npd.data)
         if hasattr(npd, 'mask'):
+            self._data = np.ascontiguousarray(npd.data)
             self._mask = np.ascontiguousarray(npd.mask)
         else:
+            self._data = np.ascontiguousarray(npd)
             self._mask = None
         self._thisptr.reset(new row_major_dense_dataview(
             <uint8_t *> self._data.data,
@@ -33,7 +42,15 @@ cdef class numpy_dataview(abstract_dataview):
     def shape(self):
         return self._shape
 
+    def toarray(self):
+        if self._mask is None:
+            return self._data
+        else:
+            return ma.array(self._data, mask=self._mask)
+
+
 cdef class sparse_2d_dataview(abstract_dataview):
+
     def __cinit__(self, rep):
         self._rows, self._cols = rep.shape
         validator.validate_positive(self._rows)
@@ -56,10 +73,12 @@ cdef class sparse_2d_dataview(abstract_dataview):
         validate_sparse_rep(csc_rep)
 
         # keep the refcounts live
-        self._csr_data, self._csr_indices, self._csr_indptr = \
+        self._csr_data, self._csr_indices, self._csr_indptr = (
             csr_rep.data, csr_rep.indices, csr_rep.indptr
-        self._csc_data, self._csc_indices, self._csc_indptr = \
+        )
+        self._csc_data, self._csc_indices, self._csc_indptr = (
             csc_rep.data, csc_rep.indices, csc_rep.indptr
+        )
 
         self._thisptr.reset(
             new compressed_2darray(
@@ -75,3 +94,16 @@ cdef class sparse_2d_dataview(abstract_dataview):
 
     def shape(self):
         return (self._rows, self._cols)
+
+    def tocsr(self):
+        return csr_matrix(
+            (self._csr_data, self._csr_indices, self._csr_indptr),
+            shape=self.shape())
+
+    def tocsc(self):
+        return csc_matrix(
+            (self._csc_data, self._csc_indices, self._csc_indptr),
+            shape=self.shape())
+
+    def tocoo(self):
+        return self.tocsr().tocoo()
