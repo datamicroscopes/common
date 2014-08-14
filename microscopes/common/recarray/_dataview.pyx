@@ -48,42 +48,36 @@ cdef class abstract_dataview:
 cdef class numpy_dataview(abstract_dataview):
     def __cinit__(self, npd):
         validator.validate_not_none(npd, "npd")
-        n = npd.shape[0]
         if len(npd.shape) != 1:
-            raise ValueError("1D arrays only")
-        self._n = n
+            raise ValueError("1D (structural) arrays only")
+        self._n = npd.shape[0]
         dtype = npd.dtype
         if len(dtype) == 0:
+            # XXX(stephentu): is there a better (less heuristic) way of
+            # checking for this
             raise ValueError("structural arrays only")
 
-        self._data = np.ascontiguousarray(npd.data)
         if hasattr(npd, 'mask'):
+            self._data = np.ascontiguousarray(npd.data)
             self._mask = np.ascontiguousarray(npd.mask)
         else:
+            self._data = np.ascontiguousarray(npd)
             self._mask = None
 
-        cdef vector[runtime_type] ctypes
-        ctypes = get_c_types(dtype)
+        cdef vector[runtime_type] ctypes = get_c_types(dtype)
 
         if self._mask is not None:
             self._thisptr.reset(new row_major_dataview(
                 <uint8_t *> self._data.data,
                 <cbool *> self._mask.data,
-                n,
+                self._n,
                 ctypes))
         else:
             self._thisptr.reset(new row_major_dataview(
                 <uint8_t *> self._data.data,
                 NULL,
-                n,
+                self._n,
                 ctypes))
-
-    def view(self, shuffle, rng r):
-        if not shuffle:
-            (<row_major_dataview *>self._thisptr.get()).reset_permutation()
-        else:
-            (<row_major_dataview *>self._thisptr.get()).permute(r._thisptr[0])
-        return self
 
     def size(self):
         return self._n
