@@ -20,17 +20,7 @@ from nose.tools import (
     assert_is_not_none,
     assert_true,
 )
-
-
-# XXX(stephentu): copied from kernel's test folder
-def assert_1d_lists_almost_equals(first,
-                                  second,
-                                  places=None,
-                                  msg=None,
-                                  delta=None):
-    assert_equals(len(first), len(second), msg=msg)
-    for i, j in zip(first, second):
-        assert_almost_equals(i, j, places=places, msg=msg, delta=delta)
+from microscopes.common.testutil import assert_1d_lists_almost_equals
 
 
 def test_recarray_numpy_dataview():
