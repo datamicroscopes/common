@@ -2,6 +2,7 @@
 
 #include <microscopes/common/random_fwd.hpp>
 #include <microscopes/common/macros.hpp>
+#include <distributions/random.hpp>
 
 #include <google/protobuf/message.h>
 
@@ -101,8 +102,6 @@ struct util {
     return ret;
   }
 
-  static std::uniform_real_distribution<float> Unif01_;
-
   // copy from:
   // https://github.com/forcedotcom/distributions/blob/master/distributions/util.py
 
@@ -130,7 +129,7 @@ struct util {
   sample_discrete(const std::vector<float> &probs, rng_t &rng)
   {
     // assumes probs add up to 1
-    float dart = Unif01_(rng);
+    float dart = distributions::sample_unif01(rng);
     for (size_t i = 0; i < probs.size(); i++) {
       dart -= probs[i];
       if (dart <= 0.)
