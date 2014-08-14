@@ -10,3 +10,6 @@
 *.prog
 *.dSYM
 /microscopes/io/schema_pb2.py
+/microscopes/**/*.cpp
+/microscopes/**/*.so
+/microscopes_common.egg-info
