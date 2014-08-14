@@ -37,11 +37,11 @@ def test_models_pickle():
         assert_equals(model.name(), model1.name())
 
         if model.name() == 'dd':
-            assert_equals(len(model.default_params()['alphas']),
-                          len(model1.default_params()['alphas']))
+            assert_equals(len(model.default_hyperparams()['alphas']),
+                          len(model1.default_hyperparams()['alphas']))
         elif model.name() == 'niw':
-            assert_equals(len(model.default_params()['mu']),
-                          len(model1.default_params()['mu']))
+            assert_equals(len(model.default_hyperparams()['mu']),
+                          len(model1.default_hyperparams()['mu']))
         elif model.name() == 'dm':
             assert_equals(model.py_desc().get_np_dtype().shape,
                           model1.py_desc().get_np_dtype().shape)

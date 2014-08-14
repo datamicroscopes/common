@@ -6,4 +6,4 @@ def test_default_parameters():
     for m in models:
         typ = m.py_desc()._model_module
         s = typ.Shared()
-        s.load(m.default_params())
+        s.load(m.default_hyperparams())

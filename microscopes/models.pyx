@@ -41,6 +41,10 @@ from microscopes.io.schema_pb2 import (
     DirichletMultinomial as pb_dm,
 )
 
+from microscopes.common.scalar_functions import (
+    log_exponential,
+    log_noninformative_beta_prior,
+)
 from microscopes.common import validator
 
 
@@ -89,11 +93,17 @@ class py_model(object):
 
 class model_descriptor(object):
 
-    def __init__(self, name, py_descriptor, c_descriptor, default_params):
+    def __init__(self,
+                 name,
+                 py_descriptor,
+                 c_descriptor,
+                 default_hyperparams,
+                 default_hyperpriors):
         self._name = name
         self._py_descriptor = py_descriptor
         self._c_descriptor = c_descriptor
-        self._default_params = default_params
+        self._default_hyperparams = default_hyperparams
+        self._default_hyperpriors = default_hyperpriors
 
     def name(self):
         return self._name
@@ -104,15 +114,18 @@ class model_descriptor(object):
     def c_desc(self):
         return self._c_descriptor
 
-    def default_params(self):
-        return self._default_params
+    def default_hyperparams(self):
+        return self._default_hyperparams
+
+    def default_hyperpriors(self):
+        return self._default_hyperpriors
 
     def _param(self):
         name = self.name()
         if name in ('dd', 'dm'):
-            return len(self._default_params['alphas'])
+            return len(self._default_hyperparams['alphas'])
         elif name == 'niw':
-            return len(self._default_params['mu'])
+            return len(self._default_hyperparams['mu'])
         else:
             return None
 
@@ -128,32 +141,49 @@ def _reconstruct_model_descriptor(name, param):
         return desc(param)
 
 
+# XXX(stephentu): someone should check that the default hyperpriors listed here
+# are sane and useful!
+
+
 bb = model_descriptor(
     name='bb',
     py_descriptor=py_model(dbg_bb, pb_bb),
     c_descriptor=_bb(),
-    default_params={'alpha': 1., 'beta': 1.})
+    default_hyperparams={'alpha': 1., 'beta': 1.},
+    default_hyperpriors={
+        ('alpha', 'beta') : log_noninformative_beta_prior,
+    })
 
 
 bnb = model_descriptor(
     name='bnb',
     py_descriptor=py_model(dbg_bnb, pb_bnb),
     c_descriptor=_bnb(),
-    default_params={'alpha': 1., 'beta': 1., 'r': 1})
+    default_hyperparams={'alpha': 1., 'beta': 1., 'r': 1},
+    default_hyperpriors={
+        ('alpha', 'beta') : log_noninformative_beta_prior,
+    })
 
 
 gp = model_descriptor(
     name='gp',
     py_descriptor=py_model(dbg_gp, pb_gp),
     c_descriptor=_gp(),
-    default_params={'alpha': 1., 'inv_beta': 1.})
+    default_hyperparams={'alpha': 1., 'inv_beta': 1.},
+    default_hyperpriors={
+        'alpha': log_exponential(1.),
+        'inv_beta': log_exponential(1.),
+    })
 
 
 nich = model_descriptor(
     name='nich',
     py_descriptor=py_model(dbg_nich, pb_nich),
     c_descriptor=_nich(),
-    default_params={'mu': 0., 'kappa': 1., 'sigmasq': 1., 'nu': 1.})
+    default_hyperparams={'mu': 0., 'kappa': 1., 'sigmasq': 1., 'nu': 1.},
+    default_hyperpriors={
+        # XXX(stephentu): put something sane here
+    })
 
 
 def dd(size):
@@ -162,7 +192,10 @@ def dd(size):
         name='dd',
         py_descriptor=py_model(dbg_dd, pb_dd),
         c_descriptor=_dd(size),
-        default_params={'alphas': [1.] * size})
+        default_hyperparams={'alphas': [1.] * size},
+        default_hyperpriors={
+            # XXX(stephentu): put something sane here
+        })
     return desc
 
 
@@ -170,7 +203,8 @@ bbnc = model_descriptor(
     name='bbnc',
     py_descriptor=py_model(dbg_bbnc, pb_bbnc),
     c_descriptor=_bbnc(),
-    default_params=bb._default_params)
+    default_hyperparams=bb._default_hyperparams,
+    default_hyperpriors=bb._default_hyperpriors)
 
 
 def niw(dim):
@@ -180,11 +214,14 @@ def niw(dim):
         name='niw',
         py_descriptor=py_model(dbg_niw, pb_niw, dtype=dtype),
         c_descriptor=_niw(dim),
-        default_params={
+        default_hyperparams={
             'mu': np.array([0.] * dim),
             'kappa': 1.0,
             'psi': np.eye(dim),
             'nu': float(dim),
+        },
+        default_hyperpriors={
+            # XXX(stephentu): put something sane here
         })
     return desc
 
@@ -197,5 +234,6 @@ def dm(categories):
         name='dm',
         py_descriptor=py_descriptor,
         c_descriptor=_dm(categories),
-        default_params=dd(categories)._default_params)
+        default_hyperparams=dd(categories)._default_hyperparams,
+        default_hyperpriors=dd(categories)._default_hyperpriors)
     return desc
