@@ -5,7 +5,6 @@ from microscopes.common.relation.dataview import (
     numpy_dataview as relation_numpy_dataview,
     sparse_2d_dataview,
 )
-from microscopes.common.rng import rng
 
 import numpy as np
 import numpy.ma as ma
@@ -46,7 +45,6 @@ def test_recarray_numpy_dataview():
         assert_equals(a[0], b[0])
         assert_almost_equals(a[1], b[1])
 
-    r = rng()
     acc = 0
     for a in view:
         acc += a[0]
@@ -85,7 +83,7 @@ def test_recarray_numpy_dataview_masked():
 
 def test_recarray_numpy_dataview_pickle():
     # not masked, int32
-    y = np.array([(1, 2, 3, 4, 5), (5, 4, 3, 2, 1),],
+    y = np.array([(1, 2, 3, 4, 5), (5, 4, 3, 2, 1)],
                  dtype=[('', np.int32)] * 5)
     view = recarray_numpy_dataview(y)
     bstr = pickle.dumps(view)
@@ -93,7 +91,7 @@ def test_recarray_numpy_dataview_pickle():
     assert_list_equal(list(v for v in view), list(v for v in view1))
 
     # not masked, float32
-    y = np.array([(1, 2, 3, 4, 5), (5, 4, 3, 2, 1),],
+    y = np.array([(1, 2, 3, 4, 5), (5, 4, 3, 2, 1)],
                  dtype=[('', np.float32)] * 5)
     view = recarray_numpy_dataview(y)
     bstr = pickle.dumps(view)
@@ -102,7 +100,7 @@ def test_recarray_numpy_dataview_pickle():
         list(v for v in view), list(v for v in view1))
 
     # masked, int32
-    y = np.array([(1, 2, 3, 4, 5), (5, 4, 3, 2, 1),],
+    y = np.array([(1, 2, 3, 4, 5), (5, 4, 3, 2, 1)],
                  dtype=[('', np.int32)] * 5)
     mask = [(False, False, False, False, True),
             (True, False, True, True, False)]
@@ -116,7 +114,7 @@ def test_recarray_numpy_dataview_pickle():
     assert_equals(r, r1)
 
     # masked, float32
-    y = np.array([(1, 2, 3, 4, 5), (5, 4, 3, 2, 1),],
+    y = np.array([(1, 2, 3, 4, 5), (5, 4, 3, 2, 1)],
                  dtype=[('', np.float32)] * 5)
     mask = [(False, False, False, False, False),
             (False, False, False, False, False)]

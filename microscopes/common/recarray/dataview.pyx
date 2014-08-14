@@ -13,6 +13,7 @@ from microscopes.common.recarray._dataview cimport (
 
 import numpy.ma as ma
 
+
 class numpy_dataview(_numpy_dataview):
     """numpy_dataview(npd)
 
