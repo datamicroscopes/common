@@ -35,6 +35,8 @@ We recommend you to not work in the default (root) environment
     $ conda install distributions eigen3 cython
     $ export DYLD_LIBRARY_PATH=/path/to/anaconda/envs/myenv/lib # or LD_LIBRARY_PATH on linux
     
+Note that on OS X, instead of `DYLD_LIBRARY_PATH` it is also possible to specify `DYLD_FALLBACK_LIBRARY_PATH`.  This fixes some issues with using `libpng` (and consequently `matplotlib`) in conjunction with the datamicroscopes library.
+
 Now if you want nice git SHA1 hashes for package versions (useful for dev), install `gitpython`. Note this step is optional. 
     
     $ pip install gitpython
@@ -50,7 +52,12 @@ Now that the conda environment is set up, use `cmake` to build the C++ library. 
     $ cd ..
   
 ### Building/testing the python library
-Now use `pip` to install the python library.
+Now use `pip` to install the python library. Either
 
     $ pip install . 
-    $ cd test && nosetests
+    $ cd test && nosetests -v
+    
+or alternatively to build in the source tree:
+   
+    $ pip install -e . 
+    $ nosetests -v
