@@ -151,7 +151,7 @@ bb = model_descriptor(
     c_descriptor=_bb(),
     default_hyperparams={'alpha': 1., 'beta': 1.},
     default_hyperpriors={
-        ('alpha', 'beta') : log_noninformative_beta_prior,
+        ('alpha', 'beta'): log_noninformative_beta_prior,
     })
 
 
@@ -161,7 +161,7 @@ bnb = model_descriptor(
     c_descriptor=_bnb(),
     default_hyperparams={'alpha': 1., 'beta': 1., 'r': 1},
     default_hyperpriors={
-        ('alpha', 'beta') : log_noninformative_beta_prior,
+        ('alpha', 'beta'): log_noninformative_beta_prior,
     })
 
 
