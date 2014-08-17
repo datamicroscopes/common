@@ -17,3 +17,6 @@ cdef class rng:
 
     def __dealloc__(self):
         del self._thisptr
+
+    def next(self):
+        return self._thisptr[0]()
