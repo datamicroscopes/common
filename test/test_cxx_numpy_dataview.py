@@ -15,6 +15,7 @@ from scipy.sparse import coo_matrix
 
 from nose.tools import (
     assert_equals,
+    assert_not_equals,
     assert_almost_equals,
     assert_list_equal,
     assert_is_not_none,
@@ -115,6 +116,28 @@ def test_recarray_numpy_dataview_pickle():
     assert_1d_lists_almost_equals(
         list(v.data for v in view),
         list(v.data for v in view1))
+
+
+def test_recarray_numpy_dataview_digest():
+    y = np.array([(1, 2, 3, 4, 5), (5, 4, 3, 2, 1)],
+                 dtype=[('', np.int32)] * 5)
+    view = recarray_numpy_dataview(y)
+    view1 = recarray_numpy_dataview(y)
+    assert_equals(view.digest(), view1.digest())
+
+    y1 = np.array([(1, 2, 3, 4, 6), (5, 4, 3, 2, 1)],
+                  dtype=[('', np.int32)] * 5)
+    view = recarray_numpy_dataview(y)
+    view1 = recarray_numpy_dataview(y1)
+    assert_not_equals(view.digest(), view1.digest())
+
+    y2 = np.array([(1, 2, 3, 4)],
+                 dtype=[('', np.int32)] * 4)
+    y3 = np.array([(1, 2), (3, 4)],
+                 dtype=[('', np.int32)] * 2)
+    view = recarray_numpy_dataview(y2)
+    view1 = recarray_numpy_dataview(y3)
+    assert_not_equals(view.digest(), view1.digest())
 
 
 def test_relation_numpy_dataview():

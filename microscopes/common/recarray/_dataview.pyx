@@ -3,6 +3,7 @@
 
 import numpy as np
 import numpy.ma as ma
+import hashlib
 from microscopes.common import validator
 
 
@@ -44,6 +45,19 @@ cdef class abstract_dataview:
         masks = tuple(masks)  # this seems to matter
         return ma.array(array, mask=[masks])[0]
 
+    def digest(self):
+        h = hashlib.sha1()
+
+        # two different object types should not collide
+        typ = type(self)
+        fqn = typ.__module__ + '.' + typ.__name__
+        h.update(fqn)
+
+        # implementations now fill out the details
+        self._digest(h)
+
+        return h.hexdigest()
+
 
 cdef class numpy_dataview(abstract_dataview):
     def __cinit__(self, npd):
@@ -84,3 +98,17 @@ cdef class numpy_dataview(abstract_dataview):
 
     def __len__(self):
         return self.size()
+
+    def _digest(self, h):
+        if self._mask is not None:
+            # XXX(stephentu): implement me
+            raise NotImplementedError(
+                "masked arrays digest not implemented")
+
+        # use the str repr for dtype
+        h.update(str(self._data.dtype))
+
+        # now take a memory view of the data (since we already know it is
+        # contiguous in row-major order, we don't have to worry about column
+        # major arrays)
+        h.update(self._data.view(np.uint8))
