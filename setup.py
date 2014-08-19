@@ -13,6 +13,7 @@ import numpy
 import sys
 import os
 import json
+import re
 
 from subprocess import Popen, PIPE, check_call
 
@@ -68,20 +69,18 @@ distributions_lib, distributions_inc = find_dependency(
 microscopes_common_lib, microscopes_common_inc = find_dependency(
     'libmicroscopes_common.{}'.format(so_ext), 'microscopes')
 
-version = "0.1.0"
+join = os.path.join
+dirname = os.path.dirname
+basedir = join(dirname(__file__), 'microscopes', 'common')
+
 if not 'OFFICIAL_BUILD' in os.environ:
     sha1 = get_git_sha1()
     if sha1 is None:
         sha1 = 'unknown'
-    version = version + '.{}-{}'.format(sha1, 'debug' if debug_build else 'release')
-    print 'writing package version:', version
-    join = os.path.join
-    dirname = os.path.dirname
-    basedir = join(join(dirname(__file__), 'microscopes'), 'common')
-    pkgfile = join(basedir, '__init__.py')
-    print pkgfile
-    with open(pkgfile, 'w') as fp:
-        print >>fp, "__version__ = '{}'".format(version)
+    print 'writing git hash:', sha1
+    githashfile = join(basedir, 'githash.txt')
+    with open(githashfile, 'w') as fp:
+        print >>fp, sha1
 elif debug_build:
     raise RuntimeError("OFFICIAL_BUILD and DEBUG both set")
 
@@ -173,23 +172,31 @@ extensions = cythonize([
 with open('README.md') as f:
     long_description = f.read()
 
-setup(
-    version=version,
-    name='microscopes-common',
-    description='Non-parametric bayesian inference',
-    long_description=long_description,
-    url='https://github.com/datamicroscopes/common',
-    author='Stephen Tu, Eric Jonas',
-    maintainer='Stephen Tu',
-    maintainer_email='tu.stephenl@gmail.com',
-    packages=(
-        'microscopes',
-        'microscopes.io',
-        'microscopes.common',
-        'microscopes.common.recarray',
-        'microscopes.common.relation',
-        'microscopes.common.vendor',
-        'microscopes.dbg',
-        'microscopes.dbg.models',
-    ),
-    ext_modules=extensions)
+
+version = None
+with open(join(basedir, '__init__.py')) as fp:
+    for line in fp:
+        if re.match("_version_base\s+=\s+'\S+'$", line):
+            version = line.split()[-1].strip("'")
+if not version:
+    raise RuntimeError("could not determine version")
+
+setup(version=version,
+      name='microscopes-common',
+      description='Non-parametric bayesian inference',
+      long_description=long_description,
+      url='https://github.com/datamicroscopes/common',
+      author='Stephen Tu, Eric Jonas',
+      maintainer='Stephen Tu',
+      maintainer_email='tu.stephenl@gmail.com',
+      packages=(
+          'microscopes',
+          'microscopes.io',
+          'microscopes.common',
+          'microscopes.common.recarray',
+          'microscopes.common.relation',
+          'microscopes.common.vendor',
+          'microscopes.dbg',
+          'microscopes.dbg.models',
+      ),
+      ext_modules=extensions)
