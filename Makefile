@@ -36,8 +36,8 @@ travis_script:
 
 .PHONY: lint
 lint:
-	pyflakes test
-	pep8 --filename=*.py --ignore=E265 --exclude=*_pb2.py,vendor microscopes test
+	pyflakes test setup.py
+	pep8 --filename=*.py --ignore=E265 --exclude=*_pb2.py,vendor microscopes test setup.py
 	pep8 --filename=*.pyx --ignore=E265,E211,E225 microscopes
 
 .PHONY: clean

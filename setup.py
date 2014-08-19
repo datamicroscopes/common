@@ -3,7 +3,6 @@
 from distutils.core import setup
 from distutils.extension import Extension
 from distutils.version import LooseVersion
-from Cython.Distutils import build_ext
 from Cython.Build import cythonize
 import Cython.Compiler.Options
 Cython.Compiler.Options.fail_fast = True
@@ -17,6 +16,7 @@ import re
 
 from subprocess import Popen, PIPE, check_call
 
+
 def get_git_sha1():
     try:
         from git import Repo
@@ -27,13 +27,14 @@ def get_git_sha1():
     sha1 = repo.commits()[0].id
     return sha1
 
+
 def find_dependency(soname, incname):
     def test(prefix):
         sofile = os.path.join(prefix, 'lib/{}'.format(soname))
         incdir = os.path.join(prefix, 'include/{}'.format(incname))
         if os.path.isfile(sofile) and os.path.isdir(incdir):
-            return os.path.join(prefix, 'lib'), \
-                   os.path.join(prefix, 'include')
+            return (os.path.join(prefix, 'lib'),
+                    os.path.join(prefix, 'include'))
         return None
     if 'VIRTUAL_ENV' in os.environ:
         ret = test(os.environ['VIRTUAL_ENV'])
@@ -41,7 +42,8 @@ def find_dependency(soname, incname):
             return ret[0], ret[1]
     if 'CONDA_DEFAULT_ENV' in os.environ:
         # shell out to conda to get info
-        s = Popen(['conda', 'info', '--json'], shell=False, stdout=PIPE).stdout.read()
+        cmd = ['conda', 'info', '--json']
+        s = Popen(cmd, shell=False, stdout=PIPE).stdout.read()
         s = json.loads(s)
         if 'default_prefix' in s:
             ret = test(str(s['default_prefix']))
@@ -73,7 +75,7 @@ join = os.path.join
 dirname = os.path.dirname
 basedir = join(dirname(__file__), 'microscopes', 'common')
 
-if not 'OFFICIAL_BUILD' in os.environ:
+if 'OFFICIAL_BUILD' not in os.environ:
     sha1 = get_git_sha1()
     if sha1 is None:
         sha1 = 'unknown'
@@ -140,6 +142,7 @@ if 'EXTRA_LINK_ARGS' in os.environ:
     extra_link_args.append(os.environ['EXTRA_LINK_ARGS'])
 
 check_call(['protoc', '--python_out=.', 'microscopes/io/schema.proto'])
+
 
 def make_extension(module_name):
     sources = [module_name.replace('.', '/') + '.pyx']
