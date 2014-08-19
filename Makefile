@@ -44,4 +44,4 @@ lint:
 clean:
 	rm -rf release relwithdebinfo debug microscopes_common.egg-info
 	rm -f microscopes/io/schema_pb2.py
-	find microscopes/ -name '*.cpp' -o -name '*.so' -o -name '*.pyc' -type f -print0 | xargs -0 rm -f --
+	find microscopes/ -name '*.cpp' -o -name '*.so' -o -name '*.pyc' -type f -print0 | xargs -0 rm --
