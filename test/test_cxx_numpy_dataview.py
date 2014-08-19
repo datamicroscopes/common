@@ -132,9 +132,9 @@ def test_recarray_numpy_dataview_digest():
     assert_not_equals(view.digest(), view1.digest())
 
     y2 = np.array([(1, 2, 3, 4)],
-                 dtype=[('', np.int32)] * 4)
+                  dtype=[('', np.int32)] * 4)
     y3 = np.array([(1, 2), (3, 4)],
-                 dtype=[('', np.int32)] * 2)
+                  dtype=[('', np.int32)] * 2)
     view = recarray_numpy_dataview(y2)
     view1 = recarray_numpy_dataview(y3)
     assert_not_equals(view.digest(), view1.digest())
