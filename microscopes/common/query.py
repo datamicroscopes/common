@@ -18,12 +18,12 @@ def groups(avec):
 
     Parameters
     ----------
-    avec: assignment vector
+    avec : assignment vector
 
     Returns
     -------
     clustering : a list of lists
-        Note that `len(clustering) == len(np.unique(avec))`
+        Note that ``len(clustering) == len(np.unique(avec))``
 
     """
     cluster_map = {}
@@ -105,8 +105,8 @@ def zmatrix_heuristic_block_ordering(zmat):
     Returns
     -------
     order : (N,)  ndarray
-        A permutation on [N] which heuristically generates the most block
-        diagonal sub-matrices after re-ordering
+        A permutation on :math:`[N]` which heuristically generates the most
+        block diagonal sub-matrices after re-ordering
 
     """
 
