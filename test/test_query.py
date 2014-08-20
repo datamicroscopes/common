@@ -14,10 +14,14 @@ from nose.tools import (
 def test_groups():
     avec = [34, 34, 5, 11, 5, 5433]
     truth_clustering = [[0, 1], [2, 4], [3], [5]]
-    clustering = query.groups(avec)
+    clustering = query.groups(avec, sort=False)
     assert_equals(len(clustering), len(np.unique(avec)))
     assert_equals(set(map(frozenset, truth_clustering)),
                   set(map(frozenset, clustering)))
+
+    clustering = query.groups(avec, sort=True)
+    assert_equals(map(len, clustering),
+                  sorted(map(len, truth_clustering), reverse=True))
 
 
 def test_zmatrix():

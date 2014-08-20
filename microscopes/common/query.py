@@ -13,12 +13,15 @@ import itertools as it
 # assignments: a list of avecs
 
 
-def groups(avec):
+def groups(avec, sort=False):
     """Turn an assignment vector in a clustering.
 
     Parameters
     ----------
     avec : assignment vector
+    sort : bool, default False
+        Whether or not the order of the clusters should be sorted by descending
+        size (largest groups first)
 
     Returns
     -------
@@ -31,7 +34,10 @@ def groups(avec):
         lst = cluster_map.get(gid, [])
         lst.append(idx)
         cluster_map[gid] = lst
-    return list(cluster_map.values())
+    if sort:
+        return list(sorted(cluster_map.values(), key=len, reverse=True))
+    else:
+        return list(cluster_map.values())
 
 
 def zmatrix(assignments):
