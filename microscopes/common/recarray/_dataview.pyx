@@ -3,7 +3,6 @@
 
 import numpy as np
 import numpy.ma as ma
-import hashlib
 from microscopes.common import validator
 
 
@@ -45,8 +44,7 @@ cdef class abstract_dataview:
         masks = tuple(masks)  # this seems to matter
         return ma.array(array, mask=[masks])[0]
 
-    def digest(self):
-        h = hashlib.sha1()
+    def digest(self, h):
 
         # two different object types should not collide
         typ = type(self)
@@ -56,7 +54,7 @@ cdef class abstract_dataview:
         # implementations now fill out the details
         self._digest(h)
 
-        return h.hexdigest()
+        return h
 
 
 cdef class numpy_dataview(abstract_dataview):

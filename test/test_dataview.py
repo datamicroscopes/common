@@ -11,7 +11,8 @@ import numpy.ma as ma
 import pickle
 import itertools as it
 import operator as op
-from scipy.sparse import coo_matrix
+import hashlib
+from scipy.sparse import coo_matrix, csr_matrix, csc_matrix
 
 from nose.tools import (
     assert_equals,
@@ -118,18 +119,24 @@ def test_recarray_numpy_dataview_pickle():
         list(v.data for v in view1))
 
 
+def _hexdigest(obj):
+    h = hashlib.sha1()
+    obj.digest(h)
+    return h.hexdigest()
+
+
 def test_recarray_numpy_dataview_digest():
     y = np.array([(1, 2, 3, 4, 5), (5, 4, 3, 2, 1)],
                  dtype=[('', np.int32)] * 5)
     view = recarray_numpy_dataview(y)
     view1 = recarray_numpy_dataview(y)
-    assert_equals(view.digest(), view1.digest())
+    assert_equals(_hexdigest(view), _hexdigest(view1))
 
     y1 = np.array([(1, 2, 3, 4, 6), (5, 4, 3, 2, 1)],
                   dtype=[('', np.int32)] * 5)
     view = recarray_numpy_dataview(y)
     view1 = recarray_numpy_dataview(y1)
-    assert_not_equals(view.digest(), view1.digest())
+    assert_not_equals(_hexdigest(view), _hexdigest(view1))
 
     y2 = np.array([(1, 2, 3, 4)],
                   dtype=[('', np.int32)] * 4)
@@ -137,7 +144,7 @@ def test_recarray_numpy_dataview_digest():
                   dtype=[('', np.int32)] * 2)
     view = recarray_numpy_dataview(y2)
     view1 = recarray_numpy_dataview(y3)
-    assert_not_equals(view.digest(), view1.digest())
+    assert_not_equals(_hexdigest(view), _hexdigest(view1))
 
 
 def test_relation_numpy_dataview():
@@ -171,6 +178,52 @@ def test_relation_numpy_dataview_pickle():
     assert_true((y == view1.toarray()).all())
 
 
+def test_relation_numpy_dataview_digest():
+    x = np.zeros((2, 3, 4), dtype=np.bool)
+    view = relation_numpy_dataview(x)
+    view1 = relation_numpy_dataview(x)
+    assert_equals(_hexdigest(view), _hexdigest(view1))
+
+    y = np.ones((2, 3, 4), dtype=np.bool)
+    view1 = relation_numpy_dataview(y)
+    assert_not_equals(_hexdigest(view), _hexdigest(view1))
+
+
+def test_relation_numpy_dataview_digest_masked():
+    x = np.zeros((2, 2), dtype=np.bool)
+    y = np.zeros((2, 2), dtype=np.bool)
+    y[0, 0] = True
+    mask = np.zeros((2, 2))
+    mask[0, 0] = True
+    ma_x = ma.array(x, mask=mask)
+    ma_y = ma.array(y, mask=mask)
+    view = relation_numpy_dataview(ma_x)
+    view1 = relation_numpy_dataview(ma_y)
+    assert_equals(_hexdigest(view), _hexdigest(view1))
+
+
+def test_relation_sparse_2d_dataview_build_from_csr():
+    row = np.array([0, 3, 1, 0])
+    col = np.array([0, 3, 1, 2])
+    data = np.array([4, 5, 7, 9])
+    m = coo_matrix((data, (row, col)), shape=(4, 4))
+    csr = m.tocsr()
+    assert isinstance(csr, csr_matrix)
+    view = sparse_2d_dataview(csr)
+    assert view.shape() == (4, 4)
+
+
+def test_relation_sparse_2d_dataview_build_from_csc():
+    row = np.array([0, 3, 1, 0])
+    col = np.array([0, 3, 1, 2])
+    data = np.array([4, 5, 7, 9])
+    m = coo_matrix((data, (row, col)), shape=(4, 4))
+    csc = m.tocsc()
+    assert isinstance(csc, csc_matrix)
+    view = sparse_2d_dataview(csc)
+    assert view.shape() == (4, 4)
+
+
 def test_relation_sparse_2d_dataview_pickle():
 
     def sparsify(y, fn=lambda x: x):
@@ -194,3 +247,21 @@ def test_relation_sparse_2d_dataview_pickle():
     view1 = pickle.loads(bstr)
     assert_almost_equals(
         np.abs((view.tocsr() - view1.tocsr()).todense()).max(), 0., places=3)
+
+
+def test_relation_sparse_2d_dataview_digest():
+    row = np.array([0, 3, 1, 0])
+    col = np.array([0, 3, 1, 2])
+    data = np.array([4, 5, 7, 9])
+    m = coo_matrix((data, (row, col)), shape=(4, 4))
+    view = sparse_2d_dataview(m)
+    view1 = sparse_2d_dataview(m)
+    assert_equals(_hexdigest(view), _hexdigest(view1))
+
+    row1 = np.array([0, 3, 1, 0])
+    col1 = np.array([0, 3, 1, 2])
+    data1 = np.array([4, 5, 7, 1])
+    m1 = coo_matrix((data1, (row1, col1)), shape=(4, 4))
+    view = sparse_2d_dataview(m)
+    view1 = sparse_2d_dataview(m1)
+    assert_not_equals(_hexdigest(view), _hexdigest(view1))

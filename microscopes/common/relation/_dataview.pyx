@@ -11,7 +11,18 @@ from microscopes.common import validator
 
 
 cdef class abstract_dataview:
-    pass
+
+    def digest(self, h):
+
+        # two different object types should not collide
+        typ = type(self)
+        fqn = typ.__module__ + '.' + typ.__name__
+        h.update(fqn)
+
+        # implementations now fill out the details
+        self._digest(h)
+
+        return h
 
 
 cdef class numpy_dataview(abstract_dataview):
@@ -47,6 +58,23 @@ cdef class numpy_dataview(abstract_dataview):
             return self._data
         else:
             return ma.array(self._data, mask=self._mask)
+
+    def _digest(self, h):
+        # use the str repr for dtype
+        h.update(str(self._data.dtype))
+
+        if self._mask is None:
+            # fast implementation
+            h.update(self._data.view(np.uint8))
+        else:
+            h.update(self._mask.view(np.uint8))
+
+            # slow implementation-- we have to ensure the masked values have
+            # the same value
+            data, mask = np.ravel(self._data), np.ravel(self._mask)
+            data[mask] = 0  # XXX(stephentu): what if zero is not valid
+
+            h.update(data.view(np.uint8))
 
 
 cdef class sparse_2d_dataview(abstract_dataview):
@@ -107,3 +135,15 @@ cdef class sparse_2d_dataview(abstract_dataview):
 
     def tocoo(self):
         return self.tocsr().tocoo()
+
+    def _digest(self, h):
+
+        # use the str repr for dtype
+        h.update(str(self._csr_data.dtype))
+
+        h.update(str(self.shape()))
+
+        # digest the CSR representation
+        h.update(self._csr_data.view(np.uint8))
+        h.update(self._csr_indices.view(np.uint8))
+        h.update(self._csr_indptr.view(np.uint8))
