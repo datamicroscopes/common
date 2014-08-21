@@ -97,15 +97,21 @@ class Group(GroupIoMixin):
 
     def load(self, raw):
         self.p = raw['p']
+        self.heads = raw['heads']
+        self.tails = raw['tails']
 
     def dump(self):
-        return {'p': self.p}
+        return {'p': self.p, 'heads': self.heads, 'tails': self.tails}
 
     def protobuf_load(self, message):
         self.p = message.p
+        self.heads = message.heads
+        self.tails = message.tails
 
     def protobuf_dump(self, message):
         message.p = self.p
+        message.heads = self.heads
+        message.tails = self.tails
 
 
 class Sampler(object):

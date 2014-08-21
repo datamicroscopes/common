@@ -12,6 +12,8 @@ message BetaBernoulliNonConj {
 
     message Group {
         required float p = 1;
+        required uint32 heads = 2;
+        required uint32 tails = 3;
     }
 }
 

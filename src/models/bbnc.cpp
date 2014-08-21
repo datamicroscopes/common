@@ -85,6 +85,8 @@ bbnc_group::get_ss() const
 {
   group_message_type m;
   m.set_p(p_);
+  m.set_heads(heads_);
+  m.set_tails(tails_);
   return util::protobuf_to_string(m);
 }
 
@@ -94,6 +96,8 @@ bbnc_group::set_ss(const suffstats_bag_t &ss)
   group_message_type m;
   util::protobuf_from_string(m, ss);
   p_ = m.p();
+  heads_ = m.heads();
+  tails_ = m.tails();
 }
 
 void
@@ -114,7 +118,10 @@ string
 bbnc_group::debug_str() const
 {
   ostringstream oss;
-  oss << "{p:" << p_ << "}";
+  oss << "{p:" << p_
+      << ", heads: " << heads_
+      << ", tails: " << tails_
+      << "}";
   return oss.str();
 }
 
@@ -163,7 +170,7 @@ string
 bbnc_hypers::debug_str() const
 {
   ostringstream oss;
-  oss << "{alpha:" << alpha_ << ",beta:" << beta_ << "}";
+  oss << "{alpha:" << alpha_ << ", beta:" << beta_ << "}";
   return oss.str();
 }
 
