@@ -89,11 +89,11 @@ struct util {
    * (so taking the max() + 1 is the total # of groups)
    */
   static inline std::vector<size_t>
-  random_assignment_vector(size_t n, rng_t &rng)
+  random_assignment_vector(size_t n, rng_t &rng, size_t maxgroups=100)
   {
     std::vector<size_t> ret(n);
-    // create min(100, n/2) + 1 groups
-    const size_t ngroups = std::min(size_t(100), n) + 1;
+    // create min(maxgroups, n) groups
+    size_t ngroups = std::min(size_t(maxgroups), n);
     const auto groups = range(ngroups);
     for (size_t i = 0; i < n; i++) {
       const auto choice = sample_choice(groups, rng);
