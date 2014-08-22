@@ -2,6 +2,8 @@
 
 from nose.tools import assert_almost_equals
 import numpy as np
+import pickle
+import copy
 
 
 def test_import_models():
@@ -46,6 +48,12 @@ def test_log_normal():
     ours = log_normal(mu, sigma2)
     assert_almost_equals(
         ours(x), norm.logpdf(x, loc=mu, scale=math.sqrt(sigma2)))
+    ours1 = pickle.loads(pickle.dumps(ours))
+    assert_almost_equals(ours._mu, ours1._mu)
+    assert_almost_equals(ours._sigma2, ours1._sigma2)
+    ours1 = copy.copy(ours)
+    assert_almost_equals(ours._mu, ours1._mu)
+    assert_almost_equals(ours._sigma2, ours1._sigma2)
 
 
 def test_log_noninformative_beta_prior():

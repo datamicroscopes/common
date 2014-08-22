@@ -47,6 +47,7 @@ log_exponential(float lambda)
 static inline scalar_fn
 log_normal(float mu, float sigma2)
 {
+  MICROSCOPES_DCHECK(sigma2 > 0., "sigma2 cannot be zero");
   const float lgC = -0.5 * logf(2.*M_PIf*sigma2);
   const float one_half_inv_sigma2 = 0.5 * 1./sigma2;
   return scalar_fn(

@@ -25,6 +25,8 @@ cdef class log_normal(scalar_function):
     cdef readonly float _sigma2
 
     def __cinit__(self, float mu, float sigma2):
+        self._mu = mu
+        self._sigma2 = sigma2
         self._func = c_log_normal(mu, sigma2)
 
     def __reduce__(self):
