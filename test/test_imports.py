@@ -51,9 +51,13 @@ def test_log_normal():
     ours1 = pickle.loads(pickle.dumps(ours))
     assert_almost_equals(ours._mu, ours1._mu)
     assert_almost_equals(ours._sigma2, ours1._sigma2)
+    assert_almost_equals(
+        ours1(x), norm.logpdf(x, loc=mu, scale=math.sqrt(sigma2)))
     ours1 = copy.copy(ours)
     assert_almost_equals(ours._mu, ours1._mu)
     assert_almost_equals(ours._sigma2, ours1._sigma2)
+    assert_almost_equals(
+        ours1(x), norm.logpdf(x, loc=mu, scale=math.sqrt(sigma2)))
 
 
 def test_log_noninformative_beta_prior():
