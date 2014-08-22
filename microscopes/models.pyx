@@ -44,6 +44,7 @@ from microscopes.io.schema_pb2 import (
 from microscopes.common.scalar_functions import (
     log_exponential,
     log_noninformative_beta_prior,
+    log_normal,
 )
 from microscopes.common import validator
 
@@ -183,6 +184,8 @@ nich = model_descriptor(
     default_hyperparams={'mu': 0., 'kappa': 1., 'sigmasq': 1., 'nu': 1.},
     default_hyperpriors={
         # XXX(stephentu): put something sane here
+        'mu': log_normal(0., 1.),
+        'sigmasq': log_exponential(1.),
     })
 
 
