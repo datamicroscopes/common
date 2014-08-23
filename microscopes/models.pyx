@@ -12,6 +12,7 @@ from microscopes._models cimport (
 # Python includes
 
 import numpy as np
+import itertools as it
 
 from distributions.dbg.models import (
     bb as dbg_bb,
@@ -99,12 +100,14 @@ class model_descriptor(object):
                  py_descriptor,
                  c_descriptor,
                  default_hyperparams,
-                 default_hyperpriors):
+                 default_hyperpriors,
+                 default_partial_hypergrid):
         self._name = name
         self._py_descriptor = py_descriptor
         self._c_descriptor = c_descriptor
         self._default_hyperparams = default_hyperparams
         self._default_hyperpriors = default_hyperpriors
+        self._default_partial_hypergrid = default_partial_hypergrid
 
     def name(self):
         return self._name
@@ -120,6 +123,9 @@ class model_descriptor(object):
 
     def default_hyperpriors(self):
         return self._default_hyperpriors
+
+    def default_partial_hypergrid(self):
+        return self._default_partial_hypergrid
 
     def _param(self):
         name = self.name()
@@ -146,6 +152,30 @@ def _reconstruct_model_descriptor(name, param):
 # are sane and useful!
 
 
+def _bb_default_partial_hypergrid():
+    pts = np.logspace(-1, 1, num=100)
+    return [
+        {'alpha': alpha, 'beta': beta} for alpha, beta in it.product(pts, pts)
+    ]
+
+
+def _gp_default_partial_hypergrid():
+    pts = np.logspace(-1, 1, num=100)
+    return [
+        {'alpha': alpha, 'inv_beta': beta}
+        for alpha, beta in it.product(pts, pts)
+    ]
+
+
+def _nich_default_partial_hypergrid():
+    mu_pts = np.linspace(-2., 2., num=100)
+    sigmasq_pts = np.logspace(-1, 1, num=100)
+    return [
+        {'mu': mu, 'sigmasq': sigmasq}
+        for mu, sigmasq in it.product(mu_pts, sigmasq_pts)
+    ]
+
+
 bb = model_descriptor(
     name='bb',
     py_descriptor=py_model(dbg_bb, pb_bb),
@@ -153,7 +183,8 @@ bb = model_descriptor(
     default_hyperparams={'alpha': 1., 'beta': 1.},
     default_hyperpriors={
         ('alpha', 'beta'): log_noninformative_beta_prior,
-    })
+    },
+    default_partial_hypergrid=_bb_default_partial_hypergrid())
 
 
 bnb = model_descriptor(
@@ -163,7 +194,8 @@ bnb = model_descriptor(
     default_hyperparams={'alpha': 1., 'beta': 1., 'r': 1},
     default_hyperpriors={
         ('alpha', 'beta'): log_noninformative_beta_prior,
-    })
+    },
+    default_partial_hypergrid=_bb_default_partial_hypergrid())
 
 
 gp = model_descriptor(
@@ -174,7 +206,8 @@ gp = model_descriptor(
     default_hyperpriors={
         'alpha': log_exponential(1.),
         'inv_beta': log_exponential(1.),
-    })
+    },
+    default_partial_hypergrid=_gp_default_partial_hypergrid())
 
 
 nich = model_descriptor(
@@ -186,7 +219,8 @@ nich = model_descriptor(
         # XXX(stephentu): put something sane here
         'mu': log_normal(0., 1.),
         'sigmasq': log_exponential(1.),
-    })
+    },
+    default_partial_hypergrid=_nich_default_partial_hypergrid())
 
 
 def dd(size):
@@ -198,7 +232,10 @@ def dd(size):
         default_hyperparams={'alphas': [1.] * size},
         default_hyperpriors={
             # XXX(stephentu): put something sane here
-        })
+        },
+        default_partial_hypergrid=[
+            # XXX(stephentu): put something sane here
+        ])
     return desc
 
 
@@ -207,7 +244,8 @@ bbnc = model_descriptor(
     py_descriptor=py_model(dbg_bbnc, pb_bbnc),
     c_descriptor=_bbnc(),
     default_hyperparams=bb._default_hyperparams,
-    default_hyperpriors=bb._default_hyperpriors)
+    default_hyperpriors=bb._default_hyperpriors,
+    default_partial_hypergrid=bb._default_partial_hypergrid)
 
 
 def niw(dim):
@@ -225,7 +263,10 @@ def niw(dim):
         },
         default_hyperpriors={
             # XXX(stephentu): put something sane here
-        })
+        },
+        default_partial_hypergrid=[
+            # XXX(stephentu): put something sane here
+        ])
     return desc
 
 
@@ -238,5 +279,6 @@ def dm(categories):
         py_descriptor=py_descriptor,
         c_descriptor=_dm(categories),
         default_hyperparams=dd(categories)._default_hyperparams,
-        default_hyperpriors=dd(categories)._default_hyperpriors)
+        default_hyperpriors=dd(categories)._default_hyperpriors,
+        default_partial_hypergrid=dd(categories)._default_partial_hypergrid)
     return desc
