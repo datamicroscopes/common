@@ -51,14 +51,6 @@ public:
     return get().anymasked();
   }
 
-  template <typename T>
-  inline T
-  get(size_t idx) const
-  {
-    MICROSCOPES_ASSERT(pos_ < nfeatures());
-    get().get<T>(idx);
-  }
-
   inline void
   bump()
   {
