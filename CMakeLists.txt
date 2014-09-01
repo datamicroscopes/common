@@ -81,6 +81,7 @@ set(MICROSCOPES_COMMON_SOURCE_FILES
     src/common/runtime_type.cpp
     src/common/runtime_value.cpp
     src/common/relation/dataview.cpp
+    src/common/variadic/dataview.cpp
     src/common/util.cpp
     src/common/scalar_functions.cpp
     src/models/bbnc.cpp
