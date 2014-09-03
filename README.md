@@ -32,7 +32,7 @@ We recommend you to not work in the default (root) environment
     $ source activate myenv
     $ conda config --add channels distributions 
     $ conda config --add channels datamicroscopes
-    $ conda install distributions eigen3 cython
+    $ conda install distributions eigen3 cython cmake
     $ export DYLD_LIBRARY_PATH=/path/to/anaconda/envs/myenv/lib # or LD_LIBRARY_PATH on linux
     
 Note that on OS X, instead of `DYLD_LIBRARY_PATH` it is also possible to specify `DYLD_FALLBACK_LIBRARY_PATH`.  This fixes some issues with using `libpng` (and consequently `matplotlib`) in conjunction with the datamicroscopes library.
