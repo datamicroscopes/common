@@ -528,6 +528,16 @@ public:
 
   inline size_t ngroups() const { return groups_.size(); }
 
+  inline std::vector<size_t>
+  groups() const
+  {
+    std::vector<size_t> ret;
+    ret.reserve(ngroups());
+    for (auto &g : groups_)
+      ret.push_back(g.first);
+    return ret;
+  }
+
   inline std::pair<size_t, T&>
   create_group()
   {
