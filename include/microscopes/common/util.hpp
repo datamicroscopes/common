@@ -12,6 +12,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <map>
 #include <utility>
 #include <random>
 #include <algorithm>
@@ -32,13 +33,29 @@ operator<<(std::ostream &o, const std::vector<T, Alloc> &v)
 {
   bool first = true;
   o << "[";
-  for (auto &p : v) {
+  for (const auto &p : v) {
     if (!first)
       o << ", ";
     first = false;
     o << p;
   }
   o << "]";
+  return o;
+}
+
+template <typename Key, typename Value, typename Cmp, typename Alloc>
+static inline std::ostream &
+operator<<(std::ostream &o, const std::map<Key, Value, Cmp, Alloc> &m)
+{
+  bool first = true;
+  o << "{";
+  for (const auto &p : m) {
+    if (!first)
+      o << ", ";
+    first = false;
+    o << p.first << " => " << p.second;
+  }
+  o << "}";
   return o;
 }
 
