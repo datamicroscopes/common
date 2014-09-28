@@ -22,6 +22,6 @@ cdef class abstract_dataview:
 
 
 cdef class numpy_dataview(abstract_dataview):
-    cdef int _n
+    cdef readonly int _n
     cdef readonly np.ndarray _data
     cdef readonly np.ndarray _mask
