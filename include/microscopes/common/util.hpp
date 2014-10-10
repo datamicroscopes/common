@@ -178,6 +178,32 @@ struct util {
     return ldlt.isPositive();
   }
 
+  template <typename T>
+  static inline void
+  remove_row(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m, size_t row_to_remove)
+  {
+      size_t num_rows = m.rows()-1;
+      size_t num_cols = m.cols();
+
+      if( row_to_remove < num_rows )
+          m.block(row_to_remove,0,num_rows-row_to_remove,num_cols) = m.block(row_to_remove+1,0,num_rows-row_to_remove,num_cols);
+
+      m.conservativeResize(num_rows,num_cols);
+  }
+
+  template <typename T>
+  static inline void
+  remove_column(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &m, size_t col_to_remove)
+  {
+      size_t num_rows = m.rows();
+      size_t num_cols = m.cols()-1;
+
+      if( col_to_remove < num_cols )
+          m.block(0,col_to_remove,num_rows,num_cols-col_to_remove) = m.block(0,col_to_remove+1,num_rows,num_cols-col_to_remove);
+
+      m.conservativeResize(num_rows,num_cols);
+  }
+
   // helpers for python
   static inline ALWAYS_INLINE void
   set(Eigen::MatrixXf &m, unsigned i, unsigned j, float v)
