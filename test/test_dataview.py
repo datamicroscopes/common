@@ -5,6 +5,9 @@ from microscopes.common.relation.dataview import (
     numpy_dataview as relation_numpy_dataview,
     sparse_2d_dataview,
 )
+from microscopes.common.variadic.dataview import (
+    numpy_dataview as variadic_numpy_dataview,
+)
 
 import numpy as np
 import numpy.ma as ma
@@ -265,3 +268,15 @@ def test_relation_sparse_2d_dataview_digest():
     view = sparse_2d_dataview(m)
     view1 = sparse_2d_dataview(m1)
     assert_not_equals(_hexdigest(view), _hexdigest(view1))
+
+
+def test_variadic_dataview_simple():
+    data = [
+        np.array([1, 2, 3]),
+        np.array([1, 2, 3, 4]),
+        np.array([1, 2, 3, 5]),
+    ]
+    view = variadic_numpy_dataview(data)
+    view1 = variadic_numpy_dataview(data)
+    assert_equals(len(view), len(data))
+    assert_equals(_hexdigest(view), _hexdigest(view1))

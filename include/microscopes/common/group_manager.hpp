@@ -253,6 +253,15 @@ public:
   typedef io::CRP message_type;
   typedef typename std::map<size_t, gd<T>>::const_iterator const_iterator;
 
+  // for std containers
+  group_manager()
+    : alpha_(),
+      gcount_(),
+      gempty_(),
+      assignments_(),
+      groups_()
+  {}
+
   group_manager(size_t n)
     : alpha_(),
       gcount_(),
@@ -496,6 +505,86 @@ protected:
   std::set<size_t> gempty_;
   std::vector<ssize_t> assignments_;
   std::map<size_t, gd<T>> groups_;
+};
+
+/**
+ * Manages groups and nothing else.
+ *
+ * XXX(stephentu):
+ *   (a) group_manager should use this underneath
+ *   (b) rename group_manager to CRP
+ *
+ * Let N = # of groups.
+ *   (a) O(log N) - add/remove group
+ *   (b) O(N) - iteration
+ *   (c) O(1) - size
+ */
+template <typename T>
+class simple_group_manager {
+public:
+  typedef typename std::map<size_t, T>::const_iterator const_iterator;
+
+  simple_group_manager() : gcount_() {}
+
+  inline size_t ngroups() const { return groups_.size(); }
+
+  inline std::vector<size_t>
+  groups() const
+  {
+    std::vector<size_t> ret;
+    ret.reserve(ngroups());
+    for (auto &g : groups_)
+      ret.push_back(g.first);
+    return ret;
+  }
+
+  inline std::pair<size_t, T&>
+  create_group()
+  {
+    const size_t gid = gcount_++;
+    auto &g = groups_[gid];
+    return std::pair<size_t, T&>(gid, g);
+  }
+
+  inline void
+  delete_group(size_t gid)
+  {
+    auto it = groups_.find(gid);
+    MICROSCOPES_DCHECK(it != groups_.end(), "invalid gid");
+    groups_.erase(it);
+  }
+
+  inline const T &
+  group(size_t gid) const
+  {
+    const auto it = groups_.find(gid);
+    MICROSCOPES_DCHECK(it != groups_.end(), "invalid gid");
+    return it->second;
+  }
+
+  inline T &
+  group(size_t gid)
+  {
+    auto it = groups_.find(gid);
+    MICROSCOPES_DCHECK(it != groups_.end(), "invalid gid");
+    return it->second;
+  }
+
+  inline const_iterator
+  begin() const
+  {
+    return groups_.begin();
+  }
+
+  inline const_iterator
+  end() const
+  {
+    return groups_.end();
+  }
+
+private:
+  size_t gcount_;
+  std::map<size_t, T> groups_;
 };
 
 } // namespace common

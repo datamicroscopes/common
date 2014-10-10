@@ -82,6 +82,18 @@ public:
     }
   }
 
+  row_major_dataview(const std::vector<const uint8_t *> &data,
+                     const std::vector<unsigned> &ns,
+                     const runtime_type &type)
+    : dataview(ns.size(), type), pxs_(data), ns_(ns)
+  {
+    MICROSCOPES_DCHECK(data.size() == ns.size(), "size inconsistent");
+#ifdef DEBUG_MODE
+    for (auto px : data)
+      MICROSCOPES_DCHECK(px, "null data given");
+#endif
+  }
+
   row_accessor
   get(size_t i) const override
   {

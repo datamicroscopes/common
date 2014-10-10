@@ -170,6 +170,8 @@ extensions = cythonize([
     make_extension('microscopes.common.random'),
     make_extension('microscopes.common.scalar_functions'),
     make_extension('microscopes.common._scalar_functions'),
+    make_extension('microscopes.common.variadic.dataview'),
+    make_extension('microscopes.common.variadic._dataview'),
 ])
 
 with open('README.md') as f:
@@ -198,6 +200,7 @@ setup(version=version,
           'microscopes.common',
           'microscopes.common.recarray',
           'microscopes.common.relation',
+          'microscopes.common.variadic',
           'microscopes.common.vendor',
           'microscopes.dbg',
           'microscopes.dbg.models',
