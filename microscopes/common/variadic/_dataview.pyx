@@ -46,6 +46,9 @@ cdef class numpy_dataview(abstract_dataview):
     def size(self):
         return len(self._data)
 
+    def rowsize(self, i):
+        return len(self._data[i])
+
     def __len__(self):
         return self.size()
 
