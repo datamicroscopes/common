@@ -24,7 +24,7 @@ def get_git_sha1():
         print >>sys.stderr, "could not import gitpython"
         return None
     repo = Repo(os.path.dirname(__file__))
-    sha1 = repo.commits()[0].id
+    sha1 = repo.iter_commits().next().hexsha
     return sha1
 
 
