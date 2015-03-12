@@ -1,5 +1,5 @@
 cdef extern from "microscopes/common/type_info.h":
-    enum _primitive_type:
+    enum primitive_type:
        TYPE_B
        TYPE_I8
        TYPE_U8
@@ -11,4 +11,3 @@ cdef extern from "microscopes/common/type_info.h":
        TYPE_U64
        TYPE_F32
        TYPE_F64
-    ctypedef _primitive_type primitive_type
