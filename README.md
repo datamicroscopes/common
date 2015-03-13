@@ -39,7 +39,7 @@ Note that on OS X, instead of `DYLD_LIBRARY_PATH` it is also possible to specify
 
 Now if you want nice git SHA1 hashes for package versions (useful for dev), install `gitpython`. Note this step is optional. 
     
-    $ pip install gitpython
+    $ pip install gitpython==0.3.6
     
 ### Building/testing the C++ library
 Now that the conda environment is set up, use `cmake` to build the C++ library. Enter the commands below, replacing `debug` with either `relwithdebinfo` or `release` depending on the type of build. Note the first invocation to `make` simply invokes `cmake` with the right prefixes set up.
@@ -61,3 +61,4 @@ or alternatively to build in the source tree:
    
     $ pip install -e . 
     $ nosetests -v
+
