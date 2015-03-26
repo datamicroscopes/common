@@ -5,6 +5,8 @@ notifications:
   email: false
   slack:
     secure: iG77bbaDK8OPCvLJnFDqf6jCGKkQCiKXc9dVCGl0nzIlNN1InVKBq9H2pKLAygKROw17tqZ7l9qEok18c66tzQuDL29CAdNzGmRxc1hU+/lLqseiM8GngpCwxYCSEAiRdjWSYIIZFTnYYrG5kBoRkrP2/wlQ8JG9g0b5GX+ObV0=
+  slack: qadium:RYCmKN3pKsaLZwMDH1YWWWUF
+
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
