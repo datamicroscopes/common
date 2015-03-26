@@ -9,10 +9,24 @@
 namespace microscopes {
 namespace common {
 
-class fixed_entity_based_state_object {
+/**
+ * The common interface for sampling kernels:
+ *
+ * An entity_based_state_object is a collection of (a fixed, known number of)
+ * entities.
+ *
+ * The state describes a generative process composed of:
+ *   (A) the clustering (group assignment) of the entities
+ *   (B) conditionally independent components which describe the likelihood model
+ *
+ * Examples of generative models falling under an entity_based_state_object
+ * include (1) mixture models and (2) infinite relational models (IRM)
+ */
+class entity_based_state_object {
 public:
-  virtual ~fixed_entity_based_state_object() {}
-
+  /**
+   * A subset of groups()
+   */
   virtual size_t nentities() const = 0;
   virtual size_t ngroups() const = 0;
   virtual size_t ncomponents() const = 0;
@@ -69,26 +83,7 @@ public:
       score += score_likelihood(component, id, rng);
     return score;
   }
-};
 
-/**
- * The common interface for sampling kernels:
- *
- * An entity_based_state_object is a collection of (a fixed, known number of)
- * entities.
- *
- * The state describes a generative process composed of:
- *   (A) the clustering (group assignment) of the entities
- *   (B) conditionally independent components which describe the likelihood model
- *
- * Examples of generative models falling under an entity_based_state_object
- * include (1) mixture models and (2) infinite relational models (IRM)
- */
-class entity_based_state_object : public fixed_entity_based_state_object {
-public:
-  /**
-   * A subset of groups()
-   */
   virtual std::vector<size_t> empty_groups() const = 0;
   virtual size_t create_group(rng_t &rng) = 0;
   virtual void delete_group(size_t gid) = 0;
