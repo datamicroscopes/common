@@ -1,29 +1,28 @@
 language: python
 python:
-  - '2.7'
+- '2.7'
 notifications:
   email: false
   slack:
-    secure: iG77bbaDK8OPCvLJnFDqf6jCGKkQCiKXc9dVCGl0nzIlNN1InVKBq9H2pKLAygKROw17tqZ7l9qEok18c66tzQuDL29CAdNzGmRxc1hU+/lLqseiM8GngpCwxYCSEAiRdjWSYIIZFTnYYrG5kBoRkrP2/wlQ8JG9g0b5GX+ObV0=
-  slack: qadium:RYCmKN3pKsaLZwMDH1YWWWUF
-
+    secure: WiSLYg5SbqwpX9STr1BEll2lY+uwQmaxi3qd0RPjbLyGZta7razHzMFfdfoPfjsFe91AqTTJgNrDIKiPdCHoArvpgXNW7efVLgiZ9Cr3jb9ccPLQei7aObUDt5ycFZkgH4N7+N8ml3JZ2Ju4UY9wXcRhWcCBjaSZ9xtk7itGCUk=
 before_install:
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq g++-4.8
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
-  - ./miniconda.sh -b
-  - export PATH=/home/travis/miniconda/bin:$PATH
-  - conda update --yes conda
-  - sudo rm -rf /dev/shm
-  - sudo ln -s /run/shm /dev/shm
-  - conda create -n build --yes python=$TRAVIS_PYTHON_VERSION numpy scipy nose cython pip
-  - source activate build
-  - conda install --yes -c distributions distributions
-  - conda install --yes -c datamicroscopes eigen3
-  - export CC=gcc-4.8
-  - export CXX=g++-4.8
-  - printenv
+- sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+- sudo apt-get update -qq
+- sudo apt-get install -qq g++-4.8
+- wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+- chmod +x miniconda.sh
+- "./miniconda.sh -b"
+- export PATH=/home/travis/miniconda/bin:$PATH
+- conda update --yes conda
+- sudo rm -rf /dev/shm
+- sudo ln -s /run/shm /dev/shm
+- conda create -n build --yes python=$TRAVIS_PYTHON_VERSION numpy scipy nose cython
+  pip
+- source activate build
+- conda install --yes -c distributions distributions
+- conda install --yes -c datamicroscopes eigen3
+- export CC=gcc-4.8
+- export CXX=g++-4.8
+- printenv
 install: make travis_install
 script: make travis_script
