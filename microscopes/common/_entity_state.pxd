@@ -7,7 +7,7 @@ from microscopes.common._entity_state_h cimport \
 from microscopes.common._rng cimport rng
 
 
-cdef class entity_based_state_object():
+cdef class entity_based_state_object:
     cdef c_entity_based_state_object * raw_px(self)
     cdef shared_ptr[c_entity_based_state_object] _thisptr
     cdef public list _models # list of model_descriptor objects

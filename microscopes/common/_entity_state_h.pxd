@@ -6,7 +6,7 @@ from microscopes.common._random_fwd_h cimport rng_t
 
 cdef extern from "microscopes/common/entity_state.hpp" namespace "microscopes::common":
     # expose enough of the API here
-    cdef cppclass entity_based_state_object():
+    cdef cppclass entity_based_state_object:
         vector[ssize_t] assignments() except +
         size_t nentities()
         size_t ngroups()

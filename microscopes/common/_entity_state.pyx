@@ -4,7 +4,7 @@
 from microscopes.models import model_descriptor
 import numpy as np
 
-cdef class entity_based_state_object():
+cdef class entity_based_state_object:
     def __init__(self, models):
         for m in models:
             if not isinstance(m, model_descriptor):
