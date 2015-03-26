@@ -27,8 +27,6 @@ public:
   /**
    * A subset of groups()
    */
-  virtual ~fixed_entity_based_state_object() {}
-
   virtual size_t nentities() const = 0;
   virtual size_t ngroups() const = 0;
   virtual size_t ncomponents() const = 0;
