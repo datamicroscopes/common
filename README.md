@@ -28,7 +28,7 @@ Currently, our `CMakeLists.txt` does not give precedence to Anaconda's version o
 ### Setting up the anaconda environment
 We recommend you to not work in the default (root) environment
 
-    $ conda create -n myenv anaconda 
+    $ conda create -n myenv anaconda python=2
     $ source activate myenv
     $ conda config --add channels distributions 
     $ conda config --add channels datamicroscopes
