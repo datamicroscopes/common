@@ -9,14 +9,14 @@ requirements:
   build:
     - cmake
     - python
-    - numpy
+    - numpy ==1.8.2
     - cython >=0.22
     - distributions >=2.0.23
     - libprotobuf
     - eigen3
   run:
     - python
-    - numpy
+    - numpy ==1.8.2
     - scipy
     - distributions >=2.0.23
     - libprotobuf
