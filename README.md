@@ -6,7 +6,7 @@ The base package.
 The only officially supported mechanism is to use [Anaconda](https://store.continuum.io/cshop/anaconda/).
 
 ```
-$ conda install -c datamicroscopes -c distributions microscopes-lda
+$ conda install -c datamicroscopes -c distributions microscopes-common
 ```
 
 We realize that forcing a particular package/environment manager may be offensive to some.
