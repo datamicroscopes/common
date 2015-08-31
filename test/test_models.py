@@ -14,6 +14,10 @@ from nose.tools import assert_equals
 import pickle
 
 
+def test_model_callable():
+    assert_equals(nich(), nich)
+
+
 def test_models_dtype():
     assert_equals(niw(3).py_desc().get_np_dtype().shape, (3,))
     assert_equals(niw(5).py_desc().get_np_dtype().shape, (5,))

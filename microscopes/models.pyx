@@ -139,6 +139,12 @@ class model_descriptor(object):
     def __reduce__(self):
         return (_reconstruct_model_descriptor, (self._name, self._param()))
 
+    def __call__(self):
+        """Make models callable so nich() == nich.
+        Allows consistency with models that require parameters.
+        """
+        return self
+
 
 def _reconstruct_model_descriptor(name, param):
     desc = globals()[name]
