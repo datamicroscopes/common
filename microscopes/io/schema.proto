@@ -23,7 +23,7 @@ message DirichletMultinomial {
     }
 
     message Group {
-        repeated uint32 counts = 1; 
+        repeated uint32 counts = 1;
         required float ratio = 2;
     }
 }
@@ -52,6 +52,18 @@ message MixtureModelGroup {
 message MixtureModelState {
     repeated bytes hypers = 1;
     required bytes groups = 2;
+}
+
+message LdaModelState {
+    repeated int32 docs = 1;
+    repeated int32 doc_index = 2;
+    required float alpha = 3;
+    required float beta = 4;
+    required float gamma = 5;
+    repeated int32 table_assignment = 6;
+    repeated int32 table_assignment_index = 7;
+    repeated int32 dish_assignment = 8;
+    repeated int32 dish_assignment_index = 9;
 }
 
 message IrmSuffstat {
