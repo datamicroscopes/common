@@ -64,6 +64,7 @@ message LdaModelState {
     repeated int32 table_assignment_index = 7;
     repeated int32 dish_assignment = 8;
     repeated int32 dish_assignment_index = 9;
+    repeated string vocab = 10;
 }
 
 message IrmSuffstat {
